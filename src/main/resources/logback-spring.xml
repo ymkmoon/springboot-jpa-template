@@ -6,9 +6,12 @@
     <springProfile name="local">
         <property resource="logback-local.properties" />
     </springProfile>
-    <!-- <SpringProfile name="dev">
-        <property resource="logback-edv.properties" />
-    </SpringProfile> -->
+    <SpringProfile name="dev">
+        <property resource="logback-dev.properties" />
+    </SpringProfile>
+    <SpringProfile name="prod">
+        <property resource="logback-prod.properties" />
+    </SpringProfile>
     
     
     <!-- Environment 내의 프로퍼티들을 개별적으로 설정할 수도 있다 -->
