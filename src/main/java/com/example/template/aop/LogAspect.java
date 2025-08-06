@@ -58,8 +58,8 @@ public class LogAspect {
 	}
 	@Pointcut("@annotation(org.springframework.web.bind.annotation.PatchMapping)")
 	public void patchMapping() {
-		logger.info("Pointcut RequestMapping(): begin");
-		logger.info("Pointcut RequestMapping(): end");
+		logger.info("Pointcut PatchMapping(): begin");
+		logger.info("Pointcut PatchMapping(): end");
 	}
     
 	
@@ -86,7 +86,7 @@ public class LogAspect {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
 		Map<String, String[]> paramMap = request.getParameterMap();
 		if (logger.isInfoEnabled() && !paramMap.isEmpty()) {
-			logger.info("Parameter : [ {} ]", DataParsingUtil.paramMapToString(paramMap));
+			logger.info("GET Parameter : [ {} ]", DataParsingUtil.paramMapToString(paramMap));
 		}
 		return around(pjp);
 	}
@@ -95,7 +95,7 @@ public class LogAspect {
 	public Object aroundPost(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
 		if (logger.isInfoEnabled()) {
-			logger.info("RequestBody : [ {} ]", IOUtils.toString(request.getReader()));
+			logger.info("POST RequestBody : [ {} ]", IOUtils.toString(request.getReader()));
 		}
 		return around(pjp);
 	}
@@ -109,7 +109,7 @@ public class LogAspect {
 	public Object aroundPatch(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
 		if (logger.isInfoEnabled()) {
-			logger.info("RequestBody : [ {} ]", IOUtils.toString(request.getReader()));
+			logger.info("PATCH RequestBody : [ {} ]", IOUtils.toString(request.getReader()));
 		}
 		return around(pjp);
 	}

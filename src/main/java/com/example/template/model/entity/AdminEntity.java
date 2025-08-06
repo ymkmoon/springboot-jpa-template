@@ -14,6 +14,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * AdminEntity
+ * - 관리자 테이블
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name="admin") 
