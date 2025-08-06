@@ -49,9 +49,6 @@ public class AdminEntity extends BaseEntity {
 	@Column(name = "access_token", nullable = true)
 	private String accessToken;
 	
-	@Column(name = "refresh_token", nullable = true)
-	private String refreshToken;
-	
 	@OneToOne(targetEntity = AuthorityEntity.class)
 	@JoinColumn(name="authority_code", referencedColumnName = "code", nullable = true)
 	private AuthorityEntity role;
@@ -62,14 +59,13 @@ public class AdminEntity extends BaseEntity {
 	
 	@Builder
 	public AdminEntity(String loginId, String password, String name, String phoneNumber, String email, 
-			String accessToken, String refreshToken, AuthorityEntity role) {
+			String accessToken, AuthorityEntity role) {
 		this.loginId = loginId;
 		this.password = password;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 		this.accessToken = accessToken;
-		this.refreshToken = refreshToken;
 		this.role = role;
 	}
 }
