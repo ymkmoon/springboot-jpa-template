@@ -10,7 +10,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class RefreshTokenEntity extends BaseEntity {
 	@Column(name = "id", unique = true, nullable = false, updatable = false, insertable = false)
 	private Long id;
 	
-	@OneToMany(fetch = FetchType.LAZY, targetEntity = AdminEntity.class)
+	@OneToOne(fetch = FetchType.LAZY, targetEntity = AdminEntity.class)
 	@JoinColumn(name = "admin_id", referencedColumnName = "id", nullable = false)
 	private AdminEntity adminId;
 	
