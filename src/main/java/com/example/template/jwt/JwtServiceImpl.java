@@ -86,13 +86,16 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 	}
 
 	@Override
-	public void storeAccessToken(String username, String accessToken, long expireInSeconds) {
+	public void saveAccessToken(UserDetails userDetails, String accessToken) {
+		String username = userDetails.getUsername();
+        long accessTokenExpireIn = JwtUtil.getExpiration(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+        
 		// 기존 토큰 삭제
         if (redisService.hasAccessToken(username)) {
             redisService.deleteAccessToken(username);
         }
         // 새 토큰 저장
-        redisService.saveAccessToken(username, accessToken, expireInSeconds);
+        redisService.saveAccessToken(username, accessToken, accessTokenExpireIn);
 	}
 	
 	

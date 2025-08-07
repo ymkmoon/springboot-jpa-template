@@ -27,7 +27,7 @@ public class JwtConfig {
     @Getter
     @Setter
     public static class TokenConfig {
-        private String group;     // ex. AccessToken
+        private String group;     // CommonConstants > ACCESS_TOKEN, LoginId
         private String secretKey;
         private long validity;    // milliseconds
     }

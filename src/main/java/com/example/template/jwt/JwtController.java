@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.template.common.CommonConstants;
 import com.example.template.common.dto.AdminDto;
 import com.example.template.common.dto.TokenDto;
 import com.example.template.error.ErrorCode;
@@ -31,11 +30,7 @@ public class JwtController {
         TokenDto.Request token = JwtUtil.generateToken(userDetails);
         
         jwtService.saveRefreshToken(token);
-        
-        String username = userDetails.getUsername();
-        long accessTokenExpireIn = JwtUtil.getExpiration(token.getAccessToken(), CommonConstants.ACCESS_TOKEN.getTitle());
-        jwtService.storeAccessToken(username, token.getAccessToken(), accessTokenExpireIn);
-
+        jwtService.saveAccessToken(userDetails, token.getAccessToken());
         
         TokenDto.Response response = TokenDto.Response.builder()
         									.accessToken(token.getAccessToken())
