@@ -29,6 +29,13 @@ public final class JwtUtil {
         return getClaimFromToken(token, Claims::getExpiration, tokenType);
     }
 	
+	public long getExpiration(String token, String tokenType) {
+	    Date expirationDate = getExpirationDateFromToken(token, tokenType);
+	    long now = System.currentTimeMillis();
+	    long expirationMillis = expirationDate.getTime() - now;
+	    return expirationMillis / 1000; // Redis TTL로 사용하기 위해 초 단위로 변환
+	}
+	
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver, String tokenType) {
         final Claims claims = getAllClaimsFromToken(token, tokenType);
         return claimsResolver.apply(claims);

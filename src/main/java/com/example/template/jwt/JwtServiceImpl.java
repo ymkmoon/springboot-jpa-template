@@ -17,6 +17,7 @@ import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;
 import com.example.template.model.entity.AdminEntity;
 import com.example.template.model.entity.RefreshTokenEntity;
+import com.example.template.redis.RedisService;
 import com.example.template.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 
 	private final AdminRepository adminRepository;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final RedisService redisService;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -80,6 +82,16 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 		RefreshTokenEntity entity = Optional.ofNullable(refreshTokenRepository.findRefreshTokenByAdminId(admin))
 				.orElseThrow(() -> new BusinessException(ErrorCode.TOKEN_IS_NOT_AUTHORIZED));
 		return refreshToken.equals(entity.getRefreshToken());
+	}
+
+	@Override
+	public void storeAccessToken(String username, String accessToken, long expireInSeconds) {
+		// 기존 토큰 삭제
+        if (redisService.hasAccessToken(username)) {
+            redisService.deleteAccessToken(username);
+        }
+        // 새 토큰 저장
+        redisService.saveAccessToken(username, accessToken, expireInSeconds);
 	}
 	
 	
