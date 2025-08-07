@@ -25,3 +25,8 @@ spring:
 
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    
+  redis:
+    host: domain.com
+    port: 6379
+    password: password
