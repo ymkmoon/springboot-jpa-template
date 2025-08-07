@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.example.template.common.ReadableRequestWrapper;
 import com.example.template.util.DataParsingUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,9 @@ public class LogAspect {
 
 	@Around("getMapping()")
 	public Object aroundGet(ProceedingJoinPoint pjp) throws Throwable {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		ReadableRequestWrapper request = new ReadableRequestWrapper(original);
+		
 		Map<String, String[]> paramMap = request.getParameterMap();
 		if (logger.isInfoEnabled() && !paramMap.isEmpty()) {
 			logger.info("GET Parameter : [ {} ]", DataParsingUtil.paramMapToString(paramMap));
@@ -93,7 +96,8 @@ public class LogAspect {
 	
 	@Around("postMapping()")
 	public Object aroundPost(ProceedingJoinPoint pjp) throws Throwable {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		ReadableRequestWrapper request = new ReadableRequestWrapper(original);
 		if (logger.isInfoEnabled()) {
 			logger.info("POST RequestBody : [ {} ]", IOUtils.toString(request.getReader()));
 		}
@@ -107,7 +111,8 @@ public class LogAspect {
 	
 	@Around("patchMapping()")
 	public Object aroundPatch(ProceedingJoinPoint pjp) throws Throwable {
-		HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
+		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+		ReadableRequestWrapper request = new ReadableRequestWrapper(original);
 		if (logger.isInfoEnabled()) {
 			logger.info("PATCH RequestBody : [ {} ]", IOUtils.toString(request.getReader()));
 		}

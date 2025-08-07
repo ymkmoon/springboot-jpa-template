@@ -22,7 +22,7 @@ import lombok.experimental.UtilityClass;
 public final class JwtUtil {
 
 	public String getUsernameFromToken(String token, String tokenType) {
-		return getCustomClaimFromToken(token, CommonConstants.USERNAME.getTitle(), tokenType);
+		return getCustomClaimFromToken(token, CommonConstants.LOGIN_ID.getTitle(), tokenType);
 	}
 	
 	public Date getExpirationDateFromToken(String token, String tokenType) {
@@ -52,7 +52,7 @@ public final class JwtUtil {
     public TokenDto.Request generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put(CommonConstants.USERNAME.getTitle(), userDetails.getUsername());
+        claims.put(CommonConstants.LOGIN_ID.getTitle(), userDetails.getUsername());
         
         String accessToken = doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
         String refreshToken = doGenerateToken(claims, CommonConstants.REFRESH_TOKEN.getTitle());

@@ -9,7 +9,7 @@ public enum CommonConstants {
 	
 	ACCESS_TOKEN("AccessToken"),
 	REFRESH_TOKEN("RefreshToken"),
-	USERNAME("username"),
+	LOGIN_ID("LoginId"),
 	EMPTY("Empty"),
 	START_AT("startAt"),
 	END_AT("endAt")

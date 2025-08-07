@@ -1,7 +1,10 @@
 package com.example.template.jwt;
 
+import java.util.Collections;
 import java.util.Optional;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,11 +30,11 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        AdminEntity adminItem = Optional.ofNullable(adminRepository.findAccountByName(username))
+        AdminEntity adminItem = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
         		.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NAME_NOT_FOUND.getDetail()));
 
         return User.builder()
-                .username(adminItem.getName())
+                .username(adminItem.getId().toString())
                 .password(adminItem.getPassword())
                 .roles(adminItem.getRole().getName())
                 .build();
@@ -40,15 +43,32 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 	@Override
 	public TokenDto.RefreshResponse saveRefreshToken(TokenDto.Request token) {
 		String username = JwtUtil.getUsernameFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
-		AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByName(username))
+		
+		AdminEntity admin = adminRepository.findById(Long.parseLong(username))
 				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NAME_NOT_FOUND.getDetail()));
-		
-		TokenDto.RefreshRequest refreshRequest = TokenDto.RefreshRequest.builder()
-				.refreshToken(token.getRefreshToken())
-				.build();
-		
-		RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.save(refreshRequest.toEntity(admin));
-		return refreshTokenEntity.toRefreshResponse();
+
+		// 인증 객체 수동 세팅
+	    UsernamePasswordAuthenticationToken authenticationToken =
+	            new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+
+	    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+	    
+		Optional<RefreshTokenEntity> optionalToken = Optional.ofNullable(refreshTokenRepository.findRefreshTokenByAdminId(admin));
+
+	    if (optionalToken.isPresent()) {
+	        // 이미 존재하면 -> 토큰 값만 갱신 (update)
+	        optionalToken.get().update(token.getRefreshToken());
+	        return optionalToken.get().toRefreshResponse();
+	    } else {
+	        // 없으면 -> 새로 생성 (insert)
+	    	RefreshTokenEntity refreshTokenEntity = TokenDto.RefreshRequest.builder()
+	                .refreshToken(token.getRefreshToken())
+	                .build()
+	                .toEntity(admin);
+	    	refreshTokenRepository.save(refreshTokenEntity);
+	 		
+	 		return refreshTokenEntity.toRefreshResponse();
+	    }
 	}
 
 	@Override
