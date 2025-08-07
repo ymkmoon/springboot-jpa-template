@@ -29,6 +29,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * JwtRequestFilter
+ * - 스프링 시큐리티 필터
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 @RequiredArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
 	

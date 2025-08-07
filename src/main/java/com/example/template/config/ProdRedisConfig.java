@@ -8,7 +8,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 
 /**
  * ProdRedisConfig
- * - Redis 커넥션
+ * - Redis 커넥션팩토리 (운영환경)
  *
  * @author myungki you
  * @created 2025/08/06

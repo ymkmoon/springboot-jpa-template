@@ -5,6 +5,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
+/**
+ * ApplicationContextProvider
+ * - 유틸 클래스에서 Spring Bean을 가져와야 하는 경우 필요
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 @Component
 public class ApplicationContextProvider implements ApplicationContextAware{
     

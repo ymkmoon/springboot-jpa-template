@@ -11,6 +11,14 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+
+/**
+ * ObjectMapperConfig
+ * - JSON 직렬화 클래스
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 @Configuration
 public class ObjectMapperConfig {
 	@Bean

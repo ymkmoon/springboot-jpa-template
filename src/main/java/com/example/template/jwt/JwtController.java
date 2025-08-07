@@ -17,6 +17,13 @@ import com.example.template.util.JwtUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * JwtController
+ * - JWT 관련 컨트롤러
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("auth")

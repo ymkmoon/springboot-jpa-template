@@ -9,6 +9,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+/**
+ * AuditorAwareImpl
+ * - BaseEntity 의 created_by, updated_by 자동입력
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 @Component("auditorProvider")
 public class AuditorAwareImpl implements AuditorAware<String> {
 

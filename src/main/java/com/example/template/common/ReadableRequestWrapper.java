@@ -27,6 +27,13 @@ import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * ReadableRequestWrapper
+ * - HttpServletRequest 는 재사용이 안되기 때문에 재사용을 위한 Wrapper 클래스
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 public class ReadableRequestWrapper extends HttpServletRequestWrapper { // 상속
 	
 	Logger logger = LoggerFactory.getLogger(this.getClass());

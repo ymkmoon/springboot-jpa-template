@@ -16,6 +16,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * RefreshTokenEntity
+ * - refresh_token 보관 테이블
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 @Getter
 @Entity(name="refresh_token")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

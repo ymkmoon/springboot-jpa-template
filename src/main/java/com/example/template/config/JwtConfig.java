@@ -9,6 +9,13 @@ import org.springframework.context.annotation.Configuration;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * JwtConfig
+ * - 프로파일(profile)별 JWT secret key 와 만료시간 변경
+ *
+ * @author myungki you
+ * @created 2025/08/06
+ */
 @Getter
 @Setter
 @Configuration

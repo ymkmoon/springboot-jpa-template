@@ -10,7 +10,7 @@ import redis.embedded.RedisServer;
 
 /**
  * EmbeddedRedisConfig
- * - 임베디드 Redis (운영환경을 제외하고 동작)
+ * - 임베디드 Redis (운영환경을 제외 한 로컬, 개발환경)
  * - @PreDestroy : 어플리케이션 종료 시 Redis 서버 정리
  *
  * @author myungki you

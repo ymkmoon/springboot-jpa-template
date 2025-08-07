@@ -7,8 +7,6 @@ import com.example.template.model.entity.AdminEntity;
 
 @Repository
 public interface AdminRepository extends JpaRepository<AdminEntity, Long> {
-	
 	AdminEntity findAccountByName(String name);
 	AdminEntity findAccountByLoginId(String loginId);
-
 }

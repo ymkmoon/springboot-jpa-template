@@ -9,7 +9,7 @@ import lombok.Getter;
 
 /**
  * ErrorResponse
- * - 컨트롤러 내부에서 사용
+ * - 컨트롤러 내부에서 사용 오류 응답
  *
  * @author myungki you
  * @created 2025/08/06
