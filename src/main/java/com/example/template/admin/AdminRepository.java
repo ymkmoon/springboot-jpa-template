@@ -1,4 +1,4 @@
-package com.example.template.jwt;
+package com.example.template.admin;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

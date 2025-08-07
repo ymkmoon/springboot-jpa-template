@@ -16,7 +16,7 @@ logging:
 
 spring:
   profiles:
-    active: local  # 사용할 프로파일 지정
+    active: prod  # 사용할 프로파일 지정
 
   devtools:
     livereload:
@@ -49,3 +49,11 @@ spring:
         generatestatistics: true
 
 
+jwt:
+  tokens:
+    - group: AccessToken
+      secretKey: acc_ess_tok_ens_ecr_et
+      validity: 600000  # 10분 (ms)
+    - group: RefreshToken
+      secretKey: ref_res_hto_ken_sec_ret
+      validity: 259200000  # 3일 (ms)

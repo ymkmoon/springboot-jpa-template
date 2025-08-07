@@ -9,9 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.template.common.CommonConstants;
 import com.example.template.common.dto.TokenDto;
+import com.example.template.config.JwtConfig;
 import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;
-import com.example.template.jwt.JwtGroup;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -21,36 +21,45 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public final class JwtUtil {
 
-	public String getUsernameFromToken(String token, String tokenType) {
-		return getCustomClaimFromToken(token, CommonConstants.LOGIN_ID.getTitle(), tokenType);
-	}
-	
-	public Date getExpirationDateFromToken(String token, String tokenType) {
+	private static JwtConfig jwtConfig;
+
+    public void setJwtConfig(JwtConfig config) {
+        jwtConfig = config;
+    }
+    
+    public String getUsernameFromToken(String token, String tokenType) {
+        return getCustomClaimFromToken(token, CommonConstants.LOGIN_ID.getTitle(), tokenType);
+    }
+
+    public Date getExpirationDateFromToken(String token, String tokenType) {
         return getClaimFromToken(token, Claims::getExpiration, tokenType);
     }
-	
-	public long getExpiration(String token, String tokenType) {
-	    Date expirationDate = getExpirationDateFromToken(token, tokenType);
-	    long now = System.currentTimeMillis();
-	    long expirationMillis = expirationDate.getTime() - now;
-	    return expirationMillis / 1000; // Redis TTL로 사용하기 위해 초 단위로 변환
-	}
-	
+
+    public long getExpiration(String token, String tokenType) {
+        Date expirationDate = getExpirationDateFromToken(token, tokenType);
+        long now = System.currentTimeMillis();
+        long expirationMillis = expirationDate.getTime() - now;
+        return expirationMillis / 1000; // Redis TTL로 사용하기 위해 초 단위
+    }
+
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver, String tokenType) {
         final Claims claims = getAllClaimsFromToken(token, tokenType);
         return claimsResolver.apply(claims);
     }
-    
+
     public String getCustomClaimFromToken(String token, String claimName, String tokenType) {
         final Claims claims = getAllClaimsFromToken(token, tokenType);
         return (String) claims.get(claimName);
     }
-    
+
     private Claims getAllClaimsFromToken(String token, String tokenType) {
-    	JwtGroup tokenConfig = JwtGroup.tokenInformation(tokenType);
-        return Jwts.parser().setSigningKey(tokenConfig.getSecretKey()).parseClaimsJws(token).getBody();
+        JwtConfig.TokenConfig tokenConfig = jwtConfig.getTokenConfig(tokenType);
+        return Jwts.parser()
+                .setSigningKey(tokenConfig.getSecretKey())
+                .parseClaimsJws(token)
+                .getBody();
     }
-    
+
     private Boolean isTokenExpired(String token, String tokenType) {
         final Date expiration = getExpirationDateFromToken(token, tokenType);
         return expiration.before(new Date());
@@ -58,43 +67,38 @@ public final class JwtUtil {
 
     public TokenDto.Request generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-
         claims.put(CommonConstants.LOGIN_ID.getTitle(), userDetails.getUsername());
-        
+
         String accessToken = doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
         String refreshToken = doGenerateToken(claims, CommonConstants.REFRESH_TOKEN.getTitle());
-        
+
         return TokenDto.Request.builder()
-		        .accessToken(accessToken)
-		        .refreshToken(refreshToken)
-		        .build();
-        
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
-    
+
     private String doGenerateToken(Map<String, Object> claims, String tokenType) {
-    	JwtGroup tokenConfig = JwtGroup.tokenInformation(tokenType);
-    	
+        JwtConfig.TokenConfig tokenConfig = jwtConfig.getTokenConfig(tokenType);
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis()+tokenConfig.getValidity()))
+                .setExpiration(new Date(System.currentTimeMillis() + tokenConfig.getValidity()))
                 .signWith(SignatureAlgorithm.HS512, tokenConfig.getSecretKey())
                 .compact();
     }
-    
 
     public Boolean validateAccessToken(String accessToken, UserDetails userDetails) {
         final String username = getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
     }
-    
-    public String validateRefreshToken(String refreshToken){
-    	final Claims claims = getAllClaimsFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
-        if(Boolean.FALSE.equals(isTokenExpired(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle()))) {
-//    		return doGenerateAccessToken(claims);
-        	return doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
-    	}
-    	throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
+
+    public String validateRefreshToken(String refreshToken) {
+        final Claims claims = getAllClaimsFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
+        if (Boolean.FALSE.equals(isTokenExpired(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle()))) {
+            return doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
+        }
+        throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
     }
-    
 }

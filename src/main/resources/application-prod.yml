@@ -30,3 +30,13 @@ spring:
     host: domain.com
     port: 6379
     password: password
+    
+jwt:
+  tokens:
+    - group: AccessToken
+      secretKey: acc_ess_tok_ens_ecr_et
+      validity: 600000  # 10분 (ms)
+    - group: RefreshToken
+      secretKey: ref_res_hto_ken_sec_ret
+      validity: 259200000  # 3일 (ms)
+

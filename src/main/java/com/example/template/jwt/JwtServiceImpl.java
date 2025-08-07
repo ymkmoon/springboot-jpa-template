@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.example.template.admin.AdminRepository;
 import com.example.template.common.CommonConstants;
 import com.example.template.common.dto.TokenDto;
 import com.example.template.error.ErrorCode;
