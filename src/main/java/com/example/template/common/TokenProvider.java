@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import com.example.template.common.dto.AuthDto;
 import com.example.template.config.JwtConfig;
 import com.example.template.constants.CommonConstants;
-import com.example.template.error.ErrorCode;
+import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
 
 import io.jsonwebtoken.Claims;
@@ -104,6 +104,6 @@ public class TokenProvider {
             final Claims claims = getAllClaimsFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
             return doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
         }
-        throw new BusinessException(ErrorCode.TOKEN_EXPIRED);
+        throw new BusinessException(ResponseCode.TOKEN_EXPIRED);
     }
 }

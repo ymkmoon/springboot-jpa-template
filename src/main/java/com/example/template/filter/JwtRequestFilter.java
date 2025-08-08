@@ -17,7 +17,7 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import com.example.template.auth.AuthService;
 import com.example.template.common.TokenProvider;
 import com.example.template.constants.CommonConstants;
-import com.example.template.error.ErrorCode;
+import com.example.template.constants.ResponseCode;
 import com.example.template.error.FailResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -69,15 +69,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     		}
     	} catch (IllegalArgumentException | AccessDeniedException | MalformedJwtException | SignatureException e) {
     		logger.error("Unable to get JWT Token", e);
-    		new FailResponse(objectMapper, response, ErrorCode.FAIL_AUTHORIZED).writer();
+    		new FailResponse(objectMapper, response, ResponseCode.FAIL_AUTHORIZED).writer();
     		return;
     	} catch (ExpiredJwtException e) {
     		logger.error("JWT Token has expired", e);
-    		new FailResponse(objectMapper, response, ErrorCode.TOKEN_EXPIRED).writer();
+    		new FailResponse(objectMapper, response, ResponseCode.TOKEN_EXPIRED).writer();
     		return;
     	} catch (Exception e) {
     		logger.error("Unable to get JWT Token", e);
-    		new FailResponse(objectMapper, response, ErrorCode.FAIL_AUTHORIZED).writer();
+    		new FailResponse(objectMapper, response, ResponseCode.FAIL_AUTHORIZED).writer();
     		return;
     	}
         

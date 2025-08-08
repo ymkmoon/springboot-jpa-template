@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.security.web.firewall.RequestRejectedException;
 import org.springframework.stereotype.Component;
 
-import com.example.template.error.ErrorCode;
+import com.example.template.constants.ResponseCode;
 import com.example.template.error.FailResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,7 +36,7 @@ public class FilterChainProxyAdvice {
 	        pjp.proceed();
 	    } catch (RequestRejectedException exception) {
 	        HttpServletResponse response = (HttpServletResponse) pjp.getArgs()[1];
-		    new FailResponse(objectMapper, response, ErrorCode.BAD_REQUEST).writer();
+		    new FailResponse(objectMapper, response, ResponseCode.BAD_REQUEST).writer();
 	    }
 	}
 }

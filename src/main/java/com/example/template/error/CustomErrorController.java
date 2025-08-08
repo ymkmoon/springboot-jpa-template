@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.template.constants.ResponseCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.RequestDispatcher;
@@ -45,22 +46,22 @@ public class CustomErrorController implements ErrorController {
         
         switch(status.toString()) {
 	        case "400":
-	    		failResponse(response, ErrorCode.BAD_REQUEST);
+	    		failResponse(response, ResponseCode.BAD_REQUEST);
 	    		break;
 	        case "401":
-	    		failResponse(response, ErrorCode.UNAUTHORIZED);
+	    		failResponse(response, ResponseCode.UNAUTHORIZED);
 	    		break;
         	case "404":
-        		failResponse(response, ErrorCode.NOT_FOUND);
+        		failResponse(response, ResponseCode.NOT_FOUND);
         		break;
         	default:
-        		failResponse(response, ErrorCode.INTERNAL_SERVER_ERROR);
+        		failResponse(response, ResponseCode.INTERNAL_SERVER_ERROR);
         		break;
         		        	
         }
     }
 	
-    private void failResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
-    	new FailResponse(objectMapper, response, errorCode).writer();
+    private void failResponse(HttpServletResponse response, ResponseCode responseCode) throws IOException {
+    	new FailResponse(objectMapper, response, responseCode).writer();
     }
 }

@@ -1,7 +1,7 @@
 package com.example.template.exception;
 
 
-import com.example.template.error.ErrorCode;
+import com.example.template.constants.ResponseCode;
 
 import lombok.Getter;
 
@@ -19,20 +19,20 @@ public class BusinessException extends RuntimeException {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final ErrorCode errorCode;
+	private final ResponseCode responseCode;
 	
-	public BusinessException(ErrorCode errorCode, String message) {
+	public BusinessException(ResponseCode responseCode, String message) {
 		super(message);
-		this.errorCode = errorCode;
+		this.responseCode = responseCode;
 	}
 	
-    public BusinessException(ErrorCode errorCode) {
-        super(errorCode.getDetail());
-        this.errorCode = errorCode;
+    public BusinessException(ResponseCode responseCode) {
+        super(responseCode.getDetail());
+        this.responseCode = responseCode;
     }
 
-    public ErrorCode getErrorCode() {
-        return errorCode;
+    public ResponseCode getResponseCode() {
+        return responseCode;
     }
 
 }

@@ -9,7 +9,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
-import com.example.template.error.ErrorCode;
+import com.example.template.constants.ResponseCode;
 import com.example.template.error.FailResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,7 +31,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-	    new FailResponse(objectMapper, response, ErrorCode.UNAUTHORIZED).writer();
+	    new FailResponse(objectMapper, response, ResponseCode.UNAUTHORIZED).writer();
     }
     
 }
