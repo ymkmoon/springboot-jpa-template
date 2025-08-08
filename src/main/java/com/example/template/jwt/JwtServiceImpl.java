@@ -88,8 +88,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 	}
 
 	@Override
-	public void saveAccessToken(UserDetails userDetails, String accessToken) {
-		String username = userDetails.getUsername();
+	public void saveAccessToken(String username, String accessToken) {
         long accessTokenExpireIn = tokenProvider.getExpiration(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
         
 		// 기존 토큰 삭제

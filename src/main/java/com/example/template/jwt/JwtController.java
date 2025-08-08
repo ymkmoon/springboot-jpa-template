@@ -2,7 +2,9 @@ package com.example.template.jwt;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,16 +31,24 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("auth")
 public class JwtController {
 
+	private final AuthenticationManager authenticationManager;
 	private final TokenProvider tokenProvider;
     private final JwtService jwtService;
 
     @PostMapping(value = "/login")
     public ResponseEntity<TokenDto.Response> login(@RequestBody @Valid AdminDto.Request adminRequest) {
-        UserDetails userDetails = jwtService.loadUserByUsername(adminRequest.getLoginId());
-        TokenDto.Request token = tokenProvider.generateToken(userDetails);
+    	UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                		adminRequest.getLoginId(),
+                		adminRequest.getPassword()
+                );
+
+        Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        
+        TokenDto.Request token = tokenProvider.generateToken(authentication.getName());
         
         jwtService.saveRefreshToken(token);
-        jwtService.saveAccessToken(userDetails, token.getAccessToken());
+        jwtService.saveAccessToken(authentication.getName(), token.getAccessToken());
         
         TokenDto.Response response = TokenDto.Response.builder()
         									.accessToken(token.getAccessToken())

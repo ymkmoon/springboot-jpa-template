@@ -11,5 +11,5 @@ public interface JwtService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 	public TokenDto.RefreshResponse saveRefreshToken(TokenDto.Request token);
 	public boolean validateRegistRefreshToken(TokenDto.RefreshRequest refreshRequest);
-	public void saveAccessToken(UserDetails userDetails, String accessToken);
+	public void saveAccessToken(String username, String accessToken);
 }

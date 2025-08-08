@@ -69,9 +69,9 @@ public class TokenProvider {
         return expiration.before(new Date());
     }
 
-    public TokenDto.Request generateToken(UserDetails userDetails) {
+    public TokenDto.Request generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put(CommonConstants.LOGIN_ID.getTitle(), userDetails.getUsername());
+        claims.put(CommonConstants.LOGIN_ID.getTitle(), username);
 
         String accessToken = doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
         String refreshToken = doGenerateToken(claims, CommonConstants.REFRESH_TOKEN.getTitle());

@@ -111,7 +111,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     protected ResponseEntity<ErrorResponse> handleBadCredentialsException(BadCredentialsException e) {
         logger.error("handleBadCredentialsException", e);
-        return ErrorResponse.toResponseEntity(ErrorCode.BAD_CREDENTIAL);
+//        return ErrorResponse.toResponseEntity(ErrorCode.BAD_CREDENTIAL);
+        return ErrorResponse.toResponseEntity(ErrorCode.USER_NAME_NOT_FOUND);
     }
 
     /**
