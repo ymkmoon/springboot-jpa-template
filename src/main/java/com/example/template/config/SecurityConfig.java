@@ -30,6 +30,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final TokenProvider tokenProvider;
     private final JwtService jwtService;
 
     @Value("${spring.security.debug:false}")
@@ -75,7 +76,7 @@ public class SecurityConfig {
     }
 
     private JwtRequestFilter jwtRequestFilter() {
-        return new JwtRequestFilter(jwtService);
+        return new JwtRequestFilter(tokenProvider, jwtService);
     }
 }
 

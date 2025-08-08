@@ -14,12 +14,12 @@ import org.springframework.stereotype.Service;
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.CommonConstants;
 import com.example.template.common.dto.TokenDto;
+import com.example.template.config.TokenProvider;
 import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;
 import com.example.template.model.entity.AdminEntity;
 import com.example.template.model.entity.RefreshTokenEntity;
 import com.example.template.redis.RedisService;
-import com.example.template.util.JwtUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +30,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 	private final AdminRepository adminRepository;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final RedisService redisService;
+	private final TokenProvider tokenProvider;
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -45,7 +46,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 
 	@Override
 	public TokenDto.RefreshResponse saveRefreshToken(TokenDto.Request token) {
-		String username = JwtUtil.getUsernameFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
+		String username = tokenProvider.getUsernameFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
 		
 		AdminEntity admin = adminRepository.findById(Long.parseLong(username))
 				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NAME_NOT_FOUND.getDetail()));
@@ -77,7 +78,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 	@Override
 	public boolean validateRegistRefreshToken(TokenDto.RefreshRequest refreshRequest) {
 		String refreshToken = refreshRequest.getRefreshToken();
-		String usernameInToken = JwtUtil.getUsernameFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
+		String usernameInToken = tokenProvider.getUsernameFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
 		AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByName(usernameInToken))
 				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NAME_NOT_FOUND.getDetail()));
 		RefreshTokenEntity entity = Optional.ofNullable(refreshTokenRepository.findRefreshTokenByAdminId(admin))
@@ -88,7 +89,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 	@Override
 	public void saveAccessToken(UserDetails userDetails, String accessToken) {
 		String username = userDetails.getUsername();
-        long accessTokenExpireIn = JwtUtil.getExpiration(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+        long accessTokenExpireIn = tokenProvider.getExpiration(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
         
 		// 기존 토큰 삭제
         if (redisService.hasAccessToken(username)) {

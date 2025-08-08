@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.template.common.dto.AdminDto;
 import com.example.template.common.dto.TokenDto;
+import com.example.template.config.TokenProvider;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.ErrorResponse;
-import com.example.template.util.JwtUtil;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +29,13 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("auth")
 public class JwtController {
 
+	private final TokenProvider tokenProvider;
     private final JwtService jwtService;
 
     @PostMapping(value = "/login")
     public ResponseEntity<TokenDto.Response> login(@RequestBody @Valid AdminDto.Request adminRequest) {
         UserDetails userDetails = jwtService.loadUserByUsername(adminRequest.getLoginId());
-        TokenDto.Request token = JwtUtil.generateToken(userDetails);
+        TokenDto.Request token = tokenProvider.generateToken(userDetails);
         
         jwtService.saveRefreshToken(token);
         jwtService.saveAccessToken(userDetails, token.getAccessToken());
@@ -53,7 +54,7 @@ public class JwtController {
     		return ErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED);
     	}
     	
-    	String accessToken = JwtUtil.validateRefreshToken(refreshRequest.getRefreshToken());
+    	String accessToken = tokenProvider.validateRefreshToken(refreshRequest.getRefreshToken());
     	TokenDto.Response response = TokenDto.Response.builder()
 				.accessToken(accessToken)
 				.refreshToken(refreshRequest.getRefreshToken())

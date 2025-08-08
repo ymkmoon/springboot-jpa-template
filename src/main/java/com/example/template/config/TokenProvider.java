@@ -1,4 +1,4 @@
-package com.example.template.util;
+package com.example.template.config;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -6,27 +6,31 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import com.example.template.common.CommonConstants;
 import com.example.template.common.dto.TokenDto;
-import com.example.template.config.JwtConfig;
 import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.experimental.UtilityClass;
+import lombok.RequiredArgsConstructor;
 
-@UtilityClass
-public final class JwtUtil {
+/**
+ * TokenProvider
+ * - 토큰 발급 및 관련 처리
+ *
+ * @author myungki you
+ * @created 2025/08/08
+ */
+@Component
+@RequiredArgsConstructor
+public class TokenProvider {
 
-	private static JwtConfig jwtConfig;
+    private final JwtConfig jwtConfig;
 
-    public void setJwtConfig(JwtConfig config) {
-        jwtConfig = config;
-    }
-    
     public String getUsernameFromToken(String token, String tokenType) {
         return getCustomClaimFromToken(token, CommonConstants.LOGIN_ID.getTitle(), tokenType);
     }
@@ -39,7 +43,7 @@ public final class JwtUtil {
         Date expirationDate = getExpirationDateFromToken(token, tokenType);
         long now = System.currentTimeMillis();
         long expirationMillis = expirationDate.getTime() - now;
-        return expirationMillis / 1000; // Redis TTL로 사용하기 위해 초 단위
+        return expirationMillis / 1000; // Redis TTL용
     }
 
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver, String tokenType) {
@@ -60,7 +64,7 @@ public final class JwtUtil {
                 .getBody();
     }
 
-    private Boolean isTokenExpired(String token, String tokenType) {
+    private boolean isTokenExpired(String token, String tokenType) {
         final Date expiration = getExpirationDateFromToken(token, tokenType);
         return expiration.before(new Date());
     }
@@ -89,14 +93,14 @@ public final class JwtUtil {
                 .compact();
     }
 
-    public Boolean validateAccessToken(String accessToken, UserDetails userDetails) {
+    public boolean validateAccessToken(String accessToken, UserDetails userDetails) {
         final String username = getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
     }
 
     public String validateRefreshToken(String refreshToken) {
-        final Claims claims = getAllClaimsFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
-        if (Boolean.FALSE.equals(isTokenExpired(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle()))) {
+        if (!isTokenExpired(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle())) {
+            final Claims claims = getAllClaimsFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
             return doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
         }
         throw new BusinessException(ErrorCode.TOKEN_EXPIRED);

@@ -15,10 +15,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.template.common.CommonConstants;
 import com.example.template.common.ReadableRequestWrapper;
+import com.example.template.config.TokenProvider;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.FailResponse;
 import com.example.template.jwt.JwtService;
-import com.example.template.util.JwtUtil;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -39,6 +39,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
 	
+	private final TokenProvider tokenProvider;
 	private final JwtService jwtService;
     
     private static final List<String> WHITE_LIST =
@@ -55,9 +56,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String accessToken = getAccessTokenFromRequestHeader(request);
         
     	try {
-    		String username = JwtUtil.getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+    		String username = tokenProvider.getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
     		UserDetails userDetails = this.jwtService.loadUserByUsername(username);
-    		if (Boolean.TRUE.equals(JwtUtil.validateAccessToken(accessToken, userDetails))) {
+    		if (Boolean.TRUE.equals(tokenProvider.validateAccessToken(accessToken, userDetails))) {
     			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
     					userDetails, null, userDetails.getAuthorities());
     			usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
