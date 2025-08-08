@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.example.template.model.entity.AdminEntity;
 
 @Repository
-public interface AdminRepository extends JpaRepository<AdminEntity, Long> {
+public interface AdminRepository extends JpaRepository<AdminEntity, String> {
 	AdminEntity findAccountByName(String name);
 	AdminEntity findAccountByLoginId(String loginId);
 }

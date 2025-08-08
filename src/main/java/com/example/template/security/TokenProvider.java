@@ -1,10 +1,11 @@
-package com.example.template.common;
+package com.example.template.security;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -32,8 +33,8 @@ public class TokenProvider {
 
     private final JwtConfig jwtConfig;
 
-    public String getUsernameFromToken(String token, String tokenType) {
-        return getCustomClaimFromToken(token, CommonConstants.LOGIN_ID.getTitle(), tokenType);
+    public String getAdminUuidFromToken(String token, String tokenType) {
+        return getCustomClaimFromToken(token, CommonConstants.ADMIN_UUID.getTitle(), tokenType);
     }
 
     public Date getExpirationDateFromToken(String token, String tokenType) {
@@ -70,9 +71,14 @@ public class TokenProvider {
         return expiration.before(new Date());
     }
 
-    public AuthDto.SignInResponse generateToken(String username) {
+    public AuthDto.SignInResponse generateToken(Authentication authentication) {
+    	
         Map<String, Object> claims = new HashMap<>();
-        claims.put(CommonConstants.LOGIN_ID.getTitle(), username);
+        claims.put(CommonConstants.ADMIN_UUID.getTitle(), authentication.getName());
+        
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        claims.put("role", userDetails.getAuthorities().iterator().next().getAuthority()); // role
+        claims.put("email", userDetails.getEmail()); // email
 
         String accessToken = doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
         String refreshToken = doGenerateToken(claims, CommonConstants.REFRESH_TOKEN.getTitle());
@@ -95,8 +101,8 @@ public class TokenProvider {
     }
 
     public boolean validateAccessToken(String accessToken, UserDetails userDetails) {
-        final String username = getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+        final String uuid = getAdminUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+        return (uuid.equals(userDetails.getUsername())) && !isTokenExpired(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
     }
 
     public String validateRefreshToken(String refreshToken) {

@@ -5,14 +5,12 @@ import java.util.Optional;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.template.admin.AdminRepository;
-import com.example.template.common.TokenProvider;
 import com.example.template.common.dto.AuthDto;
 import com.example.template.common.dto.AuthDto.SignUpRequest;
 import com.example.template.constants.CommonConstants;
@@ -22,6 +20,8 @@ import com.example.template.model.entity.AdminEntity;
 import com.example.template.model.entity.RefreshTokenEntity;
 import com.example.template.redis.RedisService;
 import com.example.template.refresh.token.RefreshTokenRepository;
+import com.example.template.security.CustomUserDetails;
+import com.example.template.security.TokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -36,26 +36,27 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        AdminEntity adminItem = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
-        		.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
+        AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
+                .orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 
-        return User.builder()
-                .username(adminItem.getId().toString())
-                .password(adminItem.getPassword())
-                .roles(adminItem.getRole().getName())
-                .build();
+        return new CustomUserDetails(
+                admin.getId(),           // username
+                admin.getPassword(),     // password
+                admin.getEmail(),        // email
+                admin.getRole().getName() // role
+        );
     }
 
 	@Override
 	public AuthDto.RefreshResponse saveRefreshToken(AuthDto.SignInResponse token) {
-		String username = tokenProvider.getUsernameFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
+		String uuid = tokenProvider.getAdminUuidFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
 		
-		AdminEntity admin = adminRepository.findById(Long.parseLong(username))
+		AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 
 		// 인증 객체 수동 세팅
 	    UsernamePasswordAuthenticationToken authenticationToken =
-	            new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+	            new UsernamePasswordAuthenticationToken(uuid, null, Collections.emptyList());
 
 	    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 	    
@@ -80,9 +81,11 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	@Override
 	public boolean validateRegistRefreshToken(AuthDto.RefreshRequest refreshRequest) {
 		String refreshToken = refreshRequest.getRefreshToken();
-		String usernameInToken = tokenProvider.getUsernameFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
-		AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByName(usernameInToken))
+		String uuid = tokenProvider.getAdminUuidFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
+		System.out.println("uuid : "+uuid);
+		AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
+		
 		RefreshTokenEntity entity = Optional.ofNullable(refreshTokenRepository.findRefreshTokenByAdminId(admin))
 				.orElseThrow(() -> new BusinessException(ResponseCode.TOKEN_IS_NOT_AUTHORIZED));
 		return refreshToken.equals(entity.getRefreshToken());

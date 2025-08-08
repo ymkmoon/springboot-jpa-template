@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.template.common.ApiResponse;
-import com.example.template.common.TokenProvider;
 import com.example.template.common.dto.AuthDto;
 import com.example.template.common.dto.AuthDto.SignInResponse;
 import com.example.template.constants.ResponseCode;
+import com.example.template.security.TokenProvider;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,9 +49,7 @@ public class AuthController {
                 );
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        
-        AuthDto.SignInResponse token = tokenProvider.generateToken(authentication.getName());
-        
+        AuthDto.SignInResponse token = tokenProvider.generateToken(authentication);
         authService.saveRefreshToken(token);
         authService.saveAccessToken(authentication.getName(), token.getAccessToken());
         

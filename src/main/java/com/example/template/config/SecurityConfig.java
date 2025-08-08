@@ -22,10 +22,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.example.template.auth.AuthService;
-import com.example.template.common.TokenProvider;
 import com.example.template.exception.JwtAccessDeniedHandler;
 import com.example.template.exception.JwtAuthenticationEntryPoint;
 import com.example.template.filter.JwtRequestFilter;
+import com.example.template.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;

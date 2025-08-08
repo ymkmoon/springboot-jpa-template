@@ -15,10 +15,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import com.example.template.auth.AuthService;
-import com.example.template.common.TokenProvider;
 import com.example.template.constants.CommonConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.error.FailResponse;
+import com.example.template.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -59,8 +59,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String accessToken = getAccessTokenFromRequestHeader(wrappedRequest);
         
     	try {
-    		String username = tokenProvider.getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
-    		UserDetails userDetails = this.authService.loadUserByUsername(username);
+    		String uuid = tokenProvider.getAdminUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+    		UserDetails userDetails = this.authService.loadUserByUsername(uuid);
     		if (Boolean.TRUE.equals(tokenProvider.validateAccessToken(accessToken, userDetails))) {
     			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
     					userDetails, null, userDetails.getAuthorities());
