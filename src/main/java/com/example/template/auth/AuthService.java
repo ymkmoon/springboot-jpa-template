@@ -1,15 +1,15 @@
-package com.example.template.jwt;
+package com.example.template.auth;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.template.common.dto.TokenDto;
+import com.example.template.common.dto.AuthDto;
 
 @Transactional
-public interface JwtService {
+public interface AuthService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-	public TokenDto.RefreshResponse saveRefreshToken(TokenDto.Request token);
-	public boolean validateRegistRefreshToken(TokenDto.RefreshRequest refreshRequest);
+	public AuthDto.RefreshResponse saveRefreshToken(AuthDto.SignInResponse token);
+	public boolean validateRegistRefreshToken(AuthDto.RefreshRequest refreshRequest);
 	public void saveAccessToken(String username, String accessToken);
 }

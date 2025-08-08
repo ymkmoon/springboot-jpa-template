@@ -8,7 +8,7 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.example.template.common.dto.TokenDto;
+import com.example.template.common.dto.AuthDto;
 import com.example.template.config.JwtConfig;
 import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
@@ -70,14 +70,14 @@ public class TokenProvider {
         return expiration.before(new Date());
     }
 
-    public TokenDto.Request generateToken(String username) {
+    public AuthDto.SignInResponse generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         claims.put(CommonConstants.LOGIN_ID.getTitle(), username);
 
         String accessToken = doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
         String refreshToken = doGenerateToken(claims, CommonConstants.REFRESH_TOKEN.getTitle());
 
-        return TokenDto.Request.builder()
+        return AuthDto.SignInResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
