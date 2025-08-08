@@ -18,6 +18,7 @@ import com.example.template.auth.AuthService;
 import com.example.template.constants.CommonConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.error.FailResponse;
+import com.example.template.redis.RedisService;
 import com.example.template.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,6 +44,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	private final ObjectMapper objectMapper;
 	private final TokenProvider tokenProvider;
 	private final AuthService authService;
+	private final RedisService redisService;
     
     private static final List<String> WHITE_LIST =
             Collections.unmodifiableList(
@@ -59,7 +61,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String accessToken = getAccessTokenFromRequestHeader(wrappedRequest);
         
     	try {
-    		String uuid = tokenProvider.getAdminUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+    		String uuid = tokenProvider.getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+    		String storedToken = redisService.getAccessToken(uuid);
+
+            // Redis에 저장된 토큰과 비교
+            if (storedToken == null || !storedToken.equals(accessToken)) {
+                new FailResponse(objectMapper, response, ResponseCode.DUPLICATED_LOGIN).writer();
+                return;
+            }
+            
     		UserDetails userDetails = this.authService.loadUserByUsername(uuid);
     		if (Boolean.TRUE.equals(tokenProvider.validateAccessToken(accessToken, userDetails))) {
     			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(

@@ -35,6 +35,7 @@ public enum ResponseCode {
     USER_NAME_NOT_FOUND(HttpStatus.UNAUTHORIZED, "40100005", "사용자를 찾을 수 없습니다."),
     BAD_CREDENTIAL(HttpStatus.UNAUTHORIZED, "40100006", "암호가 일치하지 않습니다."),
     TOKEN_IS_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "40100007", "인증되지 않은 토큰 입니다."),
+    DUPLICATED_LOGIN(HttpStatus.UNAUTHORIZED, "40100008", "중복 로그인 되었습니다."),
     
     // 403
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "40300001", "허가되지 않은 권한입니다."),

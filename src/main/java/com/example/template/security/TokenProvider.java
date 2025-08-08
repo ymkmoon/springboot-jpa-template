@@ -33,7 +33,7 @@ public class TokenProvider {
 
     private final JwtConfig jwtConfig;
 
-    public String getAdminUuidFromToken(String token, String tokenType) {
+    public String getUuidFromToken(String token, String tokenType) {
         return getCustomClaimFromToken(token, CommonConstants.ADMIN_UUID.getTitle(), tokenType);
     }
 
@@ -101,7 +101,7 @@ public class TokenProvider {
     }
 
     public boolean validateAccessToken(String accessToken, UserDetails userDetails) {
-        final String uuid = getAdminUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+        final String uuid = getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
         return (uuid.equals(userDetails.getUsername())) && !isTokenExpired(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
     }
 

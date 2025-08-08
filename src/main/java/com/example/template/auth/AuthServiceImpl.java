@@ -43,13 +43,13 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
                 admin.getId(),           // username
                 admin.getPassword(),     // password
                 admin.getEmail(),        // email
-                admin.getRole().getName() // role
+                admin.getRole().getCode() // role
         );
     }
 
 	@Override
 	public AuthDto.RefreshResponse saveRefreshToken(AuthDto.SignInResponse token) {
-		String uuid = tokenProvider.getAdminUuidFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
+		String uuid = tokenProvider.getUuidFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
 		
 		AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
@@ -81,8 +81,8 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	@Override
 	public boolean validateRegistRefreshToken(AuthDto.RefreshRequest refreshRequest) {
 		String refreshToken = refreshRequest.getRefreshToken();
-		String uuid = tokenProvider.getAdminUuidFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
-		System.out.println("uuid : "+uuid);
+		String uuid = tokenProvider.getUuidFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
+
 		AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 		

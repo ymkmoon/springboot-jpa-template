@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.template.common.ApiResponse;
 import com.example.template.common.dto.AuthDto;
 import com.example.template.common.dto.AuthDto.SignInResponse;
+import com.example.template.constants.CommonConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.security.TokenProvider;
 
@@ -53,6 +54,8 @@ public class AuthController {
         authService.saveRefreshToken(token);
         authService.saveAccessToken(authentication.getName(), token.getAccessToken());
         
+        System.out.println("authentication.getName() : "+authentication.getName());
+        
         AuthDto.SignInResponse response = AuthDto.SignInResponse.builder()
         									.accessToken(token.getAccessToken())
         									.refreshToken(token.getRefreshToken())
@@ -68,6 +71,9 @@ public class AuthController {
     	}
     	
     	String accessToken = tokenProvider.validateRefreshToken(refreshRequest.getRefreshToken());
+    	String uuid = tokenProvider.getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+    	authService.saveAccessToken(uuid, accessToken);
+    	
     	AuthDto.SignInResponse response = AuthDto.SignInResponse.builder()
 				.accessToken(accessToken)
 				.refreshToken(refreshRequest.getRefreshToken())
