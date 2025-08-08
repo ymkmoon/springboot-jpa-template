@@ -1,11 +1,11 @@
 package com.example.template.model.entity;
 
+import java.util.UUID;
+
 import com.example.template.model.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -26,10 +26,14 @@ import lombok.NoArgsConstructor;
 @Entity(name="admin") 
 public class AdminEntity extends BaseEntity {
 
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	@Column(name = "id", nullable = false, updatable = false, insertable = false)
+//	private Long id;
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", nullable = false, updatable = false, insertable = false)
-	private Long id;
+    @Column(name = "id", nullable = false, updatable = false, length = 36) // UUID는 36자
+    private String id;
 	
 	@Column(name = "login_id", nullable = false, unique = true)
 	private String loginId;
@@ -49,14 +53,15 @@ public class AdminEntity extends BaseEntity {
 	@OneToOne(targetEntity = AuthorityEntity.class)
 	@JoinColumn(name="authority_code", referencedColumnName = "code", nullable = true)
 	private AuthorityEntity role;
-	
-	public AdminEntity(Long id) {
-		this.id = id;
-	}
+
+    public AdminEntity(String id) {
+        this.id = id;
+    }
 	
 	@Builder
 	public AdminEntity(String loginId, String password, String name, String phoneNumber, String email, 
 			AuthorityEntity role) {
+		this.id = UUID.randomUUID().toString();
 		this.loginId = loginId;
 		this.password = password;
 		this.name = name;

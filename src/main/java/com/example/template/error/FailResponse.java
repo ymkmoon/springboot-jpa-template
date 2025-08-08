@@ -32,7 +32,7 @@ public class FailResponse {
 	}
 	
 	public void writer() throws IOException {
-		ApiResponse fail = ApiResponse.toBuilder(responseCode);
+		ApiResponse<Object> fail = ApiResponse.toBuilder(responseCode);
 		response.setStatus(responseCode.getHttpStatus().value());
 	    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 	    String json = objectMapper.writeValueAsString(fail);

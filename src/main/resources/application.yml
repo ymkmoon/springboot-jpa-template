@@ -33,7 +33,7 @@ spring:
     defer-datasource-initialization: true
     generate-ddl: true
     open-in-view: false
-    show-sql: true
+    show-sql: false
     format-sql: true
     hibernate:
       ddl-auto: create-drop

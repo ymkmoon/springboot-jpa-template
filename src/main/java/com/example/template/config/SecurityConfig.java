@@ -22,10 +22,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.example.template.auth.AuthService;
-import com.example.template.common.TokenProvider;
 import com.example.template.exception.JwtAccessDeniedHandler;
 import com.example.template.exception.JwtAuthenticationEntryPoint;
 import com.example.template.filter.JwtRequestFilter;
+import com.example.template.redis.RedisService;
+import com.example.template.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -36,9 +37,11 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    
+    private final ObjectMapper objectMapper;
     private final TokenProvider tokenProvider;
     private final AuthService authService;
-    private final ObjectMapper objectMapper;
+    private final RedisService redisService;
 
     @Value("${spring.security.debug:false}")
     private boolean securityDebug;
@@ -90,7 +93,6 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/voc/answer").hasAnyRole("ADMIN", "ADMIN2")
                 .anyRequest().permitAll()
             )
             .authenticationManager(authenticationManager)
@@ -100,7 +102,7 @@ public class SecurityConfig {
     }
 
     private JwtRequestFilter jwtRequestFilter() {
-        return new JwtRequestFilter(objectMapper, tokenProvider, authService);
+        return new JwtRequestFilter(objectMapper, tokenProvider, authService, redisService);
     }
 }
 

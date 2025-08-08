@@ -4,6 +4,7 @@ import com.example.template.model.entity.AdminEntity;
 import com.example.template.model.entity.RefreshTokenEntity;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,11 +15,27 @@ public class AuthDto {
 	
 	@Getter
 	public static class SignUpRequest {
-		@NotBlank private String loginId;
-		@NotBlank private String password;
-		@NotBlank private String name;
-		@NotBlank private String phoneNumber;
-		@NotBlank private String email;
+		@NotBlank 
+		@Pattern(regexp = "^[A-Za-z0-9]+$", message = "로그인 ID는 영문과 숫자만 가능합니다.")
+		private String loginId;
+		
+		@NotBlank 
+		private String password;
+		
+		@NotBlank 
+		@Pattern(regexp = "^[A-Za-z가-힣]+$", message = "이름은 영문과 한글만 가능합니다.")
+		private String name;
+		
+		@NotBlank 
+		@Pattern(regexp = "^01[016789]\\d{7,8}$", message = "휴대폰 번호 형식이 올바르지 않습니다.")
+		private String phoneNumber;
+		
+		@NotBlank 
+		@Pattern(
+	        regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$",
+	        message = "이메일 형식이 올바르지 않습니다."
+	    )
+		private String email;
 
 	    @Builder
 		public SignUpRequest(@NotBlank String loginId, @NotBlank String password,
@@ -32,9 +49,14 @@ public class AuthDto {
 	}
 	
 	@Getter
+	@NoArgsConstructor
 	public static class SignInRequest {
-		@NotBlank private String loginId;
-	    @NotBlank private String password;
+		@NotBlank 
+		@Pattern(regexp = "^[A-Za-z0-9]+$", message = "로그인 ID는 영문과 숫자만 가능합니다.")
+		private String loginId;
+	    
+		@NotBlank 
+		private String password;
 
 	    @Builder
 		public SignInRequest(@NotBlank String loginId, @NotBlank String password) {

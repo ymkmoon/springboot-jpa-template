@@ -17,7 +17,8 @@ public enum CommonConstants {
 	
 	ACCESS_TOKEN("AccessToken"),
 	REFRESH_TOKEN("RefreshToken"),
-	LOGIN_ID("LoginId"),
+	ADMIN_UUID("uuid"),
+	ADMIN_ROLE("role"),
 	EMPTY("Empty"),
 	START_AT("startAt"),
 	END_AT("endAt")

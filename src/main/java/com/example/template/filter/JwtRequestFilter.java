@@ -15,10 +15,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import com.example.template.auth.AuthService;
-import com.example.template.common.TokenProvider;
 import com.example.template.constants.CommonConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.error.FailResponse;
+import com.example.template.redis.RedisService;
+import com.example.template.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -43,24 +44,36 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	private final ObjectMapper objectMapper;
 	private final TokenProvider tokenProvider;
 	private final AuthService authService;
+	private final RedisService redisService;
     
     private static final List<String> WHITE_LIST =
             Collections.unmodifiableList(
                     Arrays.asList(
                         "/actuator",
-                        "/actuator/health"
+                        "/actuator/health",
+                        "/auth/sign-in",
+                        "/auth/sign-up"
                     ));
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {
         ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
-
+        
+        
         String accessToken = getAccessTokenFromRequestHeader(wrappedRequest);
         
     	try {
-    		String username = tokenProvider.getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
-    		UserDetails userDetails = this.authService.loadUserByUsername(username);
+    		String uuid = tokenProvider.getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+    		String storedToken = redisService.getAccessToken(uuid);
+
+            // Redis에 저장된 토큰과 비교
+            if (storedToken == null || !storedToken.equals(accessToken)) {
+                new FailResponse(objectMapper, response, ResponseCode.DUPLICATED_LOGIN).writer();
+                return;
+            }
+            
+    		UserDetails userDetails = this.authService.loadUserByUuid(uuid);
     		if (Boolean.TRUE.equals(tokenProvider.validateAccessToken(accessToken, userDetails))) {
     			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
     					userDetails, null, userDetails.getAuthorities());
@@ -69,7 +82,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     		}
     	} catch (IllegalArgumentException | AccessDeniedException | MalformedJwtException | SignatureException e) {
     		logger.error("Unable to get JWT Token", e);
-    		new FailResponse(objectMapper, response, ResponseCode.FAIL_AUTHORIZED).writer();
+    		new FailResponse(objectMapper, response, ResponseCode.INVALID_ACCESS_TOKEN).writer();
     		return;
     	} catch (ExpiredJwtException e) {
     		logger.error("JWT Token has expired", e);
@@ -77,7 +90,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     		return;
     	} catch (Exception e) {
     		logger.error("Unable to get JWT Token", e);
-    		new FailResponse(objectMapper, response, ResponseCode.FAIL_AUTHORIZED).writer();
+    		new FailResponse(objectMapper, response, ResponseCode.UNAUTHORIZED).writer();
     		return;
     	}
         
@@ -92,7 +105,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return WHITE_LIST.stream().noneMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
+        return WHITE_LIST.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
     }
 
     private String getAccessTokenFromRequestHeader(HttpServletRequest request) {

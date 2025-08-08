@@ -1,6 +1,5 @@
 package com.example.template.auth;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,9 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.template.common.ApiResponse;
-import com.example.template.common.TokenProvider;
 import com.example.template.common.dto.AuthDto;
+import com.example.template.common.dto.AuthDto.SignInResponse;
+import com.example.template.constants.CommonConstants;
 import com.example.template.constants.ResponseCode;
+import com.example.template.security.TokenProvider;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping(value = "/sign-in")
-    public ResponseEntity<AuthDto.SignInResponse> signIn(@RequestBody @Valid AuthDto.SignInRequest signInRequest) {
+    public ResponseEntity<ApiResponse<SignInResponse>> signIn(@RequestBody @Valid AuthDto.SignInRequest signInRequest) {
     	UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
                 		signInRequest.getLoginId(),
@@ -49,9 +50,7 @@ public class AuthController {
                 );
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        
-        AuthDto.SignInResponse token = tokenProvider.generateToken(authentication.getName());
-        
+        AuthDto.SignInResponse token = tokenProvider.generateToken(authentication);
         authService.saveRefreshToken(token);
         authService.saveAccessToken(authentication.getName(), token.getAccessToken());
         
@@ -59,22 +58,25 @@ public class AuthController {
         									.accessToken(token.getAccessToken())
         									.refreshToken(token.getRefreshToken())
         									.build();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return ApiResponse.success(response);
     }
     
-    @PostMapping(value = "/refresh")
-    public ResponseEntity<?> refresh(@RequestBody @Valid AuthDto.RefreshRequest refreshRequest) {
+    @PostMapping(value = "/refresh-token")
+    public ResponseEntity<ApiResponse<Object>> refreshToken(@RequestBody @Valid AuthDto.RefreshRequest refreshRequest) {
     	boolean registRefreshToken = authService.validateRegistRefreshToken(refreshRequest);
     	if(!registRefreshToken) {
-    		return ApiResponse.toResponseEntity(ResponseCode.UNAUTHORIZED);
+    		return ApiResponse.error(ResponseCode.INVALUD_REFRESH_TOKEN);
     	}
     	
     	String accessToken = tokenProvider.validateRefreshToken(refreshRequest.getRefreshToken());
+    	String uuid = tokenProvider.getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+    	authService.saveAccessToken(uuid, accessToken);
+    	
     	AuthDto.SignInResponse response = AuthDto.SignInResponse.builder()
 				.accessToken(accessToken)
 				.refreshToken(refreshRequest.getRefreshToken())
 				.build();
-    	return new ResponseEntity<>(response, HttpStatus.OK);
+    	return ApiResponse.success(response);
     	
     }
 }
