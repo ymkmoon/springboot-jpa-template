@@ -1,15 +1,13 @@
 package com.example.template.model.entity;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import com.example.template.model.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,9 +31,8 @@ public class AuthorityEntity extends BaseEntity implements Serializable {
 	private static final long serialVersionUID = -244868210540276880L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", unique = true, nullable = false, updatable = false, insertable = false)
-	private Long id;
+    @Column(name = "id", nullable = false, updatable = false, length = 36) // UUID는 36자
+    private String id;
 	
 	@Column(name = "name", nullable = false, updatable = true, length = 20)
 	private String name;
@@ -45,6 +42,7 @@ public class AuthorityEntity extends BaseEntity implements Serializable {
 
 	@Builder
 	public AuthorityEntity(String name, String code) {
+		this.id = UUID.randomUUID().toString();
 		this.name = name;
 		this.code = code;
 	}
