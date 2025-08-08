@@ -50,14 +50,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             Collections.unmodifiableList(
                     Arrays.asList(
                         "/actuator",
-                        "/actuator/health"
+                        "/actuator/health",
+                        "/auth/sign-in",
+                        "/auth/sign-up"
                     ));
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {
         ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
-
+        
+        
         String accessToken = getAccessTokenFromRequestHeader(wrappedRequest);
         
     	try {
@@ -70,7 +73,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 return;
             }
             
-    		UserDetails userDetails = this.authService.loadUserByUsername(uuid);
+    		UserDetails userDetails = this.authService.loadUserByUuid(uuid);
     		if (Boolean.TRUE.equals(tokenProvider.validateAccessToken(accessToken, userDetails))) {
     			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
     					userDetails, null, userDetails.getAuthorities());
@@ -79,7 +82,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     		}
     	} catch (IllegalArgumentException | AccessDeniedException | MalformedJwtException | SignatureException e) {
     		logger.error("Unable to get JWT Token", e);
-    		new FailResponse(objectMapper, response, ResponseCode.FAIL_AUTHORIZED).writer();
+    		new FailResponse(objectMapper, response, ResponseCode.INVALID_ACCESS_TOKEN).writer();
     		return;
     	} catch (ExpiredJwtException e) {
     		logger.error("JWT Token has expired", e);
@@ -87,7 +90,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     		return;
     	} catch (Exception e) {
     		logger.error("Unable to get JWT Token", e);
-    		new FailResponse(objectMapper, response, ResponseCode.FAIL_AUTHORIZED).writer();
+    		new FailResponse(objectMapper, response, ResponseCode.UNAUTHORIZED).writer();
     		return;
     	}
         
@@ -102,7 +105,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
      */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return WHITE_LIST.stream().noneMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
+        return WHITE_LIST.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
     }
 
     private String getAccessTokenFromRequestHeader(HttpServletRequest request) {

@@ -191,7 +191,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MalformedJwtException.class)
     protected ResponseEntity<ApiResponse<Object>> handleMalformedJwtException(MalformedJwtException e) {
     	logger.error("handleMalformedJwtException", e);
-    	return ApiResponse.error(ResponseCode.UNAUTHORIZED);
+    	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
     }
     
     /**
@@ -200,7 +200,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnsupportedJwtException.class)
     protected ResponseEntity<ApiResponse<Object>> handleUnsupportedJwtException(UnsupportedJwtException e) {
     	logger.error("handleUnsupportedJwtException", e);
-    	return ApiResponse.error(ResponseCode.UNAUTHORIZED);
+    	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
     }
     
     /**
@@ -209,7 +209,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SignatureException.class)
     protected ResponseEntity<ApiResponse<Object>> handleSignatureException(SignatureException e) {
     	logger.error("handleSignatureException", e);
-    	return ApiResponse.error(ResponseCode.UNAUTHORIZED);
+    	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
     }
     
     /**

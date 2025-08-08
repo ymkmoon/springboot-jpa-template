@@ -28,14 +28,17 @@ public enum ResponseCode {
     
 
     // 401
-    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "40100001", "토큰 값을 다시 한번 확인해주세요."),
-    FAIL_AUTHORIZED(HttpStatus.UNAUTHORIZED, "40100002", "인증 실패"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "40100001", "인증 실패"), // 기타 인증 실패
+//    FAIL_AUTHORIZED(HttpStatus.UNAUTHORIZED, "40100002", "인증 실패"),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "40100003", "만료 된 토큰 입니다."),
     DISABLED_USER(HttpStatus.UNAUTHORIZED, "40100004", "비활성화 된 계정 입니다."),
     USER_NAME_NOT_FOUND(HttpStatus.UNAUTHORIZED, "40100005", "사용자를 찾을 수 없습니다."),
     BAD_CREDENTIAL(HttpStatus.UNAUTHORIZED, "40100006", "암호가 일치하지 않습니다."),
     TOKEN_IS_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "40100007", "인증되지 않은 토큰 입니다."),
-    DUPLICATED_LOGIN(HttpStatus.UNAUTHORIZED, "40100008", "중복 로그인 되었습니다."),
+    DUPLICATED_LOGIN(HttpStatus.UNAUTHORIZED, "40100008", "인증 실패"), // 중복 로그인 하여 access token 이 만료 된 경우
+    INVALUD_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "40100009", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
+    UNAUTHORIZED_ENTRY_POINT(HttpStatus.UNAUTHORIZED, "40100010", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "40100011", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
     
     // 403
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "40300001", "허가되지 않은 권한입니다."),

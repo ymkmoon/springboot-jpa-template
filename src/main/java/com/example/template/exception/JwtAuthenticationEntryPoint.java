@@ -2,9 +2,6 @@ package com.example.template.exception;
 
 import java.io.IOException;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -13,6 +10,8 @@ import com.example.template.constants.ResponseCode;
 import com.example.template.error.FailResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -25,13 +24,12 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
-	
 	private final ObjectMapper objectMapper;
 	
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-	    new FailResponse(objectMapper, response, ResponseCode.UNAUTHORIZED).writer();
+	    new FailResponse(objectMapper, response, ResponseCode.UNAUTHORIZED_ENTRY_POINT).writer();
     }
     
 }

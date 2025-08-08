@@ -93,7 +93,6 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
             )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/voc/answer").hasAnyRole("ADMIN", "ADMIN2")
                 .anyRequest().permitAll()
             )
             .authenticationManager(authenticationManager)

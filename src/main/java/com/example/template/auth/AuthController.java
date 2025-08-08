@@ -54,8 +54,6 @@ public class AuthController {
         authService.saveRefreshToken(token);
         authService.saveAccessToken(authentication.getName(), token.getAccessToken());
         
-        System.out.println("authentication.getName() : "+authentication.getName());
-        
         AuthDto.SignInResponse response = AuthDto.SignInResponse.builder()
         									.accessToken(token.getAccessToken())
         									.refreshToken(token.getRefreshToken())
@@ -67,7 +65,7 @@ public class AuthController {
     public ResponseEntity<ApiResponse<Object>> refreshToken(@RequestBody @Valid AuthDto.RefreshRequest refreshRequest) {
     	boolean registRefreshToken = authService.validateRegistRefreshToken(refreshRequest);
     	if(!registRefreshToken) {
-    		return ApiResponse.error(ResponseCode.UNAUTHORIZED);
+    		return ApiResponse.error(ResponseCode.INVALUD_REFRESH_TOKEN);
     	}
     	
     	String accessToken = tokenProvider.validateRefreshToken(refreshRequest.getRefreshToken());

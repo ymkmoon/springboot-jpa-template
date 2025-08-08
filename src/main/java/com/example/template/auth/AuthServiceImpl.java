@@ -46,6 +46,20 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
                 admin.getRole().getCode() // role
         );
     }
+    
+    @Override
+    public UserDetails loadUserByUuid(String uuid) {
+    	AdminEntity admin = adminRepository.findById(uuid)
+				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
+
+        return new CustomUserDetails(
+                admin.getId(),
+                admin.getPassword(),
+                admin.getEmail(),
+                admin.getRole().getCode()
+        );
+    }
+
 
 	@Override
 	public AuthDto.RefreshResponse saveRefreshToken(AuthDto.SignInResponse token) {
