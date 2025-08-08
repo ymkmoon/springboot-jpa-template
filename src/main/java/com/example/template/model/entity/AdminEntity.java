@@ -35,19 +35,19 @@ public class AdminEntity extends BaseEntity {
     @Column(name = "id", nullable = false, updatable = false, length = 36) // UUID는 36자
     private String id;
 	
-	@Column(name = "login_id", nullable = false, unique = true)
+	@Column(name = "login_id", nullable = false, unique = true, length = 20)
 	private String loginId;
 	
 	@Column(name = "password", nullable = false)
 	private String password;
 
-	@Column(name = "name", nullable = false)
+	@Column(name = "name", nullable = false, length = 20)
 	private String name;
 	
-	@Column(name = "phone_number", nullable = false, unique = true)
+	@Column(name = "phone_number", nullable = false, unique = true, length = 11)
 	private String phoneNumber;
 	
-	@Column(name = "email", nullable = false, unique = true)
+	@Column(name = "email", nullable = false, unique = true, length = 50)
 	private String email;
 	
 	@OneToOne(targetEntity = AuthorityEntity.class)
