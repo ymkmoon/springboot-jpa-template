@@ -292,7 +292,7 @@ public class GlobalExceptionHandler {
     
     /**
      * 요청 URL 이 존재하지 않는 경우
-     * 	ex) /template/aut222h/login
+     * 	ex) /template/aut222h/sign-in
      *  
      */
     @ExceptionHandler(NoResourceFoundException.class)

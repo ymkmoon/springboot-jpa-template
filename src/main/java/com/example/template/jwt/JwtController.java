@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.template.common.TokenProvider;
-import com.example.template.common.dto.AdminDto;
+import com.example.template.common.dto.JwtDto;
 import com.example.template.common.dto.TokenDto;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.ErrorResponse;
@@ -35,8 +35,8 @@ public class JwtController {
 	private final TokenProvider tokenProvider;
     private final JwtService jwtService;
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<TokenDto.Response> login(@RequestBody @Valid AdminDto.Request adminRequest) {
+    @PostMapping(value = "/sign-in")
+    public ResponseEntity<TokenDto.Response> signIn(@RequestBody @Valid JwtDto.Request adminRequest) {
     	UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
                 		adminRequest.getLoginId(),

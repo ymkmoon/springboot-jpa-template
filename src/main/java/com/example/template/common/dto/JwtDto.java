@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AdminDto {
+public class JwtDto {
 	
 	@Getter
 	@NoArgsConstructor
