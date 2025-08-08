@@ -31,7 +31,7 @@ public class AdminEntity extends BaseEntity {
 	@Column(name = "id", nullable = false, updatable = false, insertable = false)
 	private Long id;
 	
-	@Column(name = "login_id", nullable = false)
+	@Column(name = "login_id", nullable = false, unique = true)
 	private String loginId;
 	
 	@Column(name = "password", nullable = false)
@@ -40,10 +40,10 @@ public class AdminEntity extends BaseEntity {
 	@Column(name = "name", nullable = false)
 	private String name;
 	
-	@Column(name = "phone_number", nullable = false)
+	@Column(name = "phone_number", nullable = false, unique = true)
 	private String phoneNumber;
 	
-	@Column(name = "email", nullable = false)
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 	
 	@OneToOne(targetEntity = AuthorityEntity.class)

@@ -14,11 +14,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
+import com.example.template.auth.AuthService;
 import com.example.template.common.TokenProvider;
 import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.FailResponse;
-import com.example.template.jwt.JwtService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -42,7 +42,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	
 	private final ObjectMapper objectMapper;
 	private final TokenProvider tokenProvider;
-	private final JwtService jwtService;
+	private final AuthService authService;
     
     private static final List<String> WHITE_LIST =
             Collections.unmodifiableList(
@@ -60,7 +60,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         
     	try {
     		String username = tokenProvider.getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
-    		UserDetails userDetails = this.jwtService.loadUserByUsername(username);
+    		UserDetails userDetails = this.authService.loadUserByUsername(username);
     		if (Boolean.TRUE.equals(tokenProvider.validateAccessToken(accessToken, userDetails))) {
     			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
     					userDetails, null, userDetails.getAuthorities());

@@ -1,4 +1,4 @@
-package com.example.template.jwt;
+package com.example.template.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.template.common.TokenProvider;
-import com.example.template.common.dto.AdminDto;
-import com.example.template.common.dto.TokenDto;
+import com.example.template.common.dto.AuthDto;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.ErrorResponse;
 
@@ -29,28 +28,34 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("auth")
-public class JwtController {
+public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
 	private final TokenProvider tokenProvider;
-    private final JwtService jwtService;
+    private final AuthService authService;
+    
+    @PostMapping(value="/sign-up")
+    public ResponseEntity<AuthDto.SignInResponse> signUp(@RequestBody @Valid AuthDto.SignUpRequest signUpRequest) {
+//        return new ResponseEntity<>(authService.signUp(signUpRequest), HttpStatus.OK);
+    	return null;
+    }
 
-    @PostMapping(value = "/login")
-    public ResponseEntity<TokenDto.Response> login(@RequestBody @Valid AdminDto.Request adminRequest) {
+    @PostMapping(value = "/sign-in")
+    public ResponseEntity<AuthDto.SignInResponse> signIn(@RequestBody @Valid AuthDto.SignInRequest signInRequest) {
     	UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
-                		adminRequest.getLoginId(),
-                		adminRequest.getPassword()
+                		signInRequest.getLoginId(),
+                		signInRequest.getPassword()
                 );
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         
-        TokenDto.Request token = tokenProvider.generateToken(authentication.getName());
+        AuthDto.SignInResponse token = tokenProvider.generateToken(authentication.getName());
         
-        jwtService.saveRefreshToken(token);
-        jwtService.saveAccessToken(authentication.getName(), token.getAccessToken());
+        authService.saveRefreshToken(token);
+        authService.saveAccessToken(authentication.getName(), token.getAccessToken());
         
-        TokenDto.Response response = TokenDto.Response.builder()
+        AuthDto.SignInResponse response = AuthDto.SignInResponse.builder()
         									.accessToken(token.getAccessToken())
         									.refreshToken(token.getRefreshToken())
         									.build();
@@ -58,14 +63,14 @@ public class JwtController {
     }
     
     @PostMapping(value = "/refresh")
-    public ResponseEntity<?> refresh(@RequestBody @Valid TokenDto.RefreshRequest refreshRequest) {
-    	boolean registRefreshToken = jwtService.validateRegistRefreshToken(refreshRequest);
+    public ResponseEntity<?> refresh(@RequestBody @Valid AuthDto.RefreshRequest refreshRequest) {
+    	boolean registRefreshToken = authService.validateRegistRefreshToken(refreshRequest);
     	if(!registRefreshToken) {
     		return ErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED);
     	}
     	
     	String accessToken = tokenProvider.validateRefreshToken(refreshRequest.getRefreshToken());
-    	TokenDto.Response response = TokenDto.Response.builder()
+    	AuthDto.SignInResponse response = AuthDto.SignInResponse.builder()
 				.accessToken(accessToken)
 				.refreshToken(refreshRequest.getRefreshToken())
 				.build();

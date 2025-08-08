@@ -1,6 +1,6 @@
 package com.example.template.model.entity;
 
-import com.example.template.common.dto.TokenDto;
+import com.example.template.common.dto.AuthDto;
 import com.example.template.model.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -46,8 +46,8 @@ public class RefreshTokenEntity extends BaseEntity {
 		this.refreshToken = refreshToken;
 	}
 	
-	public TokenDto.RefreshResponse toRefreshResponse() {
-		return TokenDto.RefreshResponse.builder()
+	public AuthDto.RefreshResponse toRefreshResponse() {
+		return AuthDto.RefreshResponse.builder()
 				.refreshToken(refreshToken)
 				.build();
 	}

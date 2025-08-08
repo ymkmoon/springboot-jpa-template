@@ -1,4 +1,4 @@
-package com.example.template.jwt;
+package com.example.template.auth;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.TokenProvider;
-import com.example.template.common.dto.TokenDto;
+import com.example.template.common.dto.AuthDto;
+import com.example.template.common.dto.AuthDto.SignUpRequest;
 import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;
@@ -26,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class JwtServiceImpl implements UserDetailsService, JwtService {
+public class AuthServiceImpl implements UserDetailsService, AuthService {
 
 	private final AdminRepository adminRepository;
 	private final RefreshTokenRepository refreshTokenRepository;
@@ -46,7 +47,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
     }
 
 	@Override
-	public TokenDto.RefreshResponse saveRefreshToken(TokenDto.Request token) {
+	public AuthDto.RefreshResponse saveRefreshToken(AuthDto.SignInResponse token) {
 		String username = tokenProvider.getUsernameFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
 		
 		AdminEntity admin = adminRepository.findById(Long.parseLong(username))
@@ -66,7 +67,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 	        return optionalToken.get().toRefreshResponse();
 	    } else {
 	        // 없으면 -> 새로 생성 (insert)
-	    	RefreshTokenEntity refreshTokenEntity = TokenDto.RefreshRequest.builder()
+	    	RefreshTokenEntity refreshTokenEntity = AuthDto.RefreshRequest.builder()
 	                .refreshToken(token.getRefreshToken())
 	                .build()
 	                .toEntity(admin);
@@ -77,7 +78,7 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
 	}
 
 	@Override
-	public boolean validateRegistRefreshToken(TokenDto.RefreshRequest refreshRequest) {
+	public boolean validateRegistRefreshToken(AuthDto.RefreshRequest refreshRequest) {
 		String refreshToken = refreshRequest.getRefreshToken();
 		String usernameInToken = tokenProvider.getUsernameFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
 		AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByName(usernameInToken))
@@ -97,6 +98,12 @@ public class JwtServiceImpl implements UserDetailsService, JwtService {
         }
         // 새 토큰 저장
         redisService.saveAccessToken(username, accessToken, accessTokenExpireIn);
+	}
+
+	@Override
+	public void signUp(SignUpRequest signUpRequest) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

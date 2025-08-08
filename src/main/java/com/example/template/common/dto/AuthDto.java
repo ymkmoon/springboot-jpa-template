@@ -10,27 +10,46 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TokenDto {
+public class AuthDto {
 	
 	@Getter
-	public static class Response {
-		private String accessToken;
-		private String refreshToken;
+	public static class SignUpRequest {
+		@NotBlank private String loginId;
+		@NotBlank private String password;
+		@NotBlank private String name;
+		@NotBlank private String phoneNumber;
+		@NotBlank private String email;
 
-		@Builder
-		public Response(String accessToken, String refreshToken) {
-			this.accessToken = accessToken;
-			this.refreshToken = refreshToken;
+	    @Builder
+		public SignUpRequest(@NotBlank String loginId, @NotBlank String password,
+				@NotBlank String name, @NotBlank String phoneNumber, @NotBlank String email) {
+			this.loginId = loginId;
+			this.password = password;
+			this.password = name;
+			this.password = phoneNumber;
+			this.password = email;
 		}
 	}
 	
 	@Getter
-	public static class Request {
+	public static class SignInRequest {
+		@NotBlank private String loginId;
+	    @NotBlank private String password;
+
+	    @Builder
+		public SignInRequest(@NotBlank String loginId, @NotBlank String password) {
+			this.loginId = loginId;
+			this.password = password;
+		}
+	}
+	
+	@Getter
+	public static class SignInResponse {
 		private String accessToken;
 		private String refreshToken;
-		
+
 		@Builder
-		public Request(String accessToken, String refreshToken) {
+		public SignInResponse(String accessToken, String refreshToken) {
 			this.accessToken = accessToken;
 			this.refreshToken = refreshToken;
 		}
