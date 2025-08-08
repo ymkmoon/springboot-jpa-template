@@ -32,6 +32,7 @@ public class AuthDto {
 	}
 	
 	@Getter
+	@NoArgsConstructor
 	public static class SignInRequest {
 		@NotBlank private String loginId;
 	    @NotBlank private String password;

@@ -18,39 +18,37 @@ import lombok.Getter;
  */
 @Getter
 @Builder
-public class ApiResponse {
+public class ApiResponse<T> {
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final String code;
     private final String message;
-    private final Object data;
+    private final T data;
 
-    public static ApiResponse toBuilder(ResponseCode responseCode) {
-    	return ApiResponse.builder()
-				.code(responseCode.getCode())
+    public static <T> ApiResponse<T> toBuilder(ResponseCode responseCode) {
+    	return ApiResponse.<T>builder()
+                .code(responseCode.getCode())
                 .message(responseCode.getDetail())
                 .data(null)
                 .build();
     }
     
-    public static ResponseEntity<ApiResponse> toResponseEntity(ResponseCode responseCode) {
-        return ResponseEntity
-                .status(responseCode.getHttpStatus())
-                .body(ApiResponse.builder()
-        				.code(responseCode.getCode())
-                        .message(responseCode.getDetail())
-                        .data(null)
-                        .build()
-                );
+    public static <T> ResponseEntity<ApiResponse<T>> success(T data) {
+        return ResponseEntity.ok(
+            ApiResponse.<T>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .message(ResponseCode.SUCCESS.getDetail())
+                .data(data)
+                .build()
+        );
     }
-    
-    public static ResponseEntity<ApiResponse> toResponseEntity(Object data) {
-        return ResponseEntity
-                .status(ResponseCode.SUCCESS.getHttpStatus())
-                .body(ApiResponse.builder()
-                		.code(ResponseCode.SUCCESS.getCode())
-                		.message(ResponseCode.SUCCESS.getDetail())
-                		.data(data)
-                        .build()
-                );
+
+    public static <T> ResponseEntity<ApiResponse<T>> error(ResponseCode responseCode) {
+        return ResponseEntity.status(responseCode.getHttpStatus())
+            .body(ApiResponse.<T>builder()
+                .code(responseCode.getCode())
+                .message(responseCode.getDetail())
+                .data(null)
+                .build()
+            );
     }
 }

@@ -51,9 +51,9 @@ public class GlobalExceptionHandler {
      * 주로 @RequestBody, @RequestPart 어노테이션에서 발생
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         logger.error("handleMethodArgumentNotValidException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.REQUEST_BINDING_ERROR);
+        return ApiResponse.error(ResponseCode.REQUEST_BINDING_ERROR);
     }
 
     /**
@@ -61,9 +61,9 @@ public class GlobalExceptionHandler {
      * ref https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-method-args
      */
     @ExceptionHandler(BindException.class)
-    protected ResponseEntity<ApiResponse> handleBindException(BindException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleBindException(BindException e) {
         logger.error("handleBindException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.MODEL_BINDING_ERROR);
+        return ApiResponse.error(ResponseCode.MODEL_BINDING_ERROR);
     }
 
     /**
@@ -71,9 +71,9 @@ public class GlobalExceptionHandler {
      * 주로 @RequestParam enum으로 binding 못했을 경우 발생
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    protected ResponseEntity<ApiResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         logger.error("handleMethodArgumentTypeMismatchException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.TYPE_BINDING_ERROR);
+        return ApiResponse.error(ResponseCode.TYPE_BINDING_ERROR);
     }
 
 	
@@ -81,18 +81,18 @@ public class GlobalExceptionHandler {
      * 지원하지 않은 HTTP method 호출 할 경우 발생
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    protected ResponseEntity<ApiResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         logger.error("handleHttpRequestMethodNotSupportedException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.METHOD_NOT_ALLOWED);
+        return ApiResponse.error(ResponseCode.METHOD_NOT_ALLOWED);
     }
 
     /**
      * 로직 수행 중 예외가 발생 한 경우
      */
     @ExceptionHandler(BusinessException.class)
-    protected ResponseEntity<ApiResponse> handleBusinessException(final BusinessException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleBusinessException(final BusinessException e) {
         logger.error("handleBusinessException", e);
-        return ApiResponse.toResponseEntity(e.getResponseCode());
+        return ApiResponse.error(e.getResponseCode());
     }
     
     /**
@@ -100,27 +100,27 @@ public class GlobalExceptionHandler {
      * 	비활성화 된 계정 일 경우
      */
     @ExceptionHandler(DisabledException.class)
-    protected ResponseEntity<ApiResponse> handleDisabledException(DisabledException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleDisabledException(DisabledException e) {
         logger.error("handleDisabledException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.DISABLED_USER);
+        return ApiResponse.error(ResponseCode.DISABLED_USER);
     }
     
     /**
      * JWT Token 취득 시 암호가 일치하지 않은 경우
      */
     @ExceptionHandler(BadCredentialsException.class)
-    protected ResponseEntity<ApiResponse> handleBadCredentialsException(BadCredentialsException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleBadCredentialsException(BadCredentialsException e) {
         logger.error("handleBadCredentialsException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.USER_NAME_NOT_FOUND);
+        return ApiResponse.error(ResponseCode.USER_NAME_NOT_FOUND);
     }
 
     /**
      * JWT Token 취득 시 존재하지 않는 유저인 경우
      */
     @ExceptionHandler(UsernameNotFoundException.class)
-    protected ResponseEntity<ApiResponse> handleUsernameNotFoundException(UsernameNotFoundException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleUsernameNotFoundException(UsernameNotFoundException e) {
         logger.error("handleUsernameNotFoundException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.USER_NAME_NOT_FOUND);
+        return ApiResponse.error(ResponseCode.USER_NAME_NOT_FOUND);
     }
 
     
@@ -128,9 +128,9 @@ public class GlobalExceptionHandler {
      * 해당 데이터가 존재하지 않는 경우
      */
     @ExceptionHandler(NoSuchElementException.class)
-    protected ResponseEntity<ApiResponse> handleNoSuchElementException(NoSuchElementException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleNoSuchElementException(NoSuchElementException e) {
     	logger.error("handleNoSuchElementException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.NO_SUCH_ELEMENT);
+        return ApiResponse.error(ResponseCode.NO_SUCH_ELEMENT);
     }
     
     /**
@@ -138,9 +138,9 @@ public class GlobalExceptionHandler {
      * 	ex) 게시글 답변 입력 시 foreign key 인 question id 에 해당하는 데이터가 존재하지 않는 경우 
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
-    protected ResponseEntity<ApiResponse> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
     	logger.error("handleDataIntegrityViolationException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.DATA_INTEGRITY_VIOLATION);
+    	return ApiResponse.error(ResponseCode.DATA_INTEGRITY_VIOLATION);
     }
     
     /**
@@ -148,9 +148,9 @@ public class GlobalExceptionHandler {
      * 	ex) 특정 station 조회 시 필수 파마리터인 name 이 존재하지 않는 경우 
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    protected ResponseEntity<ApiResponse> handleConstraintRequestParameterException(MissingServletRequestParameterException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleConstraintRequestParameterException(MissingServletRequestParameterException e) {
     	logger.error("handleMissingServletRequestParameterException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER);
+    	return ApiResponse.error(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER);
     }
     
     /**
@@ -158,9 +158,9 @@ public class GlobalExceptionHandler {
      * 	ex) 특정 station 조회 시 필수 파마리터인 name 의 value 가 존재하지 않는 경우 
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<ApiResponse> handleConstraintViolationException(ConstraintViolationException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleConstraintViolationException(ConstraintViolationException e) {
     	logger.error("handleConstraintViolationException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER);
+    	return ApiResponse.error(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER);
     }
     
     
@@ -170,18 +170,18 @@ public class GlobalExceptionHandler {
      * 	ex) entity 와 dto 사이 필드간 차이가 있는 경우
      */
     @ExceptionHandler(UnrecognizedPropertyException.class)
-    protected ResponseEntity<ApiResponse> handleUnrecognizedPropertyException(UnrecognizedPropertyException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleUnrecognizedPropertyException(UnrecognizedPropertyException e) {
         logger.error("handleUnrecognizedPropertyException", e);
-        return ApiResponse.toResponseEntity(ResponseCode.INTERNAL_SERVER_ERROR);
+        return ApiResponse.error(ResponseCode.INTERNAL_SERVER_ERROR);
     }
     
     /**
      * JWT 토큰이 만료 된 경우
      */
     @ExceptionHandler(ExpiredJwtException.class)
-    protected ResponseEntity<ApiResponse> handleExpiredJwtException(ExpiredJwtException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleExpiredJwtException(ExpiredJwtException e) {
     	logger.error("handleExpiredJwtException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.TOKEN_EXPIRED);
+    	return ApiResponse.error(ResponseCode.TOKEN_EXPIRED);
     }
     
     
@@ -189,27 +189,27 @@ public class GlobalExceptionHandler {
      * JWT 토큰의 구성이 올바르지 않을 경우
      */
     @ExceptionHandler(MalformedJwtException.class)
-    protected ResponseEntity<ApiResponse> handleMalformedJwtException(MalformedJwtException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleMalformedJwtException(MalformedJwtException e) {
     	logger.error("handleMalformedJwtException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.UNAUTHORIZED);
+    	return ApiResponse.error(ResponseCode.UNAUTHORIZED);
     }
     
     /**
      * 예상하는 형식과 일치하지 않는 특정 형식이나 구성의 JWT 일 경우
      */
     @ExceptionHandler(UnsupportedJwtException.class)
-    protected ResponseEntity<ApiResponse> handleUnsupportedJwtException(UnsupportedJwtException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleUnsupportedJwtException(UnsupportedJwtException e) {
     	logger.error("handleUnsupportedJwtException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.UNAUTHORIZED);
+    	return ApiResponse.error(ResponseCode.UNAUTHORIZED);
     }
     
     /**
      * JWT의 기존 서명을 확인하지 못했을 경우
      */
     @ExceptionHandler(SignatureException.class)
-    protected ResponseEntity<ApiResponse> handleSignatureException(SignatureException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleSignatureException(SignatureException e) {
     	logger.error("handleSignatureException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.UNAUTHORIZED);
+    	return ApiResponse.error(ResponseCode.UNAUTHORIZED);
     }
     
     /**
@@ -220,18 +220,18 @@ public class GlobalExceptionHandler {
      * 		(JPA Save 등)
      */
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
-    protected ResponseEntity<ApiResponse> handleTransientPropertyValueException(InvalidDataAccessApiUsageException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleTransientPropertyValueException(InvalidDataAccessApiUsageException e) {
     	logger.error("handleInvalidDataAccessApiUsageException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.INVALID_DATA_ACCESS_API_USAGE);
+    	return ApiResponse.error(ResponseCode.INVALID_DATA_ACCESS_API_USAGE);
     }
     
     /**
      * 형변환 시 객체 타입 변환이 적절하지 않을 때 발생
      */
     @ExceptionHandler(ClassCastException.class)
-    protected ResponseEntity<ApiResponse> handleClassCastException(ClassCastException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleClassCastException(ClassCastException e) {
     	logger.error("handleClassCastException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.CLASS_CAST_ERROR);
+    	return ApiResponse.error(ResponseCode.CLASS_CAST_ERROR);
     }
     
     
@@ -240,9 +240,9 @@ public class GlobalExceptionHandler {
      * 	ex) Request body 값의 타입이 Integer 로 넘어와야 하지만 String 으로 넘어 올 때
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    protected ResponseEntity<ApiResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
     	logger.error("handleHttpMessageNotReadableException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.HTTP_MESSAGE_NOT_READABLE);
+    	return ApiResponse.error(ResponseCode.HTTP_MESSAGE_NOT_READABLE);
     }
     
     /**
@@ -250,9 +250,9 @@ public class GlobalExceptionHandler {
      * 	ex) 써드파티 서버가 죽어있다던지, 써드파티의 주소가 잘못되어 있다던지 등
      */
     @ExceptionHandler(WebClientRequestException.class)
-    protected ResponseEntity<ApiResponse> handleWebClientRequestException(WebClientRequestException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleWebClientRequestException(WebClientRequestException e) {
     	logger.error("handleWebClientRequestException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.WEBCLIENT_REQUEST_ERROR);
+    	return ApiResponse.error(ResponseCode.WEBCLIENT_REQUEST_ERROR);
     }
     
     /**
@@ -260,9 +260,9 @@ public class GlobalExceptionHandler {
      * 	ex) yyyyMMdd 형식으로 요청이 와야하지만 다른 형식으로 왔을 때
      */
     @ExceptionHandler(DateTimeParseException.class)
-    protected ResponseEntity<ApiResponse> handleDateTimeParseExceptionException(DateTimeParseException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleDateTimeParseExceptionException(DateTimeParseException e) {
     	logger.error("handleDateTimeParseExceptionException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.DATE_TIME_PARSING_ERROR);
+    	return ApiResponse.error(ResponseCode.DATE_TIME_PARSING_ERROR);
     }
     
     /**
@@ -271,9 +271,9 @@ public class GlobalExceptionHandler {
      *  정렬 할 때 stationId 를 사용해야 하지만, stationId2 를 사용 한 경우
      */
     @ExceptionHandler(PropertyReferenceException.class)
-    protected ResponseEntity<ApiResponse> handlePropertyReferenceException(PropertyReferenceException e) {
+    protected ResponseEntity<ApiResponse<Object>> handlePropertyReferenceException(PropertyReferenceException e) {
     	logger.error("handlePropertyReferenceException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.PROPERTY_REFRENCE_ERROR);
+    	return ApiResponse.error(ResponseCode.PROPERTY_REFRENCE_ERROR);
     }
     
     /**
@@ -284,9 +284,9 @@ public class GlobalExceptionHandler {
      *  현재 프로젝트 에서는 OffsetBasedPageRequest 에서 Limit 와 Offset 의 값이 잘못 됐을 경우 해당 에러를 반환 
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    protected ResponseEntity<ApiResponse> handleIllegalArgumentException(IllegalArgumentException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException e) {
     	logger.error("handleIllegalArgumentException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.ILLEGAL_ARGUMENT_ERROR);
+    	return ApiResponse.error(ResponseCode.ILLEGAL_ARGUMENT_ERROR);
     }
     
     /**
@@ -295,14 +295,14 @@ public class GlobalExceptionHandler {
      *  
      */
     @ExceptionHandler(NoResourceFoundException.class)
-    protected ResponseEntity<ApiResponse> handleNoResourceFoundException(NoResourceFoundException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleNoResourceFoundException(NoResourceFoundException e) {
     	logger.error("handleNoResourceFoundException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.NOT_FOUND);
+    	return ApiResponse.error(ResponseCode.NOT_FOUND);
     }
     
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ApiResponse> handleException(Exception e) {
+    protected ResponseEntity<ApiResponse<Object>> handleException(Exception e) {
     	logger.error("handleException", e);
-    	return ApiResponse.toResponseEntity(ResponseCode.INTERNAL_SERVER_ERROR);
+    	return ApiResponse.error(ResponseCode.INTERNAL_SERVER_ERROR);
     }
 }
