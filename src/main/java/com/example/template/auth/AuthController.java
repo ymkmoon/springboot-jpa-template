@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
- * JwtController
+ * AuthController
  * - JWT 관련 컨트롤러
  *
  * @author myungki you
