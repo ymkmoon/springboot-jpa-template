@@ -32,22 +32,28 @@ public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
 	private final TokenProvider tokenProvider;
-    private final AuthService jwtService;
+    private final AuthService authService;
+    
+    @PostMapping(value="/sign-up")
+    public ResponseEntity<AuthDto.SignInResponse> signUp(@RequestBody @Valid AuthDto.SignUpRequest signUpRequest) {
+//        return new ResponseEntity<>(authService.signUp(signUpRequest), HttpStatus.OK);
+    	return null;
+    }
 
     @PostMapping(value = "/sign-in")
-    public ResponseEntity<AuthDto.SignInResponse> signIn(@RequestBody @Valid AuthDto.SignInRequest adminRequest) {
+    public ResponseEntity<AuthDto.SignInResponse> signIn(@RequestBody @Valid AuthDto.SignInRequest signInRequest) {
     	UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(
-                		adminRequest.getLoginId(),
-                		adminRequest.getPassword()
+                		signInRequest.getLoginId(),
+                		signInRequest.getPassword()
                 );
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
         
         AuthDto.SignInResponse token = tokenProvider.generateToken(authentication.getName());
         
-        jwtService.saveRefreshToken(token);
-        jwtService.saveAccessToken(authentication.getName(), token.getAccessToken());
+        authService.saveRefreshToken(token);
+        authService.saveAccessToken(authentication.getName(), token.getAccessToken());
         
         AuthDto.SignInResponse response = AuthDto.SignInResponse.builder()
         									.accessToken(token.getAccessToken())
@@ -58,7 +64,7 @@ public class AuthController {
     
     @PostMapping(value = "/refresh")
     public ResponseEntity<?> refresh(@RequestBody @Valid AuthDto.RefreshRequest refreshRequest) {
-    	boolean registRefreshToken = jwtService.validateRegistRefreshToken(refreshRequest);
+    	boolean registRefreshToken = authService.validateRegistRefreshToken(refreshRequest);
     	if(!registRefreshToken) {
     		return ErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED);
     	}

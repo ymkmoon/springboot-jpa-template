@@ -37,7 +37,7 @@ public class SecurityConfig {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final TokenProvider tokenProvider;
-    private final AuthService jwtService;
+    private final AuthService authService;
     private final ObjectMapper objectMapper;
 
     @Value("${spring.security.debug:false}")
@@ -100,7 +100,7 @@ public class SecurityConfig {
     }
 
     private JwtRequestFilter jwtRequestFilter() {
-        return new JwtRequestFilter(objectMapper, tokenProvider, jwtService);
+        return new JwtRequestFilter(objectMapper, tokenProvider, authService);
     }
 }
 

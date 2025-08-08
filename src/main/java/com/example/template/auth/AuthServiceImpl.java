@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.TokenProvider;
 import com.example.template.common.dto.AuthDto;
+import com.example.template.common.dto.AuthDto.SignUpRequest;
 import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;
@@ -97,6 +98,12 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
         }
         // 새 토큰 저장
         redisService.saveAccessToken(username, accessToken, accessTokenExpireIn);
+	}
+
+	@Override
+	public void signUp(SignUpRequest signUpRequest) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

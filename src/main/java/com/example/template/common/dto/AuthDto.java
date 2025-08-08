@@ -13,6 +13,25 @@ import lombok.NoArgsConstructor;
 public class AuthDto {
 	
 	@Getter
+	public static class SignUpRequest {
+		@NotBlank private String loginId;
+		@NotBlank private String password;
+		@NotBlank private String name;
+		@NotBlank private String phoneNumber;
+		@NotBlank private String email;
+
+	    @Builder
+		public SignUpRequest(@NotBlank String loginId, @NotBlank String password,
+				@NotBlank String name, @NotBlank String phoneNumber, @NotBlank String email) {
+			this.loginId = loginId;
+			this.password = password;
+			this.password = name;
+			this.password = phoneNumber;
+			this.password = email;
+		}
+	}
+	
+	@Getter
 	public static class SignInRequest {
 		@NotBlank private String loginId;
 	    @NotBlank private String password;

@@ -42,7 +42,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	
 	private final ObjectMapper objectMapper;
 	private final TokenProvider tokenProvider;
-	private final AuthService jwtService;
+	private final AuthService authService;
     
     private static final List<String> WHITE_LIST =
             Collections.unmodifiableList(
@@ -60,7 +60,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         
     	try {
     		String username = tokenProvider.getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
-    		UserDetails userDetails = this.jwtService.loadUserByUsername(username);
+    		UserDetails userDetails = this.authService.loadUserByUsername(username);
     		if (Boolean.TRUE.equals(tokenProvider.validateAccessToken(accessToken, userDetails))) {
     			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
     					userDetails, null, userDetails.getAuthorities());
