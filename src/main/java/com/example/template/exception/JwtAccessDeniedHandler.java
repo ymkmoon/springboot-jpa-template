@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.template.error.ErrorCode;
 import com.example.template.error.FailResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,11 +26,13 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
+	
+	private final ObjectMapper objectMapper;
 
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
-	    new FailResponse(response, ErrorCode.ACCESS_DENIED).writer();
+	    new FailResponse(objectMapper, response, ErrorCode.ACCESS_DENIED).writer();
 		
 	}
 	

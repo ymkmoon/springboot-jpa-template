@@ -3,12 +3,11 @@ package com.example.template.error;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.springframework.http.MediaType;
 
-import com.example.template.context.BeanConstructor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * FailResponse
@@ -21,14 +20,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class FailResponse {
 	
 	private final ObjectMapper objectMapper;
-	
 	private final HttpServletResponse response;
 	private final ErrorCode errorCode;
 	
-	public FailResponse(HttpServletResponse response, ErrorCode errorCode) {
+	public FailResponse(ObjectMapper objectMapper, HttpServletResponse response, ErrorCode errorCode) {
+		this.objectMapper = objectMapper;
 		this.response = response;
 		this.errorCode = errorCode;
-		this.objectMapper = (ObjectMapper)new BeanConstructor("objectMapper").getBean();
 	}
 	
 	public void writer() throws IOException {

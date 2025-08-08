@@ -19,6 +19,7 @@ import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.FailResponse;
 import com.example.template.jwt.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -39,6 +40,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtRequestFilter extends OncePerRequestFilter {
 	
+	private final ObjectMapper objectMapper;
 	private final TokenProvider tokenProvider;
 	private final JwtService jwtService;
     
@@ -66,15 +68,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     		}
     	} catch (IllegalArgumentException | AccessDeniedException | MalformedJwtException | SignatureException e) {
     		logger.error("Unable to get JWT Token", e);
-    		new FailResponse(response, ErrorCode.FAIL_AUTHORIZED).writer();
+    		new FailResponse(objectMapper, response, ErrorCode.FAIL_AUTHORIZED).writer();
     		return;
     	} catch (ExpiredJwtException e) {
     		logger.error("JWT Token has expired", e);
-    		new FailResponse(response, ErrorCode.TOKEN_EXPIRED).writer();
+    		new FailResponse(objectMapper, response, ErrorCode.TOKEN_EXPIRED).writer();
     		return;
     	} catch (Exception e) {
     		logger.error("Unable to get JWT Token", e);
-    		new FailResponse(response, ErrorCode.FAIL_AUTHORIZED).writer();
+    		new FailResponse(objectMapper, response, ErrorCode.FAIL_AUTHORIZED).writer();
     		return;
     	}
         

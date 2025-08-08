@@ -21,6 +21,7 @@ import com.example.template.exception.JwtAccessDeniedHandler;
 import com.example.template.exception.JwtAuthenticationEntryPoint;
 import com.example.template.filter.JwtRequestFilter;
 import com.example.template.jwt.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,6 +33,7 @@ public class SecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final TokenProvider tokenProvider;
     private final JwtService jwtService;
+    private final ObjectMapper objectMapper;
 
     @Value("${spring.security.debug:false}")
     private boolean securityDebug;
@@ -76,7 +78,7 @@ public class SecurityConfig {
     }
 
     private JwtRequestFilter jwtRequestFilter() {
-        return new JwtRequestFilter(tokenProvider, jwtService);
+        return new JwtRequestFilter(objectMapper, tokenProvider, jwtService);
     }
 }
 

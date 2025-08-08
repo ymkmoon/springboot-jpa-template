@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.template.error.ErrorCode;
 import com.example.template.error.FailResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,10 +26,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 	
+	private final ObjectMapper objectMapper;
+	
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-	    new FailResponse(response, ErrorCode.UNAUTHORIZED).writer();
+	    new FailResponse(objectMapper, response, ErrorCode.UNAUTHORIZED).writer();
     }
     
 }
