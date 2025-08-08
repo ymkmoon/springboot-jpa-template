@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.PropertyReferenceException;
@@ -51,9 +52,16 @@ public class GlobalExceptionHandler {
      * 주로 @RequestBody, @RequestPart 어노테이션에서 발생
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    protected ApiResponse<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         logger.error("handleMethodArgumentNotValidException", e);
-        return ApiResponse.error(ResponseCode.REQUEST_BINDING_ERROR);
+        String errorMessage = e.getBindingResult()
+                .getAllErrors()
+                .stream()
+                .findFirst()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .orElse(ResponseCode.REQUEST_BINDING_ERROR.getDetail());
+
+        return ApiResponse.error(ResponseCode.REQUEST_BINDING_ERROR, errorMessage);
     }
 
     /**

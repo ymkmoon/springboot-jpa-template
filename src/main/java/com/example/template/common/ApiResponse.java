@@ -23,7 +23,7 @@ public class ApiResponse<T> {
     private final String code;
     private final String message;
     private final T data;
-
+    
     public static <T> ApiResponse<T> toBuilder(ResponseCode responseCode) {
     	return ApiResponse.<T>builder()
                 .code(responseCode.getCode())
@@ -50,5 +50,13 @@ public class ApiResponse<T> {
                 .data(null)
                 .build()
             );
+    }
+    
+    public static <T> ApiResponse<T> error(ResponseCode responseCode, String message) {
+        return ApiResponse.<T>builder()
+                .code(responseCode.getCode())
+                .message(message != null ? message : responseCode.getDetail())
+                .data(null)
+                .build();
     }
 }
