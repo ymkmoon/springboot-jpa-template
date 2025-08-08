@@ -21,6 +21,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import com.example.template.common.TokenProvider;
 import com.example.template.exception.JwtAccessDeniedHandler;
 import com.example.template.exception.JwtAuthenticationEntryPoint;
 import com.example.template.filter.JwtRequestFilter;

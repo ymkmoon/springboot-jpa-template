@@ -1,4 +1,4 @@
-package com.example.template.config;
+package com.example.template.common;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import com.example.template.common.dto.TokenDto;
+import com.example.template.config.JwtConfig;
 import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;

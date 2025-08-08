@@ -3,8 +3,6 @@ package com.example.template.exception;
 import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 
-import jakarta.validation.ConstraintViolationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.example.template.error.ErrorCode;
 import com.example.template.error.ErrorResponse;
@@ -32,6 +31,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import jakarta.validation.ConstraintViolationException;
 
 /**
  * GlobalExceptionHandler
@@ -288,6 +288,17 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
     	logger.error("handleIllegalArgumentException", e);
     	return ErrorResponse.toResponseEntity(ErrorCode.ILLEGAL_ARGUMENT_ERROR);
+    }
+    
+    /**
+     * 요청 URL 이 존재하지 않는 경우
+     * 	ex) /template/aut222h/login
+     *  
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    protected ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException e) {
+    	logger.error("handleNoResourceFoundException", e);
+    	return ErrorResponse.toResponseEntity(ErrorCode.NOT_FOUND);
     }
     
     @ExceptionHandler(Exception.class)

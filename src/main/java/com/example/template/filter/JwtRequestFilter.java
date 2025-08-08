@@ -12,9 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import com.example.template.common.ReadableRequestWrapper;
-import com.example.template.config.TokenProvider;
+import com.example.template.common.TokenProvider;
 import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.FailResponse;
@@ -54,8 +54,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {
-    	
-        String accessToken = getAccessTokenFromRequestHeader(request);
+        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
+
+        String accessToken = getAccessTokenFromRequestHeader(wrappedRequest);
         
     	try {
     		String username = tokenProvider.getUsernameFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
@@ -63,7 +64,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     		if (Boolean.TRUE.equals(tokenProvider.validateAccessToken(accessToken, userDetails))) {
     			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
     					userDetails, null, userDetails.getAuthorities());
-    			usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+    			usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(wrappedRequest));
     			SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     		}
     	} catch (IllegalArgumentException | AccessDeniedException | MalformedJwtException | SignatureException e) {
@@ -80,8 +81,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     		return;
     	}
         
-        ReadableRequestWrapper wrapper = new ReadableRequestWrapper(request);
-        chain.doFilter(wrapper, response);
+        chain.doFilter(wrappedRequest, response);
     }
     
     /**

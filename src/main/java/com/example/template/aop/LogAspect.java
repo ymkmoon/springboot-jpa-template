@@ -2,8 +2,6 @@ package com.example.template.aop;
 
 import java.util.Map;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.IOUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -16,10 +14,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import com.example.template.common.ReadableRequestWrapper;
 import com.example.template.util.DataParsingUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -85,9 +84,9 @@ public class LogAspect {
 	@Around("getMapping()")
 	public Object aroundGet(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		ReadableRequestWrapper request = new ReadableRequestWrapper(original);
+		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) original);
 		
-		Map<String, String[]> paramMap = request.getParameterMap();
+		Map<String, String[]> paramMap = wrappedRequest.getParameterMap();
 		if (logger.isInfoEnabled() && !paramMap.isEmpty()) {
 			logger.info("GET Parameter : [ {} ]", DataParsingUtil.paramMapToString(paramMap));
 		}
@@ -97,9 +96,9 @@ public class LogAspect {
 	@Around("postMapping()")
 	public Object aroundPost(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		ReadableRequestWrapper request = new ReadableRequestWrapper(original);
+		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) original);
 		if (logger.isInfoEnabled()) {
-			logger.info("POST RequestBody : [ {} ]", IOUtils.toString(request.getReader()));
+			logger.info("POST RequestBody : [ {} ]", IOUtils.toString(wrappedRequest.getReader()));
 		}
 		return around(pjp);
 	}
@@ -112,9 +111,9 @@ public class LogAspect {
 	@Around("patchMapping()")
 	public Object aroundPatch(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		ReadableRequestWrapper request = new ReadableRequestWrapper(original);
+		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) original);
 		if (logger.isInfoEnabled()) {
-			logger.info("PATCH RequestBody : [ {} ]", IOUtils.toString(request.getReader()));
+			logger.info("PATCH RequestBody : [ {} ]", IOUtils.toString(wrappedRequest.getReader()));
 		}
 		return around(pjp);
 	}

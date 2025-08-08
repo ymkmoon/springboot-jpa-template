@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.template.common.TokenProvider;
 import com.example.template.common.dto.AdminDto;
 import com.example.template.common.dto.TokenDto;
-import com.example.template.config.TokenProvider;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.ErrorResponse;
 
