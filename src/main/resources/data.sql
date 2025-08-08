@@ -8,8 +8,8 @@ INSERT INTO admin (login_id, password, name, phone_number, email, authority_code
 
 INSERT INTO admin (login_id, password, name, phone_number, email, authority_code, created_by, updated_by) values 
 ('ymkmoon433', '$2a$10$oZPWMiSQF4lduNY/X8q9ZuuE14kJhcfIeER7SR/Ou0iE6W1VUY9WW', '유명기2', 
-'01029320134', 'ymkmoon43@gmail.com', '0002', 'SYSTEM', 'SYSTEM');
+'11129320134', 'ymkmoon433@gmail.com', '0002', 'SYSTEM', 'SYSTEM');
 
 INSERT INTO admin (login_id, password, name, phone_number, email, authority_code, created_by, updated_by) values 
 ('ymkmoon4333', '$2a$10$oZPWMiSQF4lduNY/X8q9ZuuE14kJhcfIeER7SR/Ou0iE6W1VUY9WW', '유명기3', 
-'01029320134', 'ymkmoon43@gmail.com', '0003', 'SYSTEM', 'SYSTEM');
+'22229320134', 'ymkmoon4333@gmail.com', '0003', 'SYSTEM', 'SYSTEM');
