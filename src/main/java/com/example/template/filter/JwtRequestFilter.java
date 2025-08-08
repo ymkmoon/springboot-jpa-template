@@ -13,9 +13,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.template.common.CommonConstants;
 import com.example.template.common.ReadableRequestWrapper;
 import com.example.template.config.TokenProvider;
+import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.error.FailResponse;
 import com.example.template.jwt.JwtService;

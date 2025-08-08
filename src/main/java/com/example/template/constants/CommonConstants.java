@@ -1,4 +1,4 @@
-package com.example.template.common;
+package com.example.template.constants;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

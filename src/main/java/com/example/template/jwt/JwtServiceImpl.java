@@ -12,14 +12,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.template.admin.AdminRepository;
-import com.example.template.common.CommonConstants;
 import com.example.template.common.dto.TokenDto;
 import com.example.template.config.TokenProvider;
+import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;
 import com.example.template.model.entity.AdminEntity;
 import com.example.template.model.entity.RefreshTokenEntity;
 import com.example.template.redis.RedisService;
+import com.example.template.refresh.token.RefreshTokenRepository;
 
 import lombok.RequiredArgsConstructor;
 

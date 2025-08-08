@@ -8,8 +8,8 @@ import java.util.function.Function;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import com.example.template.common.CommonConstants;
 import com.example.template.common.dto.TokenDto;
+import com.example.template.constants.CommonConstants;
 import com.example.template.error.ErrorCode;
 import com.example.template.exception.BusinessException;
 
