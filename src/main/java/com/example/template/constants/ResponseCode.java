@@ -1,4 +1,4 @@
-package com.example.template.error;
+package com.example.template.constants;
 
 import org.springframework.http.HttpStatus;
 
@@ -7,8 +7,11 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorCode {
-
+public enum ResponseCode {
+	
+	// 200
+	SUCCESS(HttpStatus.OK, "20000000", "성공"),
+	
 	// 400
 	BAD_REQUEST(HttpStatus.BAD_REQUEST, "40000001", "비정상적인 접근 입니다."),
     ENTITY_NOT_FOUND(HttpStatus.BAD_REQUEST, "40000002", "Entity Not Found"),

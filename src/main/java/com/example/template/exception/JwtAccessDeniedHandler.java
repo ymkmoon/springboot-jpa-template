@@ -10,7 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
-import com.example.template.error.ErrorCode;
+import com.example.template.constants.ResponseCode;
 import com.example.template.error.FailResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,7 +32,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response,
 			AccessDeniedException accessDeniedException) throws IOException, ServletException {
-	    new FailResponse(objectMapper, response, ErrorCode.ACCESS_DENIED).writer();
+	    new FailResponse(objectMapper, response, ResponseCode.ACCESS_DENIED).writer();
 		
 	}
 	

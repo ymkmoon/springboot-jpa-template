@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.template.common.ApiResponse;
 import com.example.template.common.TokenProvider;
 import com.example.template.common.dto.AuthDto;
-import com.example.template.error.ErrorCode;
-import com.example.template.error.ErrorResponse;
+import com.example.template.constants.ResponseCode;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +66,7 @@ public class AuthController {
     public ResponseEntity<?> refresh(@RequestBody @Valid AuthDto.RefreshRequest refreshRequest) {
     	boolean registRefreshToken = authService.validateRegistRefreshToken(refreshRequest);
     	if(!registRefreshToken) {
-    		return ErrorResponse.toResponseEntity(ErrorCode.UNAUTHORIZED);
+    		return ApiResponse.toResponseEntity(ResponseCode.UNAUTHORIZED);
     	}
     	
     	String accessToken = tokenProvider.validateRefreshToken(refreshRequest.getRefreshToken());

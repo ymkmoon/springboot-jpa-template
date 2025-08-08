@@ -16,7 +16,7 @@ import com.example.template.common.TokenProvider;
 import com.example.template.common.dto.AuthDto;
 import com.example.template.common.dto.AuthDto.SignUpRequest;
 import com.example.template.constants.CommonConstants;
-import com.example.template.error.ErrorCode;
+import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
 import com.example.template.model.entity.AdminEntity;
 import com.example.template.model.entity.RefreshTokenEntity;
@@ -37,7 +37,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         AdminEntity adminItem = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
-        		.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NAME_NOT_FOUND.getDetail()));
+        		.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 
         return User.builder()
                 .username(adminItem.getId().toString())
@@ -51,7 +51,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 		String username = tokenProvider.getUsernameFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
 		
 		AdminEntity admin = adminRepository.findById(Long.parseLong(username))
-				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NAME_NOT_FOUND.getDetail()));
+				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 
 		// 인증 객체 수동 세팅
 	    UsernamePasswordAuthenticationToken authenticationToken =
@@ -82,9 +82,9 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 		String refreshToken = refreshRequest.getRefreshToken();
 		String usernameInToken = tokenProvider.getUsernameFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
 		AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByName(usernameInToken))
-				.orElseThrow(() -> new UsernameNotFoundException(ErrorCode.USER_NAME_NOT_FOUND.getDetail()));
+				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 		RefreshTokenEntity entity = Optional.ofNullable(refreshTokenRepository.findRefreshTokenByAdminId(admin))
-				.orElseThrow(() -> new BusinessException(ErrorCode.TOKEN_IS_NOT_AUTHORIZED));
+				.orElseThrow(() -> new BusinessException(ResponseCode.TOKEN_IS_NOT_AUTHORIZED));
 		return refreshToken.equals(entity.getRefreshToken());
 	}
 

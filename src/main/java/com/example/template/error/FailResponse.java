@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 
 import org.springframework.http.MediaType;
 
+import com.example.template.common.ApiResponse;
+import com.example.template.constants.ResponseCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,17 +23,17 @@ public class FailResponse {
 	
 	private final ObjectMapper objectMapper;
 	private final HttpServletResponse response;
-	private final ErrorCode errorCode;
+	private final ResponseCode responseCode;
 	
-	public FailResponse(ObjectMapper objectMapper, HttpServletResponse response, ErrorCode errorCode) {
+	public FailResponse(ObjectMapper objectMapper, HttpServletResponse response, ResponseCode responseCode) {
 		this.objectMapper = objectMapper;
 		this.response = response;
-		this.errorCode = errorCode;
+		this.responseCode = responseCode;
 	}
 	
 	public void writer() throws IOException {
-		ErrorResponse fail = ErrorResponse.toBuilder(errorCode);
-		response.setStatus(errorCode.getHttpStatus().value());
+		ApiResponse fail = ApiResponse.toBuilder(responseCode);
+		response.setStatus(responseCode.getHttpStatus().value());
 	    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 	    String json = objectMapper.writeValueAsString(fail);
 	    PrintWriter writer = response.getWriter();
