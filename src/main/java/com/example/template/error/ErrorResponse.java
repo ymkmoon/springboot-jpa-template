@@ -20,7 +20,7 @@ public class ErrorResponse {
     private final LocalDateTime timestamp = LocalDateTime.now();
     private final int status;
     private final String error;
-    private final String type;
+//    private final String type;
     private final String code;
     private final String message;
 
@@ -28,7 +28,7 @@ public class ErrorResponse {
     	return ErrorResponse.builder()
 				.status(errorCode.getHttpStatus().value())
 				.error(errorCode.getHttpStatus().name())
-				.type(errorCode.name())
+//				.type(errorCode.name())
 				.code(errorCode.getCode())
                 .message(errorCode.getDetail())
                 .build();
@@ -40,7 +40,7 @@ public class ErrorResponse {
                 .body(ErrorResponse.builder()
                         .status(errorCode.getHttpStatus().value())
                         .error(errorCode.getHttpStatus().name())
-                        .type(errorCode.name())
+//                        .type(errorCode.name())
         				.code(errorCode.getCode())
                         .message(errorCode.getDetail())
                         .build()
