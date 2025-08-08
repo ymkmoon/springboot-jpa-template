@@ -37,10 +37,10 @@ public class AuthorityEntity extends BaseEntity implements Serializable {
 	@Column(name = "id", unique = true, nullable = false, updatable = false, insertable = false)
 	private Long id;
 	
-	@Column(name = "name", nullable = false, updatable = true)
+	@Column(name = "name", nullable = false, updatable = true, length = 20)
 	private String name;
 	
-	@Column(name = "code", nullable = false, updatable = false)
+	@Column(name = "code", nullable = false, updatable = false, length = 7)
 	private String code;
 
 	@Builder
