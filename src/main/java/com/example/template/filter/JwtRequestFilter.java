@@ -1,9 +1,6 @@
 package com.example.template.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +14,7 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import com.example.template.auth.AuthService;
 import com.example.template.constants.CommonConstants;
 import com.example.template.constants.ResponseCode;
+import com.example.template.constants.SecurityConstants;
 import com.example.template.error.FailResponse;
 import com.example.template.redis.RedisService;
 import com.example.template.security.TokenProvider;
@@ -46,15 +44,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	private final AuthService authService;
 	private final RedisService redisService;
     
-    private static final List<String> WHITE_LIST =
-            Collections.unmodifiableList(
-                    Arrays.asList(
-                        "/actuator",
-                        "/actuator/health",
-                        "/auth/sign-in",
-                        "/auth/sign-up"
-                    ));
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {
@@ -103,9 +92,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
      * 	false : execute doFilterInternal
      * 
      */
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+//        return BASE_WHITE_LIST.stream().anyMatch(exclude -> request.getServletPath().startsWith(exclude));
+//    }
+    
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        return WHITE_LIST.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
+        return SecurityConstants.FILTER_WHITELIST.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
     }
 
     private String getAccessTokenFromRequestHeader(HttpServletRequest request) {

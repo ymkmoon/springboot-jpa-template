@@ -24,10 +24,7 @@ spring:
 
   h2:
     console:
-      enabled: true
-      path: /h2-console
-      settings:
-        web-allow-others: true
+      enabled: false
 
   jpa:
     defer-datasource-initialization: true
@@ -57,3 +54,6 @@ jwt:
     - group: RefreshToken
       secretKey: ref_res_hto_ken_sec_ret
       validity: 259200000  # 3일 (ms)
+
+dev:
+  profiles: local,mac
