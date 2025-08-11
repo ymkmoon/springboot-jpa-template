@@ -13,7 +13,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
  * @author myungki you
  * @created 2025/08/06
  */
-@Profile("prod")  // 운영환경에서만 적용
+@Profile({"prod", "mac"})  // 운영 환경과 맥북 에서만 적용
 @Configuration
 public class ProdRedisConfig {
     @Bean
