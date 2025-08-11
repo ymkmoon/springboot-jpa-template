@@ -6,6 +6,9 @@
     <springProfile name="local">
         <property resource="logback-local.properties" />
     </springProfile>
+    <springProfile name="mac">
+        <property resource="logback-local.properties" />
+    </springProfile>
     <SpringProfile name="dev">
         <property resource="logback-dev.properties" />
     </SpringProfile>
