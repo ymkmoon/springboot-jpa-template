@@ -23,6 +23,13 @@ spring:
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     show-sql: false
