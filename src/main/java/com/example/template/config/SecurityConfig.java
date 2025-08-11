@@ -91,6 +91,11 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 인증 실패 시 호출되는 커스텀 엔트리 포인트 설정
                 .accessDeniedHandler(jwtAccessDeniedHandler) // 권한 부족 시 호출되는 커스텀 핸들러를 설정
             )
+            .headers(headers -> {
+            	if(isDevProfile) {
+            		headers.frameOptions(frameOptions -> frameOptions.disable()); // 특정 프로파일 에서의 X-Frame-Options 비활성화 (iframe 삽입 허) e.g.) h2-console 
+            	}
+            })
             .authorizeHttpRequests(auth -> { // HTTP 요청에 대한 인가 규칙을 설정
                 // 정적 리소스 허용
                 auth.requestMatchers("/favicon.ico", "/css/**", "/js/**", "/img/**", "/lib/**").permitAll();
@@ -109,4 +114,4 @@ public class SecurityConfig {
     private JwtRequestFilter jwtRequestFilter() {
         return new JwtRequestFilter(objectMapper, tokenProvider, authService, redisService);
     }
-}
+} 
