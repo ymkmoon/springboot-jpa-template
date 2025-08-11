@@ -17,7 +17,7 @@ import jakarta.annotation.PostConstruct;
  * @author myungki you
  * @created 2025/08/06
  */
-@Profile({"prod", "mac"})  // 운영 환경과 맥북 에서만 적용
+@Profile("!local") 
 @Configuration
 public class ProdRedisConfig {
 	

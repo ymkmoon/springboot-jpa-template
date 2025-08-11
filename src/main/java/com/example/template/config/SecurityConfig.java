@@ -1,17 +1,17 @@
 package com.example.template.config;
 
-import java.util.List;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.example.template.auth.AuthService;
+import com.example.template.constants.SecurityConstants;
 import com.example.template.exception.JwtAccessDeniedHandler;
 import com.example.template.exception.JwtAuthenticationEntryPoint;
 import com.example.template.filter.JwtRequestFilter;
@@ -42,25 +43,26 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final AuthService authService;
     private final RedisService redisService;
-
+    private final Environment environment; 
+    
     @Value("${spring.security.debug:false}")
     private boolean securityDebug;
 
-    private static final List<String> STATIC_RESOURCES = List.of(
-        "/h2-console/**", "/favicon.ico", "/css/**", "/js/**", "/img/**", "/lib/**"
-    );
+//    private static final List<String> STATIC_RESOURCES = List.of(
+//        "/h2-console/**", "/favicon.ico", "/css/**", "/js/**", "/img/**", "/lib/**"
+//    );
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.debug(securityDebug)
-                         .ignoring()
-                         .requestMatchers(STATIC_RESOURCES.toArray(new String[0]));
-    }
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return web -> web.debug(securityDebug)
+//                         .ignoring()
+//                         .requestMatchers(STATIC_RESOURCES.toArray(new String[0]));
+//    }
     
     @Bean
     public AuthenticationProvider authenticationProvider(
@@ -80,9 +82,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManagerBuilder.class).build();
 
+        String[] activeProfilesArr = environment.getActiveProfiles();
+        String activeProfile = activeProfilesArr.length > 0 ? activeProfilesArr[0] : "default";
+        String devProfiles = environment.getProperty("dev.profiles", "local,mac");
+    	boolean isDevProfile = Arrays.stream(devProfiles.split(","))
+                .map(String::trim)
+                .anyMatch(profile -> profile.equalsIgnoreCase(activeProfile));
+    	
         http
             .httpBasic(AbstractHttpConfigurer::disable)
             .csrf(AbstractHttpConfigurer::disable)
@@ -92,9 +101,20 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
             )
-            .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll()
-            )
+            .authorizeHttpRequests(auth -> {
+                // 정적 리소스 허용
+                auth.requestMatchers("/favicon.ico", "/css/**", "/js/**", "/img/**", "/lib/**").permitAll();
+
+                // devProfiles일 때만 h2-console 허용
+                if (isDevProfile) {
+                    auth.requestMatchers("/h2-console/**").permitAll();
+                }
+                
+                auth.requestMatchers(SecurityConstants.SECURITY_WHITELIST).permitAll();
+
+                // 나머지는 인증 필요
+                auth.anyRequest().authenticated();
+            })
             .authenticationManager(authenticationManager)
             .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
 
@@ -105,5 +125,3 @@ public class SecurityConfig {
         return new JwtRequestFilter(objectMapper, tokenProvider, authService, redisService);
     }
 }
-
-

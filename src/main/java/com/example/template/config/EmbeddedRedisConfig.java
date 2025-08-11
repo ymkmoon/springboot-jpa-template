@@ -10,16 +10,16 @@ import redis.embedded.RedisServer;
 
 /**
  * EmbeddedRedisConfig
- * - 임베디드 Redis (운영환경을 제외 한 로컬, 개발환경)
+ * - 임베디드 Redis (윈도우 로컬 환경)
  * - @PreDestroy : 어플리케이션 종료 시 Redis 서버 정리
- * - 실리콘 맥북에서는 도커로 실행 
+ * - 실리콘 맥북에서는 도커로 실행
  * - 	e.g.) docker run --name redis-local -p 6380:6380 -d redis:7.2-alpine
  *
  * @author myungki you
  * @created 2025/08/06
  */
-@Profile({"dev", "local"})
-@Configuration
+@Profile({"local"})
+@Configuration 
 public class EmbeddedRedisConfig {
 
     private RedisServer redisServer;
