@@ -1,0 +1,41 @@
+server:
+  port: 8000
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:ymk;MODE=MYSQL;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;
+    username: testDev
+    password: testDev
+    type: com.zaxxer.hikari.HikariDataSource
+
+    hikari:
+      maximum-pool-size: 500
+      minimumIdle: 9
+      idleTimeout: 10000
+      connection-timeout: 10000
+      validation-timeout: 10000
+      maxLifetime: 30000
+#      connection-test-query: SELECT 1
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+  
+  redis:
+    host: localhost
+    port: 6380
+    
+jwt:
+  tokens:
+    - group: AccessToken
+      secretKey: acc_ess_tok_ens_ecr_et
+      validity: 1800000  # 30분 (ms)
+    - group: RefreshToken
+      secretKey: ref_res_hto_ken_sec_ret
+      validity: 259200000  # 3일 (ms)
