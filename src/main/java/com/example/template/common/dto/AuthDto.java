@@ -22,6 +22,7 @@ public class AuthDto {
 		private String loginId;
 		
 		@NotBlank 
+		@Size(max = 50)
 		private String password;
 		
 		@NotBlank 
@@ -60,7 +61,8 @@ public class AuthDto {
 		@Pattern(regexp = "^[A-Za-z0-9]+$", message = "로그인 ID는 영문과 숫자만 가능합니다.")
 		private String loginId;
 	    
-		@NotBlank 
+		@NotBlank
+		@Size(max = 50)
 		private String password;
 
 	    @Builder
@@ -85,7 +87,10 @@ public class AuthDto {
 	@Getter
 	@NoArgsConstructor
 	public static class RefreshRequest {
-		@NotBlank private String refreshToken;
+		
+		@NotBlank 
+		@Size(max = 2048)
+		private String refreshToken;
 		
 		@Builder
 		public RefreshRequest(@NotBlank String refreshToken) {

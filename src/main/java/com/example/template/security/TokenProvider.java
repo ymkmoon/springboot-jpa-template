@@ -33,10 +33,21 @@ public class TokenProvider {
 
     private final JwtConfig jwtConfig;
 
+    /**
+     * @param token
+     * @param tokenType
+     * @return 토큰을 디코딩 하여 조회 한 관리자의 uuid
+     */
     public String getUuidFromToken(String token, String tokenType) {
         return getCustomClaimFromToken(token, CommonConstants.ADMIN_UUID.getTitle(), tokenType);
     }
 
+    
+    /**
+     * @param token
+     * @param tokenType
+     * @return 토큰 만료 정보
+     */
     public Date getExpirationDateFromToken(String token, String tokenType) {
         return getClaimFromToken(token, Claims::getExpiration, tokenType);
     }
@@ -66,11 +77,20 @@ public class TokenProvider {
                 .getBody();
     }
 
+    /**
+     * @param token
+     * @param tokenType
+     * @return 토큰 만료 여부 응답
+     */
     private boolean isTokenExpired(String token, String tokenType) {
         final Date expiration = getExpirationDateFromToken(token, tokenType);
         return expiration.before(new Date());
     }
 
+    /**
+     * @param authentication
+     * @return 토큰에 입력 할 정보 설정 하여 Access Token 과 Refresh Token 응답
+     */
     public AuthDto.SignInResponse generateToken(Authentication authentication) {
     	
         Map<String, Object> claims = new HashMap<>();
@@ -89,6 +109,11 @@ public class TokenProvider {
                 .build();
     }
 
+    /**
+     * @param claims
+     * @param tokenType
+     * @return Access Token 또는 Refresh Token
+     */
     private String doGenerateToken(Map<String, Object> claims, String tokenType) {
         JwtConfig.TokenConfig tokenConfig = jwtConfig.getTokenConfig(tokenType);
 
@@ -100,11 +125,20 @@ public class TokenProvider {
                 .compact();
     }
 
+    /**
+     * @param accessToken
+     * @param userDetails
+     * @return 토큰 유효성 검증
+     */
     public boolean validateAccessToken(String accessToken, UserDetails userDetails) {
         final String uuid = getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
         return (uuid.equals(userDetails.getUsername())) && !isTokenExpired(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
     }
 
+    /**
+     * @param refreshToken
+     * @return 토큰 유효성 검증
+     */
     public String validateRefreshToken(String refreshToken) {
         if (!isTokenExpired(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle())) {
             final Claims claims = getAllClaimsFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());

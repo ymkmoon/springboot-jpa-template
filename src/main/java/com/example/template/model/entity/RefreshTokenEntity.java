@@ -37,7 +37,7 @@ public class RefreshTokenEntity extends BaseEntity {
 	@JoinColumn(name = "admin_id", referencedColumnName = "id", nullable = false)
 	private AdminEntity adminId;
 	
-	@Column(name = "refresh_token")
+	@Column(name = "refresh_token", length = 2048)
 	private String refreshToken;
 	
 	@Builder

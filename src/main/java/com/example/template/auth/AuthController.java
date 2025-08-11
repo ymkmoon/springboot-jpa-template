@@ -20,7 +20,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
- * JwtController
+ * AuthController
  * - JWT 관련 컨트롤러
  *
  * @author myungki you
@@ -35,12 +35,24 @@ public class AuthController {
 	private final TokenProvider tokenProvider;
     private final AuthService authService;
     
+    /**
+     * @param signUpRequest 회원가입에 사용 될 정보가 담긴 DTO
+     * @return 
+     * 
+     * - 회원가입 API
+     */
     @PostMapping(value="/sign-up")
     public ResponseEntity<AuthDto.SignInResponse> signUp(@RequestBody @Valid AuthDto.SignUpRequest signUpRequest) {
 //        return new ResponseEntity<>(authService.signUp(signUpRequest), HttpStatus.OK);
     	return null;
     }
 
+    /**
+     * @param signInRequest 로그인에 사용 될 정보
+     * @return 신규 발급 한 Access Token 과 Refresh Token
+     * 
+     * - 로그인 API
+     */
     @PostMapping(value = "/sign-in")
     public ResponseEntity<ApiResponse<SignInResponse>> signIn(@RequestBody @Valid AuthDto.SignInRequest signInRequest) {
     	UsernamePasswordAuthenticationToken authenticationToken =
@@ -61,6 +73,12 @@ public class AuthController {
         return ApiResponse.success(response);
     }
     
+    /**
+     * @param refreshRequest 토큰 갱신에 사용 될 정보
+     * @return 갱신 된 Access Token 과 현재 Refresh Token
+     * 
+     * 토큰 갱신 API
+     */
     @PostMapping(value = "/refresh-token")
     public ResponseEntity<ApiResponse<Object>> refreshToken(@RequestBody @Valid AuthDto.RefreshRequest refreshRequest) {
     	boolean registRefreshToken = authService.validateRegistRefreshToken(refreshRequest);
