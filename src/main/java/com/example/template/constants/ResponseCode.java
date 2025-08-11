@@ -25,6 +25,9 @@ public enum ResponseCode {
     
     PROPERTY_REFRENCE_ERROR(HttpStatus.BAD_REQUEST, "40000010", "요청 데이터가 정상적이지 않습니다. 필드명 등을 다시 확인해주세요."),
     ILLEGAL_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "40000011", "요청 데이터가 정상적이지 않습니다."),
+    ALREADY_REGIST_PHONE_NUMBER(HttpStatus.BAD_REQUEST, "40000012", "이미 가입한 핸드폰 번호 입니다."),
+    ALREADY_REGIST_EMAIL(HttpStatus.BAD_REQUEST, "40000013", "이미 가입한 이메일 입니다."),
+    ALREADY_REGIST_LOGIN_ID(HttpStatus.BAD_REQUEST, "40000014", "이미 가입한 아이디 입니다."),
     
 
     // 401

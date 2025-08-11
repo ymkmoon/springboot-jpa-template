@@ -32,6 +32,16 @@ public class ApiResponse<T> {
                 .build();
     }
     
+    public static <T> ResponseEntity<ApiResponse<T>> success() {
+        return ResponseEntity.ok(
+            ApiResponse.<T>builder()
+                .code(ResponseCode.SUCCESS.getCode())
+                .message(ResponseCode.SUCCESS.getDetail())
+                .data(null)
+                .build()
+        );
+    }
+    
     public static <T> ResponseEntity<ApiResponse<T>> success(T data) {
         return ResponseEntity.ok(
             ApiResponse.<T>builder()

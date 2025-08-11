@@ -42,9 +42,10 @@ public class AuthController {
      * - 회원가입 API
      */
     @PostMapping(value="/sign-up")
-    public ResponseEntity<AuthDto.SignInResponse> signUp(@RequestBody @Valid AuthDto.SignUpRequest signUpRequest) {
+    public ResponseEntity<ApiResponse<Object>> signUp(@RequestBody @Valid AuthDto.SignUpRequest signUpRequest) {
 //        return new ResponseEntity<>(authService.signUp(signUpRequest), HttpStatus.OK);
-    	return null;
+        authService.signUp(signUpRequest);
+        return ApiResponse.success();
     }
 
     /**
