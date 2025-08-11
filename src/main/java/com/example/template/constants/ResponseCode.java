@@ -57,7 +57,8 @@ public enum ResponseCode {
 	DATE_TIME_PARSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "50000004", "Date 타입의 값이 잘못된 형식입니다. yyyy-MM-dd 형식에 맞춰주세요."),
 	READ_JSON_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "50000005", "JSON 파일을 읽어들이는것에 실패했습니다. "),
 	JSON_PROCESSING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "50000006", "JSON 데이터를 처리(구문 분석, 생성)할 때 오류가 발생했습니다."),
-	JMS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "50000007", "Message 발송에 실패했습니다.")
+	JMS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "50000007", "Message 발송에 실패했습니다."),
+	REDIS_CONNECTION_ERROR(HttpStatus.NOT_FOUND, "50000008", "Redis 연결 오류")
 	;
 	
 	
