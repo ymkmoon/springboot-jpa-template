@@ -58,7 +58,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             // Redis에 저장된 토큰과 비교
             if (storedToken == null || !storedToken.equals(accessToken)) {
-                new FailResponse(objectMapper, response, ResponseCode.DUPLICATED_LOGIN).writer();
+                new FailResponse(objectMapper, response, ResponseCode.NOT_MATCHED_REDIS_TOKEN).writer();
                 return;
             }
             

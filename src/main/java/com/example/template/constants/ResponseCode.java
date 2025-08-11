@@ -35,7 +35,7 @@ public enum ResponseCode {
     USER_NAME_NOT_FOUND(HttpStatus.UNAUTHORIZED, "40100005", "사용자를 찾을 수 없습니다."),
     BAD_CREDENTIAL(HttpStatus.UNAUTHORIZED, "40100006", "암호가 일치하지 않습니다."),
     TOKEN_IS_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "40100007", "인증되지 않은 토큰 입니다."),
-    DUPLICATED_LOGIN(HttpStatus.UNAUTHORIZED, "40100008", "인증 실패"), // 중복 로그인 하여 access token 이 만료 된 경우
+    NOT_MATCHED_REDIS_TOKEN(HttpStatus.UNAUTHORIZED, "40100008", "인증 실패"), // Redis 에 토큰이 등록되지 않았거나, 마지막 발급 토큰과 일치하지 않는 경우 e.g.) 중복 로그인 하여 access token 이 만료 된 경우
     INVALUD_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "40100009", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
     UNAUTHORIZED_ENTRY_POINT(HttpStatus.UNAUTHORIZED, "40100010", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "40100011", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우

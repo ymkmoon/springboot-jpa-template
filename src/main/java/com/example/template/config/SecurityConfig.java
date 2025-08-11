@@ -36,11 +36,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint; // 인증 실패(401 Unauthorized) 처리를 위한 커스텀 엔트리 포인 (JWT 인증 실패 시 응답을 처리)
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler; // 권한 부족(403 Forbidden) 처리를 위한 커스텀 핸들러 (접근 거부 시 응답을 처리)
     
-    private final ObjectMapper objectMapper;
-    private final TokenProvider tokenProvider;
+    private final ObjectMapper objectMapper; // JSON 직렬화 & 역직렬화를 위한 Jackson의 ObjectMapper
+    private final TokenProvider tokenProvider; // JWT 토큰 생성, 검증 등을 담당하는 커스텀 클래스
     private final AuthService authService;
     private final RedisService redisService;
     private final Environment environment; 
@@ -48,36 +48,26 @@ public class SecurityConfig {
     @Value("${spring.security.debug:false}")
     private boolean securityDebug;
 
-//    private static final List<String> STATIC_RESOURCES = List.of(
-//        "/h2-console/**", "/favicon.ico", "/css/**", "/js/**", "/img/**", "/lib/**"
-//    );
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-//    @Bean
-//    public WebSecurityCustomizer webSecurityCustomizer() {
-//        return web -> web.debug(securityDebug)
-//                         .ignoring()
-//                         .requestMatchers(STATIC_RESOURCES.toArray(new String[0]));
-//    }
-    
     @Bean
     public AuthenticationProvider authenticationProvider(
             PasswordEncoder passwordEncoder,
             UserDetailsService userDetailsService) {
 
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(); // 사용자 인증을 처리하는 AuthenticationProvider Bean 등록
+        authProvider.setUserDetailsService(userDetailsService); // 사용자 정보를 로드하는 UserDetailsService 설정
+        authProvider.setPasswordEncoder(passwordEncoder); // 비밀번호 암호화를 위해 PasswordEncoder 설정
         return authProvider;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration configuration) throws Exception {
+    	// Spring Security 의 인증 매니저를 빈 등록 > 사용자 인증 절차를 관리
         return configuration.getAuthenticationManager();
     }
 
@@ -93,30 +83,25 @@ public class SecurityConfig {
                 .anyMatch(profile -> profile.equalsIgnoreCase(activeProfile));
     	
         http
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .csrf(AbstractHttpConfigurer::disable)
-            .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 인증을 비활성화
+            .csrf(AbstractHttpConfigurer::disable) // CSRF 보호를 비활성화 (JWT 기반 인증에서는 일반적으로 비활성화)
+            .cors(cors -> cors.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())) // CORS 설정을 활성화 및 기본 CORS 정책을 적용
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 관리 정책을 STATELESS로 설정하여 세션 사용 X (JWT 기반)
             .exceptionHandling(ex -> ex
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 인증 실패 시 호출되는 커스텀 엔트리 포인트 설정
+                .accessDeniedHandler(jwtAccessDeniedHandler) // 권한 부족 시 호출되는 커스텀 핸들러를 설정
             )
-            .authorizeHttpRequests(auth -> {
+            .authorizeHttpRequests(auth -> { // HTTP 요청에 대한 인가 규칙을 설정
                 // 정적 리소스 허용
                 auth.requestMatchers("/favicon.ico", "/css/**", "/js/**", "/img/**", "/lib/**").permitAll();
-
-                // devProfiles일 때만 h2-console 허용
                 if (isDevProfile) {
-                    auth.requestMatchers("/h2-console/**").permitAll();
+                    auth.requestMatchers("/h2-console/**").permitAll(); // devProfiles일 때만 h2-console 허용
                 }
-                
-                auth.requestMatchers(SecurityConstants.SECURITY_WHITELIST).permitAll();
-
-                // 나머지는 인증 필요
-                auth.anyRequest().authenticated();
+                auth.requestMatchers(SecurityConstants.SECURITY_WHITELIST).permitAll(); // 인가없이 접근 가능한 화이트 리스트 설정
+                auth.anyRequest().authenticated(); // 화이트 리스트를 제외하곤 인증 절차
             })
-            .authenticationManager(authenticationManager)
-            .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+            .authenticationManager(authenticationManager) // 인증 매니저 설정
+            .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class); // JWT 필터 설정
 
         return http.build();
     }
