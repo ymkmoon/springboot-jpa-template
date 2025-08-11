@@ -9,4 +9,7 @@ import com.example.template.model.entity.AdminEntity;
 public interface AdminRepository extends JpaRepository<AdminEntity, String> {
 	AdminEntity findAccountByName(String name);
 	AdminEntity findAccountByLoginId(String loginId);
+	boolean existsByPhoneNumber(String phoneNumber);
+	boolean existsByEmail(String email);
+	boolean existsByLoginId(String loginId);
 }

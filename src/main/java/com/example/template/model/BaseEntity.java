@@ -2,20 +2,16 @@ package com.example.template.model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.MappedSuperclass;
-
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import com.example.template.constants.ActiveStatus;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 
 /**
@@ -46,9 +42,8 @@ public class BaseEntity {
    @Column(name = "updated_by", nullable = false, updatable = true, insertable = true, length = 50)
    private String updatedBy;
    
-   @Enumerated(EnumType.STRING)
-   @Column(name = "is_active", nullable = false,
-           columnDefinition = "CHAR(1) DEFAULT 'T' CHECK (is_active IN ('T', 'F'))")
-   private ActiveStatus isActive = ActiveStatus.T;
+   @Convert(converter = BooleanToStringConverter.class) // 컨버터 적용
+   @Column(name = "is_active", nullable = false, columnDefinition = "CHAR(1) DEFAULT 'T'")
+   private boolean isActive = true; // boolean 타입으로 변경
 }
 

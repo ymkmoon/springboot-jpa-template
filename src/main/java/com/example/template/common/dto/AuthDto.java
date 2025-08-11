@@ -16,53 +16,63 @@ public class AuthDto {
 	
 	@Getter
 	public static class SignUpRequest {
-		@NotBlank 
-		@Size(max = 20, message = "loginId는 최대 20자까지 가능합니다.")
+		@NotBlank(message = "아이디는 공백 일 수 없습니다.")
+		@Size(max = 20, message = "아이디는 최대 20자까지 가능합니다.")
 		@Pattern(regexp = "^[A-Za-z0-9]+$", message = "로그인 ID는 영문과 숫자만 가능합니다.")
 		private String loginId;
 		
-		@NotBlank 
-		@Size(max = 50)
+		@NotBlank(message = "비밀번호는 공백 일 수 없습니다.")
+		@Size(min = 8, max = 50, message = "비밀번호는 최소 8자, 최대 50자까지 가능합니다.")
 		private String password;
 		
-		@NotBlank 
+		@NotBlank(message = "이름은 공백 일 수 없습니다.")
 		@Size(max = 20, message = "이름은 최대 20자까지 가능합니다.")
 		@Pattern(regexp = "^[A-Za-z가-힣]+$", message = "이름은 영문과 한글만 가능합니다.")
 		private String name;
 		
-		@NotBlank 
+		@NotBlank(message = "핸드폰번호는 공백 일 수 없습니다.")
 		@Size(min = 11, max = 11, message = "전화번호는 11자리여야 합니다.")
 		@Pattern(regexp = "^01[016789]\\d{7,8}$", message = "휴대폰 번호 형식이 올바르지 않습니다.")
 		private String phoneNumber;
 		
-		@NotBlank 
-		@Size(max = 50, message = "이메일은 최대 50자까지 가능합니다.")
+		@NotBlank(message = "이메일은 공백 일 수 없습니다.")
+		@Size(min = 8, max = 50, message = "이메일은 최대 50자까지 가능합니다.")
 		@Pattern(
 	        regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$",
 	        message = "이메일 형식이 올바르지 않습니다."
 	    )
 		private String email;
 
-	    @Builder
-		public SignUpRequest(@NotBlank String loginId, @NotBlank String password,
-				@NotBlank String name, @NotBlank String phoneNumber, @NotBlank String email) {
-			this.loginId = loginId;
-			this.password = password;
-			this.name = name;
-			this.phoneNumber = phoneNumber;
-			this.email = email;
+//	    @Builder
+//		public SignUpRequest(@NotBlank String loginId, @NotBlank String password,
+//				@NotBlank String name, @NotBlank String phoneNumber, @NotBlank String email) {
+//			this.loginId = loginId;
+//			this.password = password;
+//			this.name = name;
+//			this.phoneNumber = phoneNumber;
+//			this.email = email;
+//		}
+	    
+	    public AdminEntity toEntity() {
+			return AdminEntity.builder()
+					.loginId(loginId)
+					.password(password)
+					.name(name)
+					.phoneNumber(phoneNumber)
+					.email(email)
+					.build();
 		}
 	}
 	
 	@Getter
 	@NoArgsConstructor
 	public static class SignInRequest {
-		@NotBlank 
+		@NotBlank(message = "아이디는 공백 일 수 없습니다.")
 		@Pattern(regexp = "^[A-Za-z0-9]+$", message = "로그인 ID는 영문과 숫자만 가능합니다.")
 		private String loginId;
 	    
-		@NotBlank
-		@Size(max = 50)
+		@NotBlank(message = "비밀번호는 공백 일 수 없습니다.")
+		@Size(min = 8, max = 50, message = "비밀번호는 최소 8자, 최대 50자까지 가능합니다.")
 		private String password;
 
 	    @Builder

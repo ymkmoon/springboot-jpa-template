@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.dto.AuthDto;
-import com.example.template.common.dto.AuthDto.SignUpRequest;
 import com.example.template.constants.CommonConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
@@ -118,9 +117,20 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	}
 
 	@Override
-	public void signUp(SignUpRequest signUpRequest) {
-		// TODO Auto-generated method stub
+	public void signUp(AuthDto.SignUpRequest signUpRequest) {
+		if (adminRepository.existsByLoginId(signUpRequest.getLoginId())) {
+	        throw new BusinessException(ResponseCode.ALREADY_REGIST_LOGIN_ID);
+	    }
 		
+		if (adminRepository.existsByPhoneNumber(signUpRequest.getPhoneNumber())) {
+	        throw new BusinessException(ResponseCode.ALREADY_REGIST_PHONE_NUMBER);
+	    }
+
+	    if (adminRepository.existsByEmail(signUpRequest.getEmail())) {
+	        throw new BusinessException(ResponseCode.ALREADY_REGIST_EMAIL);
+	    }
+	    
+    	adminRepository.save(signUpRequest.toEntity());
 	}
 	
 	
