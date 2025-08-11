@@ -9,6 +9,7 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.PropertyReferenceException;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -295,6 +296,17 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException e) {
     	logger.error("handleIllegalArgumentException", e);
     	return ApiResponse.error(ResponseCode.ILLEGAL_ARGUMENT_ERROR);
+    }
+    
+    /**
+     * 요청 URL 이 존재하지 않는 경우
+     * 	ex) /template/aut222h/sign-in
+     *  
+     */
+    @ExceptionHandler(RedisConnectionFailureException.class)
+    protected ResponseEntity<ApiResponse<Object>> handleRedisConnectionFailureException(RedisConnectionFailureException e) {
+    	logger.error("handleRedisConnectionFailureException", e);
+    	return ApiResponse.error(ResponseCode.REDIS_CONNECTION_ERROR);
     }
     
     /**
