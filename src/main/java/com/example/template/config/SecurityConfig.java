@@ -93,7 +93,11 @@ public class SecurityConfig {
             )
             .headers(headers -> {
             	if(isDevProfile) {
-            		headers.frameOptions(frameOptions -> frameOptions.disable()); // 특정 프로파일 에서의 X-Frame-Options 비활성화 (iframe 삽입 허) e.g.) h2-console 
+            		// 특정 프로파일 에서의 X-Frame-Options 비활성화 (iframe 삽입 허용) 
+            		// 	e.g.) h2-console
+            		// 클릭재킹(clickjacking) 공격을 방지하기 위해선 활성화 필요
+            		// 화이트라벨 페이지나, API 서버에서 제공하는 웹 페이지에서 발생 가능성 있음
+            		headers.frameOptions(frameOptions -> frameOptions.disable()); 
             	}
             })
             .authorizeHttpRequests(auth -> { // HTTP 요청에 대한 인가 규칙을 설정
