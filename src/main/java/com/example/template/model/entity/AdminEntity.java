@@ -6,9 +6,10 @@ import com.example.template.model.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,9 +51,9 @@ public class AdminEntity extends BaseEntity {
 	@Column(name = "email", nullable = false, unique = true, length = 50)
 	private String email;
 	
-	@OneToOne(targetEntity = AuthorityEntity.class)
-	@JoinColumn(name="authority_code", referencedColumnName = "code", nullable = true)
-	private AuthorityEntity role;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "authority_group_id", nullable = true)
+    private AuthorityGroupEntity authorityGroup;
 
     public AdminEntity(String id) {
         this.id = id;
@@ -60,13 +61,13 @@ public class AdminEntity extends BaseEntity {
 	
 	@Builder
 	public AdminEntity(String loginId, String password, String name, String phoneNumber, String email, 
-			AuthorityEntity role) {
+			AuthorityGroupEntity authorityGroup) {
 		this.id = UUID.randomUUID().toString();
 		this.loginId = loginId;
 		this.password = password;
 		this.name = name;
 		this.phoneNumber = phoneNumber;
 		this.email = email;
-		this.role = role;
+		this.authorityGroup = authorityGroup;
 	}
 }

@@ -42,7 +42,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
                 admin.getId(),           // username
                 admin.getPassword(),     // password
                 admin.getEmail(),        // email
-                admin.getRole().getCode() // role
+                admin.getAuthorityGroup().getLevel().getLevelCode() // role
         );
     }
     
@@ -55,7 +55,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
                 admin.getId(),
                 admin.getPassword(),
                 admin.getEmail(),
-                admin.getRole().getCode()
+                admin.getAuthorityGroup().getLevel().getLevelCode() // role
         );
     }
 
