@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.template.admin.AdminRepository;
@@ -34,6 +35,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final RedisService redisService;
 	private final TokenProvider tokenProvider;
+	private final PasswordEncoder passwordEncoder; 
 
     @Override
     public UserDetails loadUserByUsername(String username) {
@@ -140,7 +142,9 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	        throw new BusinessException(ResponseCode.ALREADY_REGIST_EMAIL);
 	    }
 	    
-    	adminRepository.save(signUpRequest.toEntity());
+	    String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
+	    
+    	adminRepository.save(signUpRequest.toEntity(encodedPassword));
 	}
 	
 	

@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -45,19 +44,14 @@ public class SecurityConfig {
     private final RedisService redisService;
     private final Environment environment; 
     
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    
     @Value("${spring.security.debug:false}")
     private boolean securityDebug;
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider(
-            PasswordEncoder passwordEncoder,
-            UserDetailsService userDetailsService) {
-
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(); // 사용자 인증을 처리하는 AuthenticationProvider Bean 등록
         authProvider.setUserDetailsService(userDetailsService); // 사용자 정보를 로드하는 UserDetailsService 설정
         authProvider.setPasswordEncoder(passwordEncoder); // 비밀번호 암호화를 위해 PasswordEncoder 설정

@@ -33,21 +33,21 @@ INSERT INTO authority_group_menu (id, group_id, menu_id, created_by, updated_by)
 
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid1', 'ymkmoon43', '$2a$10$oZPWMiSQF4lduNY/X8q9ZuuE14kJhcfIeER7SR/Ou0iE6W1VUY9WW', '유명기', 
+('admin_uuid1', 'ymkmoon43', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기', 
 '01029320134', 'ymkmoon43@gmail.com', 'authority_group_uuid1', 'ACTIVE', 'SYSTEM', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid2', 'ymkmoon433', '$2a$10$oZPWMiSQF4lduNY/X8q9ZuuE14kJhcfIeER7SR/Ou0iE6W1VUY9WW', '유명기2', 
+('admin_uuid2', 'ymkmoon433', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기2', 
 '11129320134', 'ymkmoon433@gmail.com', 'authority_group_uuid2', 'PENDING', 'SYSTEM', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid3', 'ymkmoon4333', '$2a$10$oZPWMiSQF4lduNY/X8q9ZuuE14kJhcfIeER7SR/Ou0iE6W1VUY9WW', '유명기3', 
+('admin_uuid3', 'ymkmoon4333', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기3', 
 '22229320134', 'ymkmoon4333@gmail.com', 'authority_group_uuid3', 'REJECTED', 'SYSTEM', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid4', 'ymkmoon43333', '$2a$10$oZPWMiSQF4lduNY/X8q9ZuuE14kJhcfIeER7SR/Ou0iE6W1VUY9WW', '유명기4', 
+('admin_uuid4', 'ymkmoon43333', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기4', 
 '33329320134', 'ymkmoon43333@gmail.com', 'authority_group_uuid3', 'SUSPENDED', 'SUSPENDED', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid6', 'ymkmoon433333', '$2a$10$oZPWMiSQF4lduNY/X8q9ZuuE14kJhcfIeER7SR/Ou0iE6W1VUY9WW', '유명기4', 
+('admin_uuid6', 'ymkmoon433333', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기4', 
 '44429320134', 'ymkmoon433333@gmail.com', 'authority_group_uuid3', 'WITHDRAWN', 'SUSPENDED', 'SYSTEM');

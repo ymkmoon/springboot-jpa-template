@@ -1,5 +1,6 @@
 package com.example.template.common.dto;
 
+import com.example.template.constants.ApprovalStatus;
 import com.example.template.model.entity.AdminEntity;
 import com.example.template.model.entity.RefreshTokenEntity;
 
@@ -53,13 +54,14 @@ public class AuthDto {
 //			this.email = email;
 //		}
 	    
-	    public AdminEntity toEntity() {
+	    public AdminEntity toEntity(String encodedPassword) {
 			return AdminEntity.builder()
 					.loginId(loginId)
-					.password(password)
+					.password(encodedPassword)
 					.name(name)
 					.phoneNumber(phoneNumber)
 					.email(email)
+					.approvalStatus(ApprovalStatus.PENDING)
 					.build();
 		}
 	}
