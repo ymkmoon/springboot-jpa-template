@@ -2,10 +2,13 @@ package com.example.template.model.entity;
 
 import java.util.UUID;
 
+import com.example.template.constants.ApprovalStatus;
 import com.example.template.model.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -54,6 +57,10 @@ public class AdminEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "authority_group_id", nullable = true)
     private AuthorityGroupEntity authorityGroup;
+	
+	@Enumerated(EnumType.STRING)
+    @Column(name = "approval_status", nullable = false, length = 20)
+    private ApprovalStatus approvalStatus = ApprovalStatus.PENDING; // 기본값 승인대기
 
     public AdminEntity(String id) {
         this.id = id;
@@ -61,7 +68,7 @@ public class AdminEntity extends BaseEntity {
 	
 	@Builder
 	public AdminEntity(String loginId, String password, String name, String phoneNumber, String email, 
-			AuthorityGroupEntity authorityGroup) {
+			AuthorityGroupEntity authorityGroup, ApprovalStatus approvalStatus) {
 		this.id = UUID.randomUUID().toString();
 		this.loginId = loginId;
 		this.password = password;
@@ -69,5 +76,6 @@ public class AdminEntity extends BaseEntity {
 		this.phoneNumber = phoneNumber;
 		this.email = email;
 		this.authorityGroup = authorityGroup;
+        this.approvalStatus = approvalStatus != null ? approvalStatus : ApprovalStatus.PENDING;
 	}
 }

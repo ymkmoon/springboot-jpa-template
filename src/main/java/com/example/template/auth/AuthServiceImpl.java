@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.dto.AuthDto;
+import com.example.template.constants.ApprovalStatus;
 import com.example.template.constants.CommonConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
@@ -21,6 +22,7 @@ import com.example.template.redis.RedisService;
 import com.example.template.refresh.token.RefreshTokenRepository;
 import com.example.template.security.CustomUserDetails;
 import com.example.template.security.TokenProvider;
+import com.example.template.util.AdminUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +39,13 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     public UserDetails loadUserByUsername(String username) {
         AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
                 .orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
-
+        
+        AdminUtil.isActiveAccount(admin);
+        
+        if (admin.getApprovalStatus() != ApprovalStatus.ACTIVE) {
+            throw new BusinessException(ResponseCode.ALREADY_REGIST_LOGIN_ID);
+        }
+        
         return new CustomUserDetails(
                 admin.getId(),           // username
                 admin.getPassword(),     // password
@@ -51,10 +59,12 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     	AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 
-        return new CustomUserDetails(
-                admin.getId(),
-                admin.getPassword(),
-                admin.getEmail(),
+    	AdminUtil.isActiveAccount(admin);
+    	
+    	return new CustomUserDetails(
+                admin.getId(),           // username
+                admin.getPassword(),     // password
+                admin.getEmail(),        // email
                 admin.getAuthorityGroup().getLevel().getLevelCode() // role
         );
     }
