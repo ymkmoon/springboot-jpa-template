@@ -9,8 +9,8 @@ import com.example.template.common.dto.AdminDto;
 
 @Transactional(readOnly = true)
 public interface AdminService {
-	List<AdminDto.AdminListResponse> getAdminListV1(Pageable pageable, AdminDto.AdminListRequest condition);
-	List<AdminDto.AdminListResponse> getAdminListV2(Pageable pageable, AdminDto.AdminListRequest condition);
-	List<AdminDto.AdminListResponse> getAdminListV3(Pageable pageable, AdminDto.AdminListRequest condition);
+	List<AdminDto.AdminResponse> getAdminListV1(Pageable pageable, AdminDto.AdminListRequest condition);
+	List<AdminDto.AdminResponse> getAdminListV2(Pageable pageable, AdminDto.AdminListRequest condition);
+	List<AdminDto.AdminResponse> getAdminListV3(Pageable pageable, AdminDto.AdminListRequest condition);
 
 }

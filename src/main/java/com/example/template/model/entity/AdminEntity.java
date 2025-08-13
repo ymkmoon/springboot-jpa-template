@@ -2,6 +2,7 @@ package com.example.template.model.entity;
 
 import java.util.UUID;
 
+import com.example.template.common.dto.AdminDto;
 import com.example.template.constants.ApprovalStatus;
 import com.example.template.model.BaseEntity;
 
@@ -77,5 +78,20 @@ public class AdminEntity extends BaseEntity {
 		this.email = email;
 		this.authorityGroup = authorityGroup;
         this.approvalStatus = approvalStatus != null ? approvalStatus : ApprovalStatus.PENDING;
+	}
+	
+	public AdminDto.AdminResponse toAdminResponse() {
+		return AdminDto.AdminResponse.builder()
+				.id(id)
+				.loginId(loginId)
+				.name(name)
+				.phoneNumber(phoneNumber)
+				.email(email)
+	            .authorityLevel(authorityGroup != null ? authorityGroup.getLevel().getLevelCode() : null)
+	            .approvalStatus(approvalStatus)
+				.createdAt(getCreatedAt())
+				.updatedAt(getUpdatedAt())
+				.isActive(isActive())
+				.build();
 	}
 }
