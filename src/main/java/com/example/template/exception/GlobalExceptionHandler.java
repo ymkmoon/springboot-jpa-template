@@ -157,9 +157,12 @@ public class GlobalExceptionHandler {
      * 	ex) 특정 station 조회 시 필수 파마리터인 name 이 존재하지 않는 경우 
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    protected ResponseEntity<ApiResponse<Object>> handleConstraintRequestParameterException(MissingServletRequestParameterException e) {
+    protected ApiResponse<Object>  handleConstraintRequestParameterException(MissingServletRequestParameterException e) {
     	logger.error("handleMissingServletRequestParameterException", e);
-    	return ApiResponse.error(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER);
+    	
+    	String missingParameter = e.getParameterName();
+        String errorMessage = String.format("필수 요청 파라미터 '%s'가 누락되었습니다.", missingParameter);
+    	return ApiResponse.error(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER, errorMessage);
     }
     
     /**

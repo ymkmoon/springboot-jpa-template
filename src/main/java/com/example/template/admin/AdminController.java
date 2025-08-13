@@ -37,7 +37,7 @@ public class AdminController {
      * SQL 을 이용한 회원 목록 조회 API
      */
     @GetMapping("/v1")
-	public ResponseEntity<List<AdminDto.AdminListResponse>> getVocQuestionsVer1(
+	public ResponseEntity<List<AdminDto.AdminResponse>> getVocQuestionsVer1(
 			AdminDto.AdminListRequest condition,
 			@RequestParam(name="offset") @NotNull long offset,
     		@RequestParam(name="limit") @NotNull int limit) {
@@ -52,7 +52,7 @@ public class AdminController {
      * JPA 를 이용한 회원 목록 조회 API
      */
     @GetMapping("/v2")
-	public ResponseEntity<List<AdminDto.AdminListResponse>> getVocQuestionsVer2(
+	public ResponseEntity<List<AdminDto.AdminResponse>> getVocQuestionsVer2(
 			AdminDto.AdminListRequest condition,
 			@RequestParam(name="offset") @NotNull long offset,
     		@RequestParam(name="limit") @NotNull int limit) {
@@ -67,7 +67,7 @@ public class AdminController {
      * QueryDSL 을 이용한 회원 목록 조회 API
      */
     @GetMapping("/v3")
-	public ResponseEntity<List<AdminDto.AdminListResponse>> getVocQuestionsVer3(
+	public ResponseEntity<List<AdminDto.AdminResponse>> getVocQuestionsVer3(
 			AdminDto.AdminListRequest condition,
 			@RequestParam(name="offset") @NotNull long offset,
     		@RequestParam(name="limit") @NotNull int limit) {

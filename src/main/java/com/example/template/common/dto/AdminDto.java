@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.querydsl.core.annotations.QueryProjection;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,7 +32,7 @@ public class AdminDto {
 	}
 	
 	@Getter
-	public static class AdminListResponse {
+	public static class AdminResponse {
 		private String id;
 		private String loginId;
 	    private String name;
@@ -48,8 +49,8 @@ public class AdminDto {
 		private LocalDateTime updatedAt;
 
 		@Builder
-//		@QueryProjection
-		public AdminListResponse(String id, String loginId, String name, String phoneNumber, String email,
+		@QueryProjection
+		public AdminResponse(String id, String loginId, String name, String phoneNumber, String email,
 				LocalDateTime createdAt, LocalDateTime updatedAt, boolean isActive) {
 			this.id = id;
 			this.loginId = loginId;
