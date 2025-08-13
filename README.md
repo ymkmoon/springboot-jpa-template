@@ -7,3 +7,10 @@ JPA 사용 템플릿
 - MySQL 9.3.*
 - Docker
 - JWT
+
+
+
+> ./gradlew wrapper --gradle-version 8.2
+
+> ./gradlew clean build
+
