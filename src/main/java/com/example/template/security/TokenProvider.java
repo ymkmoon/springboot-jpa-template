@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.template.common.dto.AuthDto;
 import com.example.template.config.JwtConfig;
-import com.example.template.constants.CommonConstants;
+import com.example.template.constants.AuthConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
 
@@ -39,7 +39,7 @@ public class TokenProvider {
      * @return 토큰을 디코딩 하여 조회 한 관리자의 uuid
      */
     public String getUuidFromToken(String token, String tokenType) {
-        return getCustomClaimFromToken(token, CommonConstants.ADMIN_UUID.getTitle(), tokenType);
+        return getCustomClaimFromToken(token, AuthConstants.ADMIN_UUID.getTitle(), tokenType);
     }
 
     
@@ -94,14 +94,13 @@ public class TokenProvider {
     public AuthDto.SignInResponse generateToken(Authentication authentication) {
     	
         Map<String, Object> claims = new HashMap<>();
-        claims.put(CommonConstants.ADMIN_UUID.getTitle(), authentication.getName());
+        claims.put(AuthConstants.ADMIN_UUID.getTitle(), authentication.getName());
         
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        claims.put("role", userDetails.getAuthorities().iterator().next().getAuthority()); // role
-//        claims.put("email", userDetails.getEmail()); // email
+        claims.put(AuthConstants.ADMIN_ROLE.getTitle(), userDetails.getAuthorities().iterator().next().getAuthority()); // role
 
-        String accessToken = doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
-        String refreshToken = doGenerateToken(claims, CommonConstants.REFRESH_TOKEN.getTitle());
+        String accessToken = doGenerateToken(claims, AuthConstants.ACCESS_TOKEN.getTitle());
+        String refreshToken = doGenerateToken(claims, AuthConstants.REFRESH_TOKEN.getTitle());
 
         return AuthDto.SignInResponse.builder()
                 .accessToken(accessToken)
@@ -131,8 +130,8 @@ public class TokenProvider {
      * @return 토큰 유효성 검증
      */
     public boolean validateAccessToken(String accessToken, UserDetails userDetails) {
-        final String uuid = getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
-        return (uuid.equals(userDetails.getUsername())) && !isTokenExpired(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+        final String uuid = getUuidFromToken(accessToken, AuthConstants.ACCESS_TOKEN.getTitle());
+        return (uuid.equals(userDetails.getUsername())) && !isTokenExpired(accessToken, AuthConstants.ACCESS_TOKEN.getTitle());
     }
 
     /**
@@ -140,9 +139,9 @@ public class TokenProvider {
      * @return 토큰 유효성 검증
      */
     public String validateRefreshToken(String refreshToken) {
-        if (!isTokenExpired(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle())) {
-            final Claims claims = getAllClaimsFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
-            return doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
+        if (!isTokenExpired(refreshToken, AuthConstants.REFRESH_TOKEN.getTitle())) {
+            final Claims claims = getAllClaimsFromToken(refreshToken, AuthConstants.REFRESH_TOKEN.getTitle());
+            return doGenerateToken(claims, AuthConstants.ACCESS_TOKEN.getTitle());
         }
         throw new BusinessException(ResponseCode.TOKEN_EXPIRED);
     }
