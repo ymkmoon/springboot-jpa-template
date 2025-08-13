@@ -1,5 +1,7 @@
 package com.example.template.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +23,8 @@ import jakarta.annotation.PostConstruct;
 @Configuration
 public class ProdRedisConfig {
 	
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	@Value("${spring.redis.port}")
 	private int redisPort;
 	
@@ -30,9 +34,8 @@ public class ProdRedisConfig {
 
 	@PostConstruct
 	public void logRedisPort() {
-//		System.out.println("✅ Redis Host = " + redisHost);
-//        System.out.println("✅ Redis Port = " + redisPort);
-
+		logger.info("Redis Host = " + redisHost);
+		logger.info("Redis Port = " + redisPort);
 	}
 	
     @Bean
