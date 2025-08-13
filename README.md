@@ -12,5 +12,6 @@ JPA 사용 템플릿
 
 > ./gradlew wrapper --gradle-version 8.2
 
-> ./gradlew clean build
+> MAC : ./gradlew clean build
+> WIN : gradlew clean build
 
