@@ -10,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,6 +25,7 @@ import com.example.template.exception.JwtAccessDeniedHandler;
 import com.example.template.exception.JwtAuthenticationEntryPoint;
 import com.example.template.filter.JwtRequestFilter;
 import com.example.template.redis.RedisService;
+import com.example.template.security.CustomAuthenticationProvider;
 import com.example.template.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -37,6 +37,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint; // 인증 실패(401 Unauthorized) 처리를 위한 커스텀 엔트리 포인 (JWT 인증 실패 시 응답을 처리)
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler; // 권한 부족(403 Forbidden) 처리를 위한 커스텀 핸들러 (접근 거부 시 응답을 처리)
+    private final CustomAuthenticationProvider customAuthenticationProvider;
+
     
     private final ObjectMapper objectMapper; // JSON 직렬화 & 역직렬화를 위한 Jackson의 ObjectMapper
     private final TokenProvider tokenProvider; // JWT 토큰 생성, 검증 등을 담당하는 커스텀 클래스
@@ -58,11 +60,18 @@ public class SecurityConfig {
         return authProvider;
     }
 
+//    @Bean
+//    public AuthenticationManager authenticationManager(
+//            AuthenticationConfiguration configuration) throws Exception {
+//    	// Spring Security 의 인증 매니저를 빈 등록 > 사용자 인증 절차를 관리
+//        return configuration.getAuthenticationManager();
+//    }
+    
     @Bean
-    public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration) throws Exception {
-    	// Spring Security 의 인증 매니저를 빈 등록 > 사용자 인증 절차를 관리
-        return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+        return http.getSharedObject(AuthenticationManagerBuilder.class)
+                .authenticationProvider(customAuthenticationProvider)
+                .build();
     }
 
     @Bean

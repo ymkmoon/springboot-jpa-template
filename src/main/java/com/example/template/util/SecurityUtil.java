@@ -1,16 +1,17 @@
 package com.example.template.util;
 
+import com.example.template.constants.ApprovalStatus;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
-import com.example.template.model.entity.AdminEntity;
+import com.example.template.model.entity.AuthorityGroupEntity;
 
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class AdminUtil {
-
-	public void isActiveAccount(AdminEntity admin) {
-		switch (admin.getApprovalStatus()) {
+public class SecurityUtil {
+	
+	public void isActiveAccountStatus(ApprovalStatus approvalStatus) {
+		switch (approvalStatus) {
 	        case PENDING:
 	            throw new BusinessException(ResponseCode.ACCOUNT_PENDING); // 승인 대기 중
 	        case REJECTED:
@@ -25,14 +26,18 @@ public class AdminUtil {
 	        default:
 	            throw new BusinessException(ResponseCode.ACCOUNT_STATUS_UNKNOWN); // 예기치 않은 상태
 	    }
-		
-		if(!admin.isActive()) {
+	}
+	
+	public void isActiveAccountActive(boolean isActive) {
+		if(!isActive) {
             throw new BusinessException(ResponseCode.ACCOUNT_LOCK); // 예기치 않은 상태
 		}
-		
-		if(admin.getAuthorityGroup() == null) {
+	}
+	
+	public void isValidAuthorityGroup(AuthorityGroupEntity authorityGroup) {
+		if(authorityGroup == null) {
             throw new BusinessException(ResponseCode.INVALID_AUTHORITY_GROUP); // 권한이 부여되지 않은 계정
 		}
-		
 	}
+	
 }

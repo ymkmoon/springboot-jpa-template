@@ -37,17 +37,21 @@ INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_
 '01029320134', 'ymkmoon43@gmail.com', 'authority_group_uuid1', 'ACTIVE', 'SYSTEM', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid2', 'ymkmoon433', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기2', 
-'11129320134', 'ymkmoon433@gmail.com', 'authority_group_uuid2', 'PENDING', 'SYSTEM', 'SYSTEM');
+('admin_uuid2', 'ymkmoon1', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '승인대기', 
+'11129320134', 'ymkmoon433@gmail.com', 'authority_group_uuid1', 'PENDING', 'SYSTEM', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid3', 'ymkmoon4333', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기3', 
-'22229320134', 'ymkmoon4333@gmail.com', 'authority_group_uuid3', 'REJECTED', 'SYSTEM', 'SYSTEM');
+('admin_uuid3', 'ymkmoon2', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '반려', 
+'22229320134', 'ymkmoon4333@gmail.com', 'authority_group_uuid2', 'REJECTED', 'SYSTEM', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid4', 'ymkmoon43333', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기4', 
+('admin_uuid4', 'ymkmoon3', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '일시정지', 
 '33329320134', 'ymkmoon43333@gmail.com', 'authority_group_uuid3', 'SUSPENDED', 'SUSPENDED', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid6', 'ymkmoon433333', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기4', 
-'44429320134', 'ymkmoon433333@gmail.com', 'authority_group_uuid3', 'WITHDRAWN', 'SUSPENDED', 'SYSTEM');
+('admin_uuid6', 'ymkmoon4', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '탈퇴', 
+'44429320134', 'ymkmoon433333@gmail.com', 'authority_group_uuid4', 'WITHDRAWN', 'SUSPENDED', 'SYSTEM');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
+('admin_uuid7', 'ymkmoon5', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적', 
+'55529320134', 'ymkmoon4333333@gmail.com', 'authority_group_uuid4', 'ACTIVE', 'SYSTEM', 'SYSTEM', 'F');
