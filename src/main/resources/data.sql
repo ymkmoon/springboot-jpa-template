@@ -55,3 +55,7 @@ INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
 ('admin_uuid7', 'ymkmoon5', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적', 
 '55529320134', 'ymkmoon4333333@gmail.com', 'authority_group_uuid4', 'ACTIVE', 'SYSTEM', 'SYSTEM', 'F');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
+('admin_uuid8', 'ymkmoon6', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
+'66629320134', 'ymkmoon43333333@gmail.com', null, 'ACTIVE', 'SYSTEM', 'SYSTEM', 'T');

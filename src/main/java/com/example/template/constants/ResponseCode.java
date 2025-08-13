@@ -48,7 +48,7 @@ public enum ResponseCode {
     ACCOUNT_SUSPENDED(HttpStatus.UNAUTHORIZED, "40100015", "일시 정지 된 계정 입니다."), // 일시 정지 된 경우
     ACCOUNT_STATUS_UNKNOWN(HttpStatus.UNAUTHORIZED, "40100016", "인증 실패"), // approval status 가 비정상적인 경우
     ACCOUNT_LOCK(HttpStatus.UNAUTHORIZED, "40100017", "사용 불가능한 계정 입니다. 관리자에게 문의해주세요."), // is_active 가 F 인 경우
-    INVALID_AUTHORITY_GROUP(HttpStatus.UNAUTHORIZED, "40100018", "권한이 부여되지 않았습니. 관리자에게 문의해주세요."), // Active 상태 이지만 권한 그룹이 존재하지 않는 경우 
+    INVALID_AUTHORITY_GROUP(HttpStatus.UNAUTHORIZED, "40100018", "권한이 부여되지 않았습니다. 관리자에게 문의해주세요."), // Active 상태 이지만 권한 그룹이 존재하지 않는 경우 
     
     // 403
     ACCESS_DENIED(HttpStatus.FORBIDDEN, "40300001", "허가되지 않은 권한입니다."),

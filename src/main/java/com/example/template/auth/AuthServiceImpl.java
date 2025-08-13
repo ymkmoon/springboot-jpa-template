@@ -41,6 +41,8 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
         AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
                 .orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
         
+        SecurityUtil.isValidAuthorityGroup(admin.getAuthorityGroup());
+        
         return new CustomUserDetails(
                 admin.getId(),           // username
                 admin.getPassword(),     // password

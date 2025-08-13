@@ -28,12 +28,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         CustomUserDetails user = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
         
-        System.out.println("user : "+user.getAuthorities());
-
         // 상태 체크
         SecurityUtil.isActiveAccountStatus(user.getApprovalStatus());
         SecurityUtil.isActiveAccountActive(user.isActive());
-        SecurityUtil.isActiveAccountStatus(user.getApprovalStatus());
+        SecurityUtil.isValidAuthorityGroupByAuthorities(user.getAuthorities());
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException(ResponseCode.USER_NAME_NOT_FOUND.getDetail());

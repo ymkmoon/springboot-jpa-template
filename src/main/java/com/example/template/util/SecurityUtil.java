@@ -1,5 +1,9 @@
 package com.example.template.util;
 
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
+
 import com.example.template.constants.ApprovalStatus;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
@@ -38,6 +42,12 @@ public class SecurityUtil {
 		if(authorityGroup == null) {
             throw new BusinessException(ResponseCode.INVALID_AUTHORITY_GROUP); // 권한이 부여되지 않은 계정
 		}
+	}
+	
+	public void isValidAuthorityGroupByAuthorities(Collection<? extends GrantedAuthority> authorities) {
+	    if (authorities == null || authorities.isEmpty()) {
+	        throw new BusinessException(ResponseCode.INVALID_AUTHORITY_GROUP);
+	    }
 	}
 	
 }
