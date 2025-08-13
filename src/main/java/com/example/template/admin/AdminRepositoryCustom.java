@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import com.example.template.common.dto.AdminDto;
 import com.example.template.common.dto.QuerydslOrder;
 import com.example.template.model.entity.QAdminEntity;
+import com.example.template.model.entity.QAuthorityGroupEntity;
+import com.example.template.model.entity.QAuthorityLevelEntity;
 import com.example.template.util.CommonUtil;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -27,6 +29,9 @@ public class AdminRepositoryCustom {
 	
 	private final JPAQueryFactory queryFactory;
 	private static final QAdminEntity admin = QAdminEntity.adminEntity;
+	private static final QAuthorityGroupEntity authorityGroup = QAuthorityGroupEntity.authorityGroupEntity;
+    private static final QAuthorityLevelEntity authorityLevel = QAuthorityLevelEntity.authorityLevelEntity;
+	
 	
 	public Page<AdminDto.AdminResponse> searchAdmin(final AdminDto.AdminListRequest condition, final Pageable pageable) {
         
@@ -42,7 +47,7 @@ public class AdminRepositoryCustom {
                     admin.name,
                     admin.phoneNumber,
                     admin.email,
-                    admin.authorityGroup,
+                    admin.authorityGroup.level.levelCode,
                     admin.approvalStatus,
                     admin.createdAt,
                     admin.updatedAt,
@@ -51,6 +56,8 @@ public class AdminRepositoryCustom {
 
             )
             .from(admin)
+            .leftJoin(admin.authorityGroup, authorityGroup)
+            .leftJoin(authorityGroup.level, authorityLevel)
             .where(
                 loginIdEq(condition.getLoginId()),
                 nameEq(condition.getName()),
@@ -62,6 +69,7 @@ public class AdminRepositoryCustom {
             .orderBy(orders.stream().toArray(OrderSpecifier[]::new))
             .fetch(); // fetch() 메서드 사용
             
+		
         // 2. 전체 카운트를 별도로 가져옵니다.
         JPAQuery<Long> countQuery = queryFactory
             .select(admin.count())
@@ -99,6 +107,7 @@ public class AdminRepositoryCustom {
         List<OrderSpecifier<?>> orders = new ArrayList<>();
         OrderSpecifier<?> createdAt = new QuerydslOrder(Order.DESC, admin, "createdAt").getSortedColumn();
         orders.add(createdAt);
+        orders.add(admin.id.desc());
         return orders;
     }
 

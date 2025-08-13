@@ -49,13 +49,37 @@ INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_
 '33329320134', 'ymkmoon43333@gmail.com', 'authority_group_uuid3', 'SUSPENDED', 'SUSPENDED', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
-('admin_uuid6', 'ymkmoon4', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '탈퇴', 
+('admin_uuid5', 'ymkmoon4', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '탈퇴', 
 '44429320134', 'ymkmoon433333@gmail.com', 'authority_group_uuid4', 'WITHDRAWN', 'SUSPENDED', 'SYSTEM');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
-('admin_uuid7', 'ymkmoon5', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적', 
+('admin_uuid6', 'ymkmoon5', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적', 
 '55529320134', 'ymkmoon4333333@gmail.com', 'authority_group_uuid4', 'ACTIVE', 'SYSTEM', 'SYSTEM', 'F');
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
-('admin_uuid8', 'ymkmoon6', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
+('admin_uuid7', 'ymkmoon6', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
 '66629320134', 'ymkmoon43333333@gmail.com', null, 'ACTIVE', 'SYSTEM', 'SYSTEM', 'T');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
+('admin_uuid8', 'ymkmoon7', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
+'00629320134', '7@gmail.com', null, 'PENDING', 'SYSTEM', 'SYSTEM', 'T');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
+('admin_uuid9', 'ymkmoon8', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
+'00529320134', '8@gmail.com', null, 'PENDING', 'SYSTEM', 'SYSTEM', 'T');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
+('admin_uuid10', 'ymkmoon9', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
+'00429320134', '9@gmail.com', null, 'PENDING', 'SYSTEM', 'SYSTEM', 'T');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
+('admin_uuid11', 'ymkmoon10', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
+'00329320134', '10@gmail.com', null, 'PENDING', 'SYSTEM', 'SYSTEM', 'T');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
+('admin_uuid12', 'ymkmoon11', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
+'00229320134', '11@gmail.com', null, 'PENDING', 'SYSTEM', 'SYSTEM', 'T');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
+('admin_uuid13', 'ymkmoon12', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
+'00129320134', '12@gmail.com', null, 'PENDING', 'SYSTEM', 'SYSTEM', 'T');

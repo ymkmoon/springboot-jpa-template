@@ -13,8 +13,8 @@ public class QAdminDto_AdminResponse extends ConstructorExpression<AdminDto.Admi
 
     private static final long serialVersionUID = 1847240257L;
 
-    public QAdminDto_AdminResponse(com.querydsl.core.types.Expression<String> id, com.querydsl.core.types.Expression<String> loginId, com.querydsl.core.types.Expression<String> name, com.querydsl.core.types.Expression<String> phoneNumber, com.querydsl.core.types.Expression<String> email, com.querydsl.core.types.Expression<java.time.LocalDateTime> createdAt, com.querydsl.core.types.Expression<java.time.LocalDateTime> updatedAt, com.querydsl.core.types.Expression<Boolean> isActive) {
-        super(AdminDto.AdminResponse.class, new Class<?>[]{String.class, String.class, String.class, String.class, String.class, java.time.LocalDateTime.class, java.time.LocalDateTime.class, boolean.class}, id, loginId, name, phoneNumber, email, createdAt, updatedAt, isActive);
+    public QAdminDto_AdminResponse(com.querydsl.core.types.Expression<String> id, com.querydsl.core.types.Expression<String> loginId, com.querydsl.core.types.Expression<String> name, com.querydsl.core.types.Expression<String> phoneNumber, com.querydsl.core.types.Expression<String> email, com.querydsl.core.types.Expression<String> authorityLevel, com.querydsl.core.types.Expression<com.example.template.constants.ApprovalStatus> approvalStatus, com.querydsl.core.types.Expression<java.time.LocalDateTime> createdAt, com.querydsl.core.types.Expression<java.time.LocalDateTime> updatedAt, com.querydsl.core.types.Expression<Boolean> isActive) {
+        super(AdminDto.AdminResponse.class, new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, com.example.template.constants.ApprovalStatus.class, java.time.LocalDateTime.class, java.time.LocalDateTime.class, boolean.class}, id, loginId, name, phoneNumber, email, authorityLevel, approvalStatus, createdAt, updatedAt, isActive);
     }
 
 }

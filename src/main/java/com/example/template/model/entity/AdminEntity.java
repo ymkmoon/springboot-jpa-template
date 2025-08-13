@@ -87,6 +87,8 @@ public class AdminEntity extends BaseEntity {
 				.name(name)
 				.phoneNumber(phoneNumber)
 				.email(email)
+	            .authorityLevel(authorityGroup != null ? authorityGroup.getLevel().getLevelCode() : null)
+	            .approvalStatus(approvalStatus)
 				.createdAt(getCreatedAt())
 				.updatedAt(getUpdatedAt())
 				.isActive(isActive())

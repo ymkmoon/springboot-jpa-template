@@ -29,7 +29,7 @@ public interface AdminRepository extends JpaRepository<AdminEntity, String> {
                    "AND (:name IS NULL OR name = :name) " +
                    "AND (:email IS NULL OR email = :email) " +
                    "AND (:phoneNumber IS NULL OR phone_number = :phoneNumber) " +
-                   "ORDER BY created_at DESC " +
+                   "ORDER BY created_at DESC,id DESC " +
                    "LIMIT :limit OFFSET :offset",
                    nativeQuery = true)
     List<AdminEntity> findAdminListV1(@Param("loginId") String loginId,
@@ -45,5 +45,5 @@ public interface AdminRepository extends JpaRepository<AdminEntity, String> {
      * 메서드 이름 쿼리를 사용하며, Page 객체를 반환하여 페이징 정보를 함께 제공합니다.
      * DTO로 바로 매핑하는 기능은 제공하지 않으므로 엔티티를 반환합니다.
      */
-    Page<AdminEntity> findAllBy(Pageable pageable);
+    Page<AdminEntity> findAllByOrderByCreatedAtDescIdDesc(Pageable pageable);
 }

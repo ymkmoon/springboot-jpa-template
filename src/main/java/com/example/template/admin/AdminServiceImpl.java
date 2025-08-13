@@ -30,7 +30,7 @@ public class AdminServiceImpl implements AdminService {
                 pageable.getOffset(),
                 pageable.getPageSize()
         );
-        
+		
         return adminEntities.stream()
                 .map(AdminEntity::toAdminResponse)
                 .collect(Collectors.toList());
@@ -38,7 +38,7 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public List<AdminDto.AdminResponse> getAdminListV2(Pageable pageable, AdminDto.AdminListRequest condition) {
-		Page<AdminEntity> adminEntities = adminRepository.findAllBy(pageable);
+		Page<AdminEntity> adminEntities = adminRepository.findAllByOrderByCreatedAtDescIdDesc(pageable);
         
         return adminEntities.getContent().stream()
         		.map(AdminEntity::toAdminResponse)
