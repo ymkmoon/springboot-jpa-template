@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class H2Runner implements ApplicationRunner { 
 	
-	private static final Logger logger = LoggerFactory.getLogger(H2Runner.class);
-	
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private DataSource dataSource;
     
     @Value("${dev.profiles:local,mac}")
@@ -43,8 +43,8 @@ public class H2Runner implements ApplicationRunner {
     	
     	if(isDevProfile) {
     		try (Connection connection = dataSource.getConnection()) {
-            	logger.info("url: ", connection.getMetaData().getURL());
-            	logger.info("UserName: ", connection.getMetaData().getUserName());
+            	logger.info("DB url: ", connection.getMetaData().getURL());
+            	logger.info("DB UserName: ", connection.getMetaData().getUserName());
             }
     		
     	}
