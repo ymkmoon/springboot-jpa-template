@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.template.admin.AdminRepository;
@@ -21,6 +22,7 @@ import com.example.template.redis.RedisService;
 import com.example.template.refresh.token.RefreshTokenRepository;
 import com.example.template.security.CustomUserDetails;
 import com.example.template.security.TokenProvider;
+import com.example.template.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,17 +34,21 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final RedisService redisService;
 	private final TokenProvider tokenProvider;
+	private final PasswordEncoder passwordEncoder; 
 
     @Override
     public UserDetails loadUserByUsername(String username) {
         AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
                 .orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
-
+        
+        SecurityUtil.checkValidAccountAuthorityGroup(admin.getAuthorityGroup());
+        
         return new CustomUserDetails(
                 admin.getId(),           // username
                 admin.getPassword(),     // password
-                admin.getEmail(),        // email
-                admin.getRole().getCode() // role
+                admin.getApprovalStatus(),        // approval_status
+                admin.isActive(),
+                admin.getAuthorityGroup().getLevel().getLevelCode() // role
         );
     }
     
@@ -51,11 +57,16 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     	AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 
-        return new CustomUserDetails(
-                admin.getId(),
-                admin.getPassword(),
-                admin.getEmail(),
-                admin.getRole().getCode()
+    	SecurityUtil.checkValidAccountApprovalStatus(admin.getApprovalStatus());
+    	SecurityUtil.checkValidAccountActive(admin.isActive());
+    	SecurityUtil.checkValidAccountAuthorityGroup(admin.getAuthorityGroup());
+    	
+    	return new CustomUserDetails(
+                admin.getId(),           // username
+                admin.getPassword(),     // password
+                admin.getApprovalStatus(),        // approval_status
+                admin.isActive(),
+                admin.getAuthorityGroup().getLevel().getLevelCode() // role
         );
     }
 
@@ -130,7 +141,9 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	        throw new BusinessException(ResponseCode.ALREADY_REGIST_EMAIL);
 	    }
 	    
-    	adminRepository.save(signUpRequest.toEntity());
+	    String encodedPassword = passwordEncoder.encode(signUpRequest.getPassword());
+	    
+    	adminRepository.save(signUpRequest.toEntity(encodedPassword));
 	}
 	
 	

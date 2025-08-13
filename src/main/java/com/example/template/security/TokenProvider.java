@@ -98,7 +98,7 @@ public class TokenProvider {
         
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         claims.put("role", userDetails.getAuthorities().iterator().next().getAuthority()); // role
-        claims.put("email", userDetails.getEmail()); // email
+//        claims.put("email", userDetails.getEmail()); // email
 
         String accessToken = doGenerateToken(claims, CommonConstants.ACCESS_TOKEN.getTitle());
         String refreshToken = doGenerateToken(claims, CommonConstants.REFRESH_TOKEN.getTitle());

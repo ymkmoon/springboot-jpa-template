@@ -43,7 +43,6 @@ public class AuthController {
      */
     @PostMapping(value="/sign-up")
     public ResponseEntity<ApiResponse<Object>> signUp(@RequestBody @Valid AuthDto.SignUpRequest signUpRequest) {
-//        return new ResponseEntity<>(authService.signUp(signUpRequest), HttpStatus.OK);
         authService.signUp(signUpRequest);
         return ApiResponse.success();
     }
@@ -63,6 +62,7 @@ public class AuthController {
                 );
 
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
+        
         AuthDto.SignInResponse token = tokenProvider.generateToken(authentication);
         authService.saveRefreshToken(token);
         authService.saveAccessToken(authentication.getName(), token.getAccessToken());

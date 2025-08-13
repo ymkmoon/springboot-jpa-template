@@ -16,7 +16,7 @@ logging:
 
 spring:
   profiles:
-    active: local  # 사용할 프로파일 지정
+    active: mac  # 사용할 프로파일 지정
 
   devtools:
     livereload:
