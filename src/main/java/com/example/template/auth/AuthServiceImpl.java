@@ -41,7 +41,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
         AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
                 .orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
         
-        SecurityUtil.isValidAuthorityGroup(admin.getAuthorityGroup());
+        SecurityUtil.checkValidAccountAuthorityGroup(admin.getAuthorityGroup());
         
         return new CustomUserDetails(
                 admin.getId(),           // username
@@ -57,9 +57,9 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     	AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
 
-    	SecurityUtil.isActiveAccountStatus(admin.getApprovalStatus());
-    	SecurityUtil.isActiveAccountActive(admin.isActive());
-    	SecurityUtil.isValidAuthorityGroup(admin.getAuthorityGroup());
+    	SecurityUtil.checkValidAccountApprovalStatus(admin.getApprovalStatus());
+    	SecurityUtil.checkValidAccountActive(admin.isActive());
+    	SecurityUtil.checkValidAccountAuthorityGroup(admin.getAuthorityGroup());
     	
     	return new CustomUserDetails(
                 admin.getId(),           // username

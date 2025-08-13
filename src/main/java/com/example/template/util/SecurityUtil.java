@@ -14,7 +14,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class SecurityUtil {
 	
-	public void isActiveAccountStatus(ApprovalStatus approvalStatus) {
+	public void checkValidAccountApprovalStatus(ApprovalStatus approvalStatus) {
 		switch (approvalStatus) {
 	        case PENDING:
 	            throw new BusinessException(ResponseCode.ACCOUNT_PENDING); // 승인 대기 중
@@ -32,19 +32,19 @@ public class SecurityUtil {
 	    }
 	}
 	
-	public void isActiveAccountActive(boolean isActive) {
+	public void checkValidAccountActive(boolean isActive) {
 		if(!isActive) {
             throw new BusinessException(ResponseCode.ACCOUNT_LOCK); // 예기치 않은 상태
 		}
 	}
 	
-	public void isValidAuthorityGroup(AuthorityGroupEntity authorityGroup) {
+	public void checkValidAccountAuthorityGroup(AuthorityGroupEntity authorityGroup) {
 		if(authorityGroup == null) {
             throw new BusinessException(ResponseCode.INVALID_AUTHORITY_GROUP); // 권한이 부여되지 않은 계정
 		}
 	}
 	
-	public void isValidAuthorityGroupByAuthorities(Collection<? extends GrantedAuthority> authorities) {
+	public void checkValidAuthorityGroupByAuthorities(Collection<? extends GrantedAuthority> authorities) {
 	    if (authorities == null || authorities.isEmpty()) {
 	        throw new BusinessException(ResponseCode.INVALID_AUTHORITY_GROUP);
 	    }
