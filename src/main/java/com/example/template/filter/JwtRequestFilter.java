@@ -12,7 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import com.example.template.auth.AuthService;
-import com.example.template.constants.CommonConstants;
+import com.example.template.constants.AuthConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.constants.SecurityConstants;
 import com.example.template.error.FailResponse;
@@ -53,7 +53,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String accessToken = getAccessTokenFromRequestHeader(wrappedRequest);
         
     	try {
-    		String uuid = tokenProvider.getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+    		String uuid = tokenProvider.getUuidFromToken(accessToken, AuthConstants.ACCESS_TOKEN.getTitle());
     		String storedToken = redisService.getAccessToken(uuid);
 
             // Redis에 저장된 토큰과 비교

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.template.common.ApiResponse;
 import com.example.template.common.dto.AuthDto;
 import com.example.template.common.dto.AuthDto.SignInResponse;
-import com.example.template.constants.CommonConstants;
+import com.example.template.constants.AuthConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.security.TokenProvider;
 
@@ -86,9 +86,8 @@ public class AuthController {
     	if(!registRefreshToken) {
     		return ApiResponse.error(ResponseCode.INVALUD_REFRESH_TOKEN);
     	}
-    	
+    	String uuid = tokenProvider.getUuidFromToken(refreshRequest.getRefreshToken(), AuthConstants.REFRESH_TOKEN.getTitle());
     	String accessToken = tokenProvider.validateRefreshToken(refreshRequest.getRefreshToken());
-    	String uuid = tokenProvider.getUuidFromToken(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
     	authService.saveAccessToken(uuid, accessToken);
     	
     	AuthDto.SignInResponse response = AuthDto.SignInResponse.builder()

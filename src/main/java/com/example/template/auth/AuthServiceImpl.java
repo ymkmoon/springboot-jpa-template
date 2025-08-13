@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.dto.AuthDto;
-import com.example.template.constants.CommonConstants;
+import com.example.template.constants.AuthConstants;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
 import com.example.template.model.entity.AdminEntity;
@@ -73,7 +73,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
 	@Override
 	public AuthDto.RefreshResponse saveRefreshToken(AuthDto.SignInResponse token) {
-		String uuid = tokenProvider.getUuidFromToken(token.getRefreshToken(), CommonConstants.REFRESH_TOKEN.getTitle());
+		String uuid = tokenProvider.getUuidFromToken(token.getRefreshToken(), AuthConstants.REFRESH_TOKEN.getTitle());
 		
 		AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
@@ -105,7 +105,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	@Override
 	public boolean validateRegistRefreshToken(AuthDto.RefreshRequest refreshRequest) {
 		String refreshToken = refreshRequest.getRefreshToken();
-		String uuid = tokenProvider.getUuidFromToken(refreshToken, CommonConstants.REFRESH_TOKEN.getTitle());
+		String uuid = tokenProvider.getUuidFromToken(refreshToken, AuthConstants.REFRESH_TOKEN.getTitle());
 
 		AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
@@ -117,7 +117,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
 	@Override
 	public void saveAccessToken(String username, String accessToken) {
-        long accessTokenExpireIn = tokenProvider.getExpiration(accessToken, CommonConstants.ACCESS_TOKEN.getTitle());
+        long accessTokenExpireIn = tokenProvider.getExpiration(accessToken, AuthConstants.ACCESS_TOKEN.getTitle());
         
 		// 기존 토큰 삭제
         if (redisService.hasAccessToken(username)) {
