@@ -4,10 +4,12 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.template.common.dto.AdminDto;
 import com.example.template.common.dto.AdminDto.AdminResponse;
+import com.example.template.constants.ResponseCode;
 import com.example.template.common.dto.ListResponseDto;
 import com.example.template.model.entity.AdminEntity;
 
@@ -75,10 +77,10 @@ public class AdminServiceImpl implements AdminService {
 
 	@Override
 	public AdminResponse getAdminDetail(String id) {
-		return null;
+		AdminEntity admin = adminRepository.findById(id)
+				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
+		return admin.toAdminResponse();
 	}
-
-    
 
 }
 
