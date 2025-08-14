@@ -1,6 +1,7 @@
 package com.example.template.common;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
@@ -51,7 +52,7 @@ public class ApiResponse<T> {
                 .build()
         );
     }
-
+    
     public static <T> ResponseEntity<ApiResponse<T>> error(ResponseCode responseCode) {
         return ResponseEntity.status(responseCode.getHttpStatus())
             .body(ApiResponse.<T>builder()
@@ -68,5 +69,19 @@ public class ApiResponse<T> {
                 .message(message != null ? message : responseCode.getDetail())
                 .data(null)
                 .build();
+    }
+    
+    @Getter
+    @Builder
+    public static class ListResponse<T> {
+        private final long totalCount;
+        private final List<T> list;
+
+        public static <T> ListResponse<T> of(long totalCount, List<T> list) {
+            return ListResponse.<T>builder()
+                .totalCount(totalCount)
+                .list(list)
+                .build();
+        }
     }
 }
