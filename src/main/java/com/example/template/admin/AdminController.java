@@ -34,7 +34,7 @@ public class AdminController {
      * @param AdminListRequest 회원 조회에 사용되는 요청 정보
      * @return AdminListResponse 회원 목록
      * 
-     * SQL 을 이용한 회원 목록 조회 API
+     * 네이티브 쿼리를 이용한 회원 목록 조회 API
      */
     @GetMapping("/v1")
     public ResponseEntity<ApiResponse<ListResponseDto<AdminDto.AdminResponse>>> getAdminListV1(
@@ -50,7 +50,7 @@ public class AdminController {
      * @param AdminListRequest 회원 조회에 사용되는 요청 정보
      * @return AdminListResponse 회원 목록
      * 
-     * JPA 를 이용한 회원 목록 조회 API
+     * JPQL 를 이용한 회원 목록 조회 API
      */
     @GetMapping("/v2")
     public ResponseEntity<ApiResponse<ListResponseDto<AdminDto.AdminResponse>>> getAdminListV2(
