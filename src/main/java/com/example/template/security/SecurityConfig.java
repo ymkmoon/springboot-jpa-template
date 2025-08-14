@@ -1,4 +1,4 @@
-package com.example.template.config;
+package com.example.template.security;
 
 import java.util.Arrays;
 
@@ -12,6 +12,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,13 +21,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import com.example.template.auth.AuthService;
-import com.example.template.constants.SecurityConstants;
 import com.example.template.exception.JwtAccessDeniedHandler;
 import com.example.template.exception.JwtAuthenticationEntryPoint;
 import com.example.template.filter.JwtRequestFilter;
 import com.example.template.redis.RedisService;
-import com.example.template.security.CustomAuthenticationProvider;
-import com.example.template.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -100,7 +98,7 @@ public class SecurityConfig {
             		// 	e.g.) h2-console
             		// 클릭재킹(clickjacking) 공격을 방지하기 위해선 활성화 필요
             		// 화이트라벨 페이지나, API 서버에서 제공하는 웹 페이지에서 발생 가능성 있음
-            		headers.frameOptions(frameOptions -> frameOptions.disable()); 
+            		headers.frameOptions(FrameOptionsConfig::disable); 
             	}
             })
             .authorizeHttpRequests(auth -> { // HTTP 요청에 대한 인가 규칙을 설정

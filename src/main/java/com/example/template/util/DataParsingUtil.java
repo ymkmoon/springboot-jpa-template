@@ -23,7 +23,7 @@ import lombok.experimental.UtilityClass;
 public final class DataParsingUtil {
 
 	public static Map<String, Object> toMap(JSONObject jsonobj)  {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		@SuppressWarnings("unchecked")
 		Iterator<String> keys = jsonobj.keySet().iterator();
 		while(keys.hasNext()) {
@@ -39,7 +39,7 @@ public final class DataParsingUtil {
 	}
 
 	public static List<Object> toList(JSONArray array) {
-		List<Object> list = new ArrayList<Object>();
+		List<Object> list = new ArrayList<>();
 		for(int i = 0; i < array.size(); i++) {
 			Object value = array.get(i);
 			if (value instanceof JSONArray) {
