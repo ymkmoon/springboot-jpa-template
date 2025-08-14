@@ -84,7 +84,7 @@ public class LogAspect {
 	@Around("getMapping()")
 	public Object aroundGet(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) original);
+		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(original);
 		
 		Map<String, String[]> paramMap = wrappedRequest.getParameterMap();
 		if (logger.isInfoEnabled() && !paramMap.isEmpty()) {
@@ -96,7 +96,7 @@ public class LogAspect {
 	@Around("postMapping()")
 	public Object aroundPost(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) original);
+		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(original);
 		if (logger.isInfoEnabled()) {
 			logger.info("POST RequestBody : [ {} ]", IOUtils.toString(wrappedRequest.getReader()));
 		}
@@ -111,7 +111,7 @@ public class LogAspect {
 	@Around("patchMapping()")
 	public Object aroundPatch(ProceedingJoinPoint pjp) throws Throwable {
 		HttpServletRequest original = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) original);
+		ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(original);
 		if (logger.isInfoEnabled()) {
 			logger.info("PATCH RequestBody : [ {} ]", IOUtils.toString(wrappedRequest.getReader()));
 		}

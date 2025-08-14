@@ -43,8 +43,8 @@ public class H2Runner implements ApplicationRunner {
     	
     	if(isDevProfile) {
     		try (Connection connection = dataSource.getConnection()) {
-            	logger.info("DB url: ", connection.getMetaData().getURL());
-            	logger.info("DB UserName: ", connection.getMetaData().getUserName());
+            	logger.info("DB url : {}", connection.getMetaData().getURL());
+            	logger.info("DB UserName : {}", connection.getMetaData().getUserName());
             }
     		
     	}

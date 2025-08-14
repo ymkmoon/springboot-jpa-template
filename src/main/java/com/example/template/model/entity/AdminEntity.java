@@ -31,11 +31,6 @@ import lombok.NoArgsConstructor;
 @Entity(name="admin") 
 public class AdminEntity extends BaseEntity {
 
-//	@Id
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	@Column(name = "id", nullable = false, updatable = false, insertable = false)
-//	private Long id;
-	
 	@Id
     @Column(name = "id", nullable = false, updatable = false, length = 36) // UUID는 36자
     private String id;

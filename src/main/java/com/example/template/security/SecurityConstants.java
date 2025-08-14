@@ -1,4 +1,4 @@
-package com.example.template.constants;
+package com.example.template.security;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +11,7 @@ public class SecurityConstants {
 
 	// Request Header 에 토큰이 존재하지 않아도 PASS
 	// 권한에 대한 보안 체크 X
-	public static final String[] SECURITY_WHITELIST = {
+	protected static final String[] SECURITY_WHITELIST = {
 		    "/auth/sign-in",
 		    "/auth/sign-up"
 		};

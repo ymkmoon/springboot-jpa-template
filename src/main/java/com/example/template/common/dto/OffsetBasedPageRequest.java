@@ -33,7 +33,6 @@ public class OffsetBasedPageRequest implements Pageable, Serializable {
         }
         
         if (limit > 100) limit = 100;
-//        offset -= 1;
         
         this.limit = limit;
         this.offset = offset;

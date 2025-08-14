@@ -14,9 +14,9 @@ import org.springframework.web.util.ContentCachingRequestWrapper;
 import com.example.template.auth.AuthService;
 import com.example.template.constants.AuthConstants;
 import com.example.template.constants.ResponseCode;
-import com.example.template.constants.SecurityConstants;
 import com.example.template.error.FailResponse;
 import com.example.template.redis.RedisService;
+import com.example.template.security.SecurityConstants;
 import com.example.template.security.TokenProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,7 +47,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
         throws ServletException, IOException {
-        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper((HttpServletRequest) request);
+        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
         
         
         String accessToken = getAccessTokenFromRequestHeader(wrappedRequest);
@@ -85,17 +85,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         
         chain.doFilter(wrappedRequest, response);
     }
-    
-    /**
-     * return shouldNotFilter
-     * 	true : not execute doFilterInternal
-     * 	false : execute doFilterInternal
-     * 
-     */
-//    @Override
-//    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-//        return BASE_WHITE_LIST.stream().anyMatch(exclude -> request.getServletPath().startsWith(exclude));
-//    }
     
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {

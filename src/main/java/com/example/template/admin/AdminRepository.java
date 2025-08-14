@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import com.example.template.model.entity.AdminEntity;
 
-import jakarta.persistence.Entity;
-
 @Repository
 public interface AdminRepository extends JpaRepository<AdminEntity, String> {
 	AdminEntity findAccountByName(String name);
@@ -56,7 +54,7 @@ public interface AdminRepository extends JpaRepository<AdminEntity, String> {
     
     
 	/**
-     * V2: JPQL 을 사용한 회원 목록 조회
+     * V2: JPQL 을 사용한 회원 목록 조회	
      * @Query 어노테이션에 실제 테이블명(admin) 대신 엔티티명(@Entity(name="admin"))인 admin 을 작성
      */
     @Query("""

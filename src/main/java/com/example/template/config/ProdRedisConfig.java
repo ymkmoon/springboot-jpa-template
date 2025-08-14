@@ -34,8 +34,8 @@ public class ProdRedisConfig {
 
 	@PostConstruct
 	public void logRedisPort() {
-		logger.info("Redis Host = " + redisHost);
-		logger.info("Redis Port = " + redisPort);
+		logger.info("Redis Host : {}", redisHost);
+		logger.info("Redis Port : {}", redisPort);
 	}
 	
     @Bean
