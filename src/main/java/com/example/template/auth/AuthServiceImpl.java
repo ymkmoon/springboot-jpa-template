@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.dto.AuthDto;
@@ -37,6 +38,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	private final PasswordEncoder passwordEncoder; 
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) {
         AdminEntity admin = Optional.ofNullable(adminRepository.findAccountByLoginId(username))
                 .orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
@@ -53,6 +55,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUuid(String uuid) {
     	AdminEntity admin = adminRepository.findById(uuid)
 				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
@@ -72,6 +75,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
 
 	@Override
+	@Transactional(readOnly = false)
 	public AuthDto.RefreshResponse saveRefreshToken(AuthDto.SignInResponse token) {
 		String uuid = tokenProvider.getUuidFromToken(token.getRefreshToken(), AuthConstants.REFRESH_TOKEN.getTitle());
 		
@@ -103,6 +107,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public boolean validateRegistRefreshToken(AuthDto.RefreshRequest refreshRequest) {
 		String refreshToken = refreshRequest.getRefreshToken();
 		String uuid = tokenProvider.getUuidFromToken(refreshToken, AuthConstants.REFRESH_TOKEN.getTitle());
@@ -116,6 +121,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void saveAccessToken(String username, String accessToken) {
         long accessTokenExpireIn = tokenProvider.getExpiration(accessToken, AuthConstants.ACCESS_TOKEN.getTitle());
         
@@ -128,6 +134,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void signUp(AuthDto.SignUpRequest signUpRequest) {
 		if (adminRepository.existsByLoginId(signUpRequest.getLoginId())) {
 	        throw new BusinessException(ResponseCode.ALREADY_REGIST_LOGIN_ID);

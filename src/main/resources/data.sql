@@ -1,3 +1,11 @@
+-- write 계정 생성
+CREATE USER IF NOT EXISTS WRITE_USER PASSWORD 'write_password';
+GRANT ALL ON SCHEMA PUBLIC TO WRITE_USER;
+
+-- read 계정 생성
+CREATE USER IF NOT EXISTS READ_USER PASSWORD 'read_password';
+GRANT SELECT ON SCHEMA PUBLIC TO READ_USER;
+
 INSERT INTO authority_level (level_code, description, created_by, updated_by) VALUES ('SUPER_ADMIN', '최고 관리자', 'SYSTEM', 'SYSTEM');
 INSERT INTO authority_level (level_code, description, created_by, updated_by) VALUES ('MID_ADMIN', '중간 관리자', 'SYSTEM', 'SYSTEM');
 INSERT INTO authority_level (level_code, description, created_by, updated_by) VALUES ('USER', '일반 사용자', 'SYSTEM', 'SYSTEM');

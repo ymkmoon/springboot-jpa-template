@@ -2,13 +2,32 @@ server:
   port: 8000
 
 spring:
+  config:
+    activate:
+      on-profile: mac
+
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:ymk;MODE=MYSQL;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;
-    username: testDev
-    password: testDev
-    type: com.zaxxer.hikari.HikariDataSource
- 
+    # admin 은 로컬 환경에서만 추가 (실제 DB 가 아닌 h2 환경) 
+    admin:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:ymk;MODE=MYSQL;DB_CLOSE_ON_EXIT=FALSE;DB_CLOSE_DELAY=-1;INIT=RUNSCRIPT FROM 'classpath:data.sql'
+      username: ymk
+      password: ymk
+      type: com.zaxxer.hikari.HikariDataSource
+
+    write:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:ymk;MODE=MYSQL;DB_CLOSE_ON_EXIT=FALSE;
+      username: write_user # 쓰기 전용 계정
+      password: write_password
+      type: com.zaxxer.hikari.HikariDataSource
+    read:
+      driver-class-name: org.h2.Driver
+      jdbc-url: jdbc:h2:mem:ymk;MODE=MYSQL;DB_CLOSE_ON_EXIT=FALSE;
+      username: read_user # 읽기 전용 계정
+      password: read_password
+      type: com.zaxxer.hikari.HikariDataSource
+
     hikari:
       maximum-pool-size: 500
       minimumIdle: 9
@@ -42,7 +61,7 @@ jwt:
   tokens:
     - group: AccessToken
       secretKey: acc_ess_tok_ens_ecr_et
-      validity: 1800000  # 30분 (ms)
+      validity: 180000000  # 30분 (ms)
     - group: RefreshToken
       secretKey: ref_res_hto_ken_sec_ret
       validity: 259200000  # 3일 (ms)
