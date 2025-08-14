@@ -26,4 +26,8 @@ public class CommonUtil {
 	public boolean hasText(String str) {
 		return StringUtils.hasText(str);
 	}
+	
+	public String stringNormalize(String value) {
+        return (value == null || value.trim().isEmpty()) ? null : value.trim();
+    }
 }

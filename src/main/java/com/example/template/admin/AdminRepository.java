@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import com.example.template.model.entity.AdminEntity;
 
+import jakarta.persistence.Entity;
+
 @Repository
 public interface AdminRepository extends JpaRepository<AdminEntity, String> {
 	AdminEntity findAccountByName(String name);
@@ -22,16 +24,17 @@ public interface AdminRepository extends JpaRepository<AdminEntity, String> {
 	
 	/**
      * V1: 네이티브 SQL을 사용한 회원 목록 조회
-     * @Query 어노테이션에 nativeQuery = true 속성을 사용하여 SQL을 직접 작성합니다.
+     * @Query 어노테이션에 nativeQuery = true 속성을 사용하여 SQL을 직접 작성
      */
-    @Query(value = "SELECT * FROM admin " +
-                   "WHERE (:loginId IS NULL OR login_id = :loginId) " +
-                   "AND (:name IS NULL OR name = :name) " +
-                   "AND (:email IS NULL OR email = :email) " +
-                   "AND (:phoneNumber IS NULL OR phone_number = :phoneNumber) " +
-                   "ORDER BY created_at DESC,id DESC " +
-                   "LIMIT :limit OFFSET :offset",
-                   nativeQuery = true)
+	@Query(value = """
+	        SELECT * FROM admin
+	        WHERE (:loginId IS NULL OR login_id = :loginId)
+	          AND (:name IS NULL OR name = :name)
+	          AND (:email IS NULL OR email = :email)
+	          AND (:phoneNumber IS NULL OR phone_number = :phoneNumber)
+	        ORDER BY created_at DESC, id DESC
+	        LIMIT :limit OFFSET :offset
+	        """, nativeQuery = true)
     List<AdminEntity> findAdminListV1(@Param("loginId") String loginId,
                                       @Param("name") String name,
                                       @Param("email") String email,
@@ -39,22 +42,34 @@ public interface AdminRepository extends JpaRepository<AdminEntity, String> {
                                       @Param("offset") long offset,
                                       @Param("limit") int limit);
     
-    @Query(value = "SELECT COUNT(*) FROM admin " +
-            "WHERE (:loginId IS NULL OR login_id = :loginId) " +
-            "AND (:name IS NULL OR name = :name) " +
-            "AND (:email IS NULL OR email = :email) " +
-            "AND (:phoneNumber IS NULL OR phone_number = :phoneNumber)",
-            nativeQuery = true)
+	@Query(value = """
+	        SELECT COUNT(*) FROM admin
+	        WHERE (:loginId IS NULL OR login_id = :loginId)
+	          AND (:name IS NULL OR name = :name)
+	          AND (:email IS NULL OR email = :email)
+	          AND (:phoneNumber IS NULL OR phone_number = :phoneNumber)
+	        """, nativeQuery = true)
     long countAdminListV1(@Param("loginId") String loginId,
                           @Param("name") String name,
                           @Param("email") String email,
                           @Param("phoneNumber") String phoneNumber);
     
     
-    /**
-     * V2: Spring Data JPA의 Pageable을 활용한 회원 목록 조회
-     * 메서드 이름 쿼리를 사용하며, Page 객체를 반환하여 페이징 정보를 함께 제공합니다.
-     * DTO로 바로 매핑하는 기능은 제공하지 않으므로 엔티티를 반환합니다.
+	/**
+     * V2: JPQL 을 사용한 회원 목록 조회
+     * @Query 어노테이션에 실제 테이블명(admin) 대신 엔티티명(@Entity(name="admin"))인 admin 을 작성
      */
-    Page<AdminEntity> findAllByOrderByCreatedAtDescIdDesc(Pageable pageable);
+    @Query("""
+        SELECT a FROM admin a
+        WHERE (:loginId IS NULL OR a.loginId = :loginId)
+          AND (:name IS NULL OR a.name = :name)
+          AND (:email IS NULL OR a.email = :email)
+          AND (:phoneNumber IS NULL OR a.phoneNumber = :phoneNumber)
+        ORDER BY a.createdAt DESC, a.id DESC
+        """)
+    Page<AdminEntity> findAdminListV2(@Param("loginId") String loginId,
+                                      @Param("name") String name,
+                                      @Param("email") String email,
+                                      @Param("phoneNumber") String phoneNumber,
+                                      Pageable pageable);
 }

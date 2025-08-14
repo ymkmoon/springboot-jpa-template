@@ -59,13 +59,17 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ListResponseDto<AdminDto.AdminResponse> getAdminListV2(Pageable pageable, AdminDto.AdminListRequest condition) {
-        Page<AdminEntity> adminEntities = adminRepository.findAllByOrderByCreatedAtDescIdDesc(pageable);
+    	Page<AdminEntity> adminEntities = adminRepository.findAdminListV2(
+            condition.getLoginId(),
+            condition.getName(),
+            condition.getEmail(),
+            condition.getPhoneNumber(),
+            pageable
+        );
 
-        List<AdminDto.AdminResponse> list = adminEntities.getContent().stream()
+        return ListResponseDto.of(adminEntities.getTotalElements(), adminEntities.getContent().stream()
             .map(AdminEntity::toAdminResponse)
-            .toList();
-
-        return ListResponseDto.of(adminEntities.getTotalElements(), list);
+            .toList());
     }
 
     @Override
