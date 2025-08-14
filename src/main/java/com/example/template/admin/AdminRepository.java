@@ -39,6 +39,17 @@ public interface AdminRepository extends JpaRepository<AdminEntity, String> {
                                       @Param("offset") long offset,
                                       @Param("limit") int limit);
     
+    @Query(value = "SELECT COUNT(*) FROM admin " +
+            "WHERE (:loginId IS NULL OR login_id = :loginId) " +
+            "AND (:name IS NULL OR name = :name) " +
+            "AND (:email IS NULL OR email = :email) " +
+            "AND (:phoneNumber IS NULL OR phone_number = :phoneNumber)",
+            nativeQuery = true)
+    long countAdminListV1(@Param("loginId") String loginId,
+                          @Param("name") String name,
+                          @Param("email") String email,
+                          @Param("phoneNumber") String phoneNumber);
+    
     
     /**
      * V2: Spring Data JPA의 Pageable을 활용한 회원 목록 조회

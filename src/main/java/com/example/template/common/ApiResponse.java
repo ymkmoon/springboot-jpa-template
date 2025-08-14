@@ -51,7 +51,7 @@ public class ApiResponse<T> {
                 .build()
         );
     }
-
+    
     public static <T> ResponseEntity<ApiResponse<T>> error(ResponseCode responseCode) {
         return ResponseEntity.status(responseCode.getHttpStatus())
             .body(ApiResponse.<T>builder()

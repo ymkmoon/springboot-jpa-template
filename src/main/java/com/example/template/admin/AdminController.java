@@ -1,16 +1,16 @@
 package com.example.template.admin;
 
-import java.util.List;
-
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.template.common.ApiResponse;
 import com.example.template.common.dto.AdminDto;
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.common.dto.OffsetBasedPageRequest;
 
 import jakarta.validation.constraints.NotNull;
@@ -37,13 +37,14 @@ public class AdminController {
      * SQL 을 이용한 회원 목록 조회 API
      */
     @GetMapping("/v1")
-	public ResponseEntity<List<AdminDto.AdminResponse>> getVocQuestionsVer1(
-			AdminDto.AdminListRequest condition,
-			@RequestParam(name="offset") @NotNull long offset,
-    		@RequestParam(name="limit") @NotNull int limit) {
-		Pageable pageable = new OffsetBasedPageRequest(offset, limit);
-		return new ResponseEntity<>(adminService.getAdminListV1(pageable, condition), HttpStatus.OK);
-	}
+    public ResponseEntity<ApiResponse<ListResponseDto<AdminDto.AdminResponse>>> getAdminListV1(
+        AdminDto.AdminListRequest condition,
+		@RequestParam(name="offset") @NotNull long offset,
+		@RequestParam(name="limit") @NotNull int limit
+    ) {
+        Pageable pageable = new OffsetBasedPageRequest(offset, limit);
+        return ApiResponse.success(adminService.getAdminListV1(pageable, condition));
+    }
     
     /**
      * @param AdminListRequest 회원 조회에 사용되는 요청 정보
@@ -52,13 +53,15 @@ public class AdminController {
      * JPA 를 이용한 회원 목록 조회 API
      */
     @GetMapping("/v2")
-	public ResponseEntity<List<AdminDto.AdminResponse>> getVocQuestionsVer2(
-			AdminDto.AdminListRequest condition,
-			@RequestParam(name="offset") @NotNull long offset,
-    		@RequestParam(name="limit") @NotNull int limit) {
-		Pageable pageable = new OffsetBasedPageRequest(offset, limit);
-		return new ResponseEntity<>(adminService.getAdminListV2(pageable, condition), HttpStatus.OK);
-	}
+    public ResponseEntity<ApiResponse<ListResponseDto<AdminDto.AdminResponse>>> getAdminListV2(
+        AdminDto.AdminListRequest condition,
+        @RequestParam(name="offset") @NotNull long offset,
+		@RequestParam(name="limit") @NotNull int limit
+    ) {
+        Pageable pageable = new OffsetBasedPageRequest(offset, limit);
+        return ApiResponse.success(adminService.getAdminListV2(pageable, condition));
+    }
+
     
     /**
      * @param AdminListRequest 회원 조회에 사용되는 요청 정보
@@ -67,13 +70,28 @@ public class AdminController {
      * QueryDSL 을 이용한 회원 목록 조회 API
      */
     @GetMapping("/v3")
-	public ResponseEntity<List<AdminDto.AdminResponse>> getVocQuestionsVer3(
-			AdminDto.AdminListRequest condition,
-			@RequestParam(name="offset") @NotNull long offset,
-    		@RequestParam(name="limit") @NotNull int limit) {
-		Pageable pageable = new OffsetBasedPageRequest(offset, limit);
-		return new ResponseEntity<>(adminService.getAdminListV3(pageable, condition), HttpStatus.OK);
-	}
+    public ResponseEntity<ApiResponse<ListResponseDto<AdminDto.AdminResponse>>> getAdminListV3(
+        AdminDto.AdminListRequest condition,
+        @RequestParam(name="offset") @NotNull long offset,
+		@RequestParam(name="limit") @NotNull int limit
+    ) {
+        Pageable pageable = new OffsetBasedPageRequest(offset, limit);
+        return ApiResponse.success(adminService.getAdminListV3(pageable, condition));
+    }
+    
+    /**
+     * @param AdminListRequest 회원 조회에 사용되는 요청 정보
+     * @return AdminListResponse 회원 목록
+     * 
+     * QueryDSL 을 이용한 회원 목록 조회 API
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<AdminDto.AdminResponse>> getAdminDetail(
+		@PathVariable(value = "id") String id
+    ) {
+        return ApiResponse.success(adminService.getAdminDetail(id));
+    }
+
 }
 
 
