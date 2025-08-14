@@ -6,8 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.example.template.common.ApiResponse;
 import com.example.template.common.dto.AdminDto;
+import com.example.template.common.dto.AdminDto.AdminResponse;
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.model.entity.AdminEntity;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ public class AdminServiceImpl implements AdminService {
 	private final AdminRepository adminRepository;
 	private final AdminRepositoryCustom adminRepositoryCustom;
 
-	public ApiResponse.ListResponse<AdminDto.AdminResponse> getAdminListV1(Pageable pageable, AdminDto.AdminListRequest condition) {
+	public ListResponseDto<AdminDto.AdminResponse> getAdminListV1(Pageable pageable, AdminDto.AdminListRequest condition) {
         List<AdminEntity> adminEntities = adminRepository.findAdminListV1(
             condition.getLoginId(),
             condition.getName(),
@@ -40,7 +41,7 @@ public class AdminServiceImpl implements AdminService {
                condition.getPhoneNumber()
            );
 
-        return ApiResponse.ListResponse.of(totalCount, list);
+        return ListResponseDto.of(totalCount, list);
     }
 
 
@@ -55,22 +56,29 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ApiResponse.ListResponse<AdminDto.AdminResponse> getAdminListV2(Pageable pageable, AdminDto.AdminListRequest condition) {
+    public ListResponseDto<AdminDto.AdminResponse> getAdminListV2(Pageable pageable, AdminDto.AdminListRequest condition) {
         Page<AdminEntity> adminEntities = adminRepository.findAllByOrderByCreatedAtDescIdDesc(pageable);
 
         List<AdminDto.AdminResponse> list = adminEntities.getContent().stream()
             .map(AdminEntity::toAdminResponse)
             .toList();
 
-        return ApiResponse.ListResponse.of(adminEntities.getTotalElements(), list);
+        return ListResponseDto.of(adminEntities.getTotalElements(), list);
     }
 
     @Override
-    public ApiResponse.ListResponse<AdminDto.AdminResponse> getAdminListV3(Pageable pageable, AdminDto.AdminListRequest condition) {
+    public ListResponseDto<AdminDto.AdminResponse> getAdminListV3(Pageable pageable, AdminDto.AdminListRequest condition) {
         Page<AdminDto.AdminResponse> result = adminRepositoryCustom.searchAdmin(condition, pageable);
-        return ApiResponse.ListResponse.of(result.getTotalElements(), result.getContent());
+        return ListResponseDto.of(result.getTotalElements(), result.getContent());
     }
 
+
+	@Override
+	public AdminResponse getAdminDetail(String id) {
+		return null;
+	}
+
+    
 
 }
 
