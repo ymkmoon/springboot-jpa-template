@@ -38,3 +38,4 @@ out/
 
 ### Application Logs ###
 logfiles/
+/.apt_generated_tests/

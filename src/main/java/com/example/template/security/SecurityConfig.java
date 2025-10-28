@@ -105,7 +105,8 @@ public class SecurityConfig {
                 // 정적 리소스 허용
                 auth.requestMatchers("/favicon.ico", "/css/**", "/js/**", "/img/**", "/lib/**").permitAll();
                 if (isDevProfile) {
-                    auth.requestMatchers("/h2-console/**").permitAll(); // devProfiles일 때만 h2-console 허용
+                	auth.requestMatchers("/h2-console/**").permitAll(); // devProfiles일 때만 h2-console 허용
+                	auth.requestMatchers("/actuator/prometheus").permitAll(); // devProfiles일 때만 h2-console 허용
                 }
                 auth.requestMatchers(SecurityConstants.SECURITY_WHITELIST).permitAll(); // 인가없이 접근 가능한 화이트 리스트 설정
                 auth.anyRequest().authenticated(); // 화이트 리스트를 제외하곤 인증 절차
