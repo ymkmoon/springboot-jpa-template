@@ -1,8 +1,0 @@
-global:
-  scrape_interval: 5s  # 5초마다 수집
-
-scrape_configs:
-  - job_name: 'springboot-template'
-    metrics_path: '/template/actuator/prometheus'
-    static_configs:
-      - targets: ['host.docker.internal:8000']
