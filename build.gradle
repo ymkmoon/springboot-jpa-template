@@ -47,6 +47,9 @@ dependencies {
     implementation (group: 'it.ozimov', name: 'embedded-redis', version: '0.7.3') {
 	    exclude group: 'org.slf4j', module: 'slf4j-simple'
 	}
+	
+	implementation 'org.springframework.boot:spring-boot-starter-actuator' // for Prometheus
+    implementation 'io.micrometer:micrometer-registry-prometheus' // for Prometheus
     
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     
