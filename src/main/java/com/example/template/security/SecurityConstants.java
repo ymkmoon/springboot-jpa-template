@@ -10,13 +10,13 @@ public class SecurityConstants {
 	private SecurityConstants() {} // 인스턴스화 방지
 
 	// Request Header 에 토큰이 존재하지 않아도 PASS
-	// 권한에 대한 보안 체크 X
+	// + 권한에 대한 보안 체크 X
 	protected static final String[] SECURITY_WHITELIST = {
 		    "/auth/sign-in",
 		    "/auth/sign-up"
 		};
     
-	// Request Header 에 토큰이 존재해야만 PASS
+	// Request Header 에 토큰이 존재하지 않아도 PASS
 	public static final List<String> FILTER_WHITELIST =
             Collections.unmodifiableList(
                     Stream.concat(
@@ -24,8 +24,7 @@ public class SecurityConstants {
                             Arrays.stream(new String[]{
                                     "/h2-console",
                                     "/actuator",
-                                    "/actuator/health",
-                                    "/actuator/prometheus"
+                                    "/actuator/health"
                             })
                     ).distinct().toList()
             );
