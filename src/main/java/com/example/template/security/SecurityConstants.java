@@ -24,7 +24,8 @@ public class SecurityConstants {
                             Arrays.stream(new String[]{
                                     "/h2-console",
                                     "/actuator",
-                                    "/actuator/health"
+                                    "/actuator/health",
+                                    "/actuator/prometheus"
                             })
                     ).distinct().toList()
             );
