@@ -1,9 +1,12 @@
 package com.example.template.security;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
+import javax.crypto.SecretKey;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +20,7 @@ import com.example.template.exception.BusinessException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -71,10 +74,12 @@ public class TokenProvider {
 
     private Claims getAllClaimsFromToken(String token, String tokenType) {
         JwtConfig.TokenConfig tokenConfig = jwtConfig.getTokenConfig(tokenType);
+        SecretKey key = Keys.hmacShaKeyFor(tokenConfig.getSecretKey().getBytes(StandardCharsets.UTF_8));
         return Jwts.parser()
-                .setSigningKey(tokenConfig.getSecretKey())
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
     /**
@@ -115,12 +120,13 @@ public class TokenProvider {
      */
     private String doGenerateToken(Map<String, Object> claims, String tokenType) {
         JwtConfig.TokenConfig tokenConfig = jwtConfig.getTokenConfig(tokenType);
+        SecretKey key = Keys.hmacShaKeyFor(tokenConfig.getSecretKey().getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + tokenConfig.getValidity()))
-                .signWith(SignatureAlgorithm.HS512, tokenConfig.getSecretKey())
+                .claims(claims)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + tokenConfig.getValidity()))
+                .signWith(key)
                 .compact();
     }
 

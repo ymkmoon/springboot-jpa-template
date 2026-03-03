@@ -14,4 +14,6 @@ public interface AuthService {
 	
 	public UserDetails loadUserByUuid(String uuid) throws UsernameNotFoundException;
 
+	public void signOut(String uuid);
+
 }
