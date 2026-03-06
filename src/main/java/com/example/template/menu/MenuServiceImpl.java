@@ -13,7 +13,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MenuServiceImpl implements MenuService {
 
+    private final MenuRepository menuRepository;
     private final MenuRepositoryCustom menuRepositoryCustom;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MenuDto.MenuResponse> getAllMenus() {
+        return menuRepository.findAllActive().stream()
+            .map(m -> MenuDto.MenuResponse.builder()
+                .id(m.getId())
+                .menuName(m.getMenuName())
+                .path(m.getPath())
+                .sortOrder(m.getSortOrder())
+                .build())
+            .toList();
+    }
 
     @Override
     @Transactional(readOnly = true)

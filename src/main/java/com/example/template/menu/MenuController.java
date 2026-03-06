@@ -30,6 +30,14 @@ public class MenuController {
     private final MenuService menuService;
 
     /**
+     * @return 전체 메뉴 목록 (is_active = true)
+     */
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<MenuDto.MenuResponse>>> getAllMenus() {
+        return ApiResponse.success(menuService.getAllMenus());
+    }
+
+    /**
      * @return 접근 가능한 메뉴 목록
      *
      * JWT 토큰의 관리자 ID 기반으로 접근 가능한 메뉴 목록 조회
