@@ -86,15 +86,26 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
     @Override
     @Transactional
     public List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> createGroupMenus(AuthorityGroupMenuDto.CreateRequest request) {
-        AuthorityGroupEntity group = findActiveGroupOrThrow(request.getGroupId());
+        findActiveGroupOrThrow(request.getGroupId());
         return request.getMenuIds().stream()
             .map(menuId -> {
-                MenuEntity menu = findMenuOrThrow(menuId);
-                AuthorityGroupMenuEntity groupMenu = AuthorityGroupMenuEntity.builder()
-                    .authorityGroup(group)
-                    .menu(menu)
-                    .build();
-                return toGroupMenuResponse(authorityGroupMenuRepository.save(groupMenu));
+                findMenuOrThrow(menuId);
+                return authorityGroupMenuRepository.findByGroupIdAndMenuId(request.getGroupId(), menuId)
+                    .map(existing -> {
+                        if (existing.isActive()) {
+                            throw new BusinessException(ResponseCode.AUTHORITY_GROUP_MENU_ALREADY_EXISTS);
+                        }
+                        authorityGroupMenuRepository.activateById(existing.getId());
+                        return toGroupMenuResponse(authorityGroupMenuRepository.findActiveById(existing.getId())
+                            .orElseThrow(() -> new BusinessException(ResponseCode.AUTHORITY_GROUP_MENU_NOT_FOUND)));
+                    })
+                    .orElseGet(() -> {
+                        AuthorityGroupMenuEntity groupMenu = AuthorityGroupMenuEntity.builder()
+                            .authorityGroup(authorityGroupRepository.getReferenceById(request.getGroupId()))
+                            .menu(menuRepository.getReferenceById(menuId))
+                            .build();
+                        return toGroupMenuResponse(authorityGroupMenuRepository.save(groupMenu));
+                    });
             })
             .toList();
     }
@@ -102,25 +113,27 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
     @Override
     @Transactional
     public List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> updateGroupMenus(AuthorityGroupMenuDto.UpdateRequest request) {
-        AuthorityGroupEntity group = findActiveGroupOrThrow(request.getGroupId());
+        findActiveGroupOrThrow(request.getGroupId());
 
         // Step 1: 그룹의 전체 메뉴 매핑 비활성화
         authorityGroupMenuRepository.deactivateAllByGroupId(request.getGroupId());
 
         // Step 2: 요청된 menuId 목록 활성화 또는 신규 생성
-        request.getMenuIds().forEach(menuId -> {
-            findMenuOrThrow(menuId);
-            authorityGroupMenuRepository.findByGroupIdAndMenuId(request.getGroupId(), menuId)
-                .ifPresentOrElse(
-                    existing -> authorityGroupMenuRepository.activateById(existing.getId()),
-                    () -> authorityGroupMenuRepository.save(
-                        AuthorityGroupMenuEntity.builder()
-                            .authorityGroup(group)
-                            .menu(menuRepository.getReferenceById(menuId))
-                            .build()
-                    )
-                );
-        });
+        if (request.getMenuIds() != null && !request.getMenuIds().isEmpty()) {
+            request.getMenuIds().forEach(menuId -> {
+                findMenuOrThrow(menuId);
+                authorityGroupMenuRepository.findByGroupIdAndMenuId(request.getGroupId(), menuId)
+                    .ifPresentOrElse(
+                        existing -> authorityGroupMenuRepository.activateById(existing.getId()),
+                        () -> authorityGroupMenuRepository.save(
+                            AuthorityGroupMenuEntity.builder()
+                                .authorityGroup(authorityGroupRepository.getReferenceById(request.getGroupId()))
+                                .menu(menuRepository.getReferenceById(menuId))
+                                .build()
+                        )
+                    );
+            });
+        }
 
         // Step 3: 최종 활성 메뉴 목록 반환
         return authorityGroupMenuRepository.findActiveByGroupId(request.getGroupId()).stream()

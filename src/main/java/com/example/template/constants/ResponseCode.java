@@ -59,6 +59,7 @@ public enum ResponseCode {
     NOT_FOUND(HttpStatus.NOT_FOUND, "40400002", "NOT FOUND"),
     AUTHORITY_GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "40400003", "권한 그룹이 존재하지 않습니다."),
     AUTHORITY_GROUP_MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "40400004", "권한 그룹 메뉴가 존재하지 않습니다."),
+    AUTHORITY_GROUP_MENU_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "40000016", "이미 추가된 메뉴입니다."),
     MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "40400005", "메뉴가 존재하지 않습니다."),
     AUTHORITY_LEVEL_NOT_FOUND(HttpStatus.NOT_FOUND, "40400006", "권한 레벨이 존재하지 않습니다."),
     

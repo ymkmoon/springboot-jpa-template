@@ -14,10 +14,10 @@ import com.example.template.model.entity.AuthorityGroupMenuEntity;
 @Repository
 public interface AuthorityGroupMenuRepository extends JpaRepository<AuthorityGroupMenuEntity, String> {
 
-    @Query("SELECT agm FROM authority_group_menu agm WHERE agm.authorityGroup.id = :groupId AND agm.isActive = true ORDER BY agm.createdAt DESC")
+    @Query("SELECT agm FROM authority_group_menu agm WHERE agm.authorityGroup.id = :groupId AND agm.isActive = true AND agm.authorityGroup.isActive = true ORDER BY agm.createdAt DESC")
     List<AuthorityGroupMenuEntity> findActiveByGroupId(@Param("groupId") String groupId);
 
-    @Query("SELECT agm FROM authority_group_menu agm WHERE agm.id = :id AND agm.isActive = true")
+    @Query("SELECT agm FROM authority_group_menu agm WHERE agm.id = :id AND agm.isActive = true AND agm.authorityGroup.isActive = true")
     Optional<AuthorityGroupMenuEntity> findActiveById(@Param("id") String id);
 
     @Query("SELECT agm FROM authority_group_menu agm WHERE agm.authorityGroup.id = :groupId AND agm.menu.id = :menuId")

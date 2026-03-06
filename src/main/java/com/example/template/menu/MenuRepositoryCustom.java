@@ -37,7 +37,11 @@ public class MenuRepositoryCustom {
             .join(admin.authorityGroup, authorityGroup)
             .join(authorityGroup.menus, authorityGroupMenu)
             .join(authorityGroupMenu.menu, menu)
-            .where(admin.id.eq(adminId))
+            .where(
+                admin.id.eq(adminId),
+                authorityGroup.isActive.isTrue(),
+                authorityGroupMenu.isActive.isTrue()
+            )
             .orderBy(menu.sortOrder.asc())
             .fetch();
     }
@@ -51,7 +55,9 @@ public class MenuRepositoryCustom {
             .join(authorityGroupMenu.menu, menu)
             .where(
                 admin.id.eq(adminId),
-                menu.id.eq(menuId)
+                menu.id.eq(menuId),
+                authorityGroup.isActive.isTrue(),
+                authorityGroupMenu.isActive.isTrue()
             )
             .fetchFirst() != null;
     }
