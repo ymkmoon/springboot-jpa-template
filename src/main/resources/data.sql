@@ -36,6 +36,11 @@ INSERT INTO authority_group_menu (id, group_id, menu_id, created_by, updated_by)
 -- 일반사용자: 대시보드만
 INSERT INTO authority_group_menu (id, group_id, menu_id, created_by, updated_by) VALUES ('authority_group_menu_uuid9', 'authority_group_uuid4', 'menu_uuid1', 'SYSTEM', 'SYSTEM');
 
+-- 활성 상태(is_active = 'T')인 레코드에 대해 (group_id, menu_id) 중복 방지
+CREATE UNIQUE INDEX uix_authority_group_menu_active
+ON authority_group_menu (group_id, menu_id)
+WHERE is_active = 'T';
+
 
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
 ('admin_uuid1', 'ymkmoon43', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기', 
