@@ -2,6 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Agent & Workflow Rules
+
+For complex tasks (new features, bug fixes, refactoring), ALWAYS follow these steps before writing any code:
+
+1. **Read project context** — load relevant files from `.claude/project-context/` (architecture.md, coding-rules.md, error-handling.md, etc.)
+2. **Select the correct workflow** from `.claude/workflows/`:
+   - New feature → `feature.md`: planner → analyzer → backend → review → backend (if FAIL) → docs
+   - Bug fix → `bugfix.md`: analyzer → backend → review
+3. **Use subagents** defined in `.claude/agents/` for each step:
+   - `planner.md` — break work into tasks, identify affected files
+   - `analyzer.md` — trace request flow, identify dependencies
+   - `backend.md` — implement production-safe code
+   - `review.md` — validate architecture compliance (PASS/FAIL)
+   - `docs.md` — update documentation
+
+Simple, single-file changes do not require the full workflow.
+
 ## Build & Run
 
 ```bash
