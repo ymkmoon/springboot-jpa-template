@@ -55,4 +55,10 @@ public class AuthorityGroupEntity extends BaseEntity {
         this.name = name;
         this.description = description;
     }
+
+    public void update(AuthorityLevelEntity level, String name, String description) {
+        this.level = level;
+        this.name = name;
+        this.description = description;
+    }
 }

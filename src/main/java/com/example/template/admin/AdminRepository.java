@@ -18,6 +18,9 @@ public interface AdminRepository extends JpaRepository<AdminEntity, String> {
 	boolean existsByPhoneNumber(String phoneNumber);
 	boolean existsByEmail(String email);
 	boolean existsByLoginId(String loginId);
+
+	@Query("SELECT COUNT(a) > 0 FROM admin a WHERE a.authorityGroup.id = :groupId AND a.isActive = true")
+	boolean existsActiveAdminByAuthorityGroupId(@Param("groupId") String groupId);
 	
 	
 	/**

@@ -21,7 +21,18 @@ Menu Feature
 menu/MenuController.java
 menu/MenuService.java, menu/MenuServiceImpl.java
 menu/MenuRepositoryCustom.java
+menu/MenuRepository.java
 common/dto/MenuDto.java
+
+Authority Feature
+
+authority/AuthorityGroupController.java
+authority/AuthorityGroupService.java, authority/AuthorityGroupServiceImpl.java
+authority/AuthorityGroupRepository.java
+authority/AuthorityGroupMenuRepository.java
+authority/AuthorityLevelRepository.java
+common/dto/AuthorityGroupDto.java
+common/dto/AuthorityGroupMenuDto.java
 
 Shared / Config
 

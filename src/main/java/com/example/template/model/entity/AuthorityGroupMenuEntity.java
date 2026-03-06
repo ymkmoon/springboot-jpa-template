@@ -45,4 +45,8 @@ public class AuthorityGroupMenuEntity extends BaseEntity {
         this.authorityGroup = authorityGroup;
         this.menu = menu;
     }
+
+    public void updateMenu(MenuEntity menu) {
+        this.menu = menu;
+    }
 }
