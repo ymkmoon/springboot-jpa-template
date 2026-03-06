@@ -59,8 +59,8 @@ spring:
 jwt:
   tokens:
     - group: AccessToken
-      secretKey: acc_ess_tok_ens_ecr_et
+      secretKey: access_token_secret_key_for_jwt_sha_256_bit
       validity: 180000000  # 30분 (ms)
     - group: RefreshToken
-      secretKey: ref_res_hto_ken_sec_ret
+      secretKey: refresh_token_secret_key_for_jwt_sha_256_bit
       validity: 259200000  # 3일 (ms)

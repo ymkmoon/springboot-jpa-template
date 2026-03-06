@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -75,9 +76,21 @@ public class AuthController {
     }
     
     /**
+     * 로그아웃 API
+     * - Redis 액세스 토큰 삭제
+     * - DB 리프레시 토큰 삭제
+     */
+    @PostMapping(value = "/sign-out")
+    public ResponseEntity<ApiResponse<Object>> signOut() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        authService.signOut(authentication.getName());
+        return ApiResponse.success();
+    }
+
+    /**
      * @param refreshRequest 토큰 갱신에 사용 될 정보
      * @return 갱신 된 Access Token 과 현재 Refresh Token
-     * 
+     *
      * 토큰 갱신 API
      */
     @PostMapping(value = "/refresh-token")

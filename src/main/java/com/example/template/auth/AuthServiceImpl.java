@@ -134,6 +134,17 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 	}
 
 	@Override
+	@Transactional
+	public void signOut(String uuid) {
+		if (redisService.hasAccessToken(uuid)) {
+			redisService.deleteAccessToken(uuid);
+		}
+		AdminEntity admin = adminRepository.findById(uuid)
+				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
+		refreshTokenRepository.deleteByAdminId(admin);
+	}
+
+	@Override
 	@Transactional(readOnly = false)
 	public void signUp(AuthDto.SignUpRequest signUpRequest) {
 		if (adminRepository.existsByLoginId(signUpRequest.getLoginId())) {
