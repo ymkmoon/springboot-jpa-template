@@ -214,6 +214,15 @@ INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_
 
 ---
 
+## Test
+
+```bash
+./gradlew test
+```
+
+---
+
+
 ## 참고
 
 - H2 DB와 MySQL의 Dialect 차이를 고려

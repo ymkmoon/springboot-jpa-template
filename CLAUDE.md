@@ -10,12 +10,14 @@ For complex tasks (new features, bug fixes, refactoring), ALWAYS follow these st
 2. **Select the correct workflow** from `.claude/workflows/`:
    - New feature → `feature.md`: planner → analyzer → backend → review → backend (if FAIL) → docs
    - Bug fix → `bugfix.md`: analyzer → backend → review
+   - Refactoring → refactoring.md: analyzer → refactor → review → refactor (if FAIL) → docs
 3. **Use subagents** defined in `.claude/agents/` for each step:
    - `planner.md` — break work into tasks, identify affected files
    - `analyzer.md` — trace request flow, identify dependencies
    - `backend.md` — implement production-safe code
    - `review.md` — validate architecture compliance (PASS/FAIL)
    - `docs.md` — update documentation
+   - `refactor.md` — improve code quality without changing external behavior
 
 Simple, single-file changes do not require the full workflow.
 

@@ -1,6 +1,7 @@
 package com.example.template.exception;
 
 import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -31,7 +33,6 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import jakarta.validation.ConstraintViolationException;
 
@@ -53,17 +54,40 @@ public class GlobalExceptionHandler {
      * 주로 @RequestBody, @RequestPart 어노테이션에서 발생
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ApiResponse<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         logger.error("handleMethodArgumentNotValidException", e);
         String errorMessage = e.getBindingResult()
                 .getAllErrors()
                 .stream()
+                .sorted(Comparator.comparing(ObjectError::getDefaultMessage)) // 알파벳 정렬로 고정
                 .findFirst()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse(ResponseCode.REQUEST_BINDING_ERROR.getDetail());
 
-        return ApiResponse.error(ResponseCode.REQUEST_BINDING_ERROR, errorMessage);
+        return ResponseEntity
+                .status(ResponseCode.REQUEST_BINDING_ERROR.getHttpStatus())
+                .body(ApiResponse.error(ResponseCode.REQUEST_BINDING_ERROR, errorMessage));
     }
+    
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+//        logger.error("handleMethodArgumentNotValidException", e);
+//
+//        List<Map<String, String>> errors = e.getBindingResult()
+//                .getFieldErrors()
+//                .stream()
+//                .map(fe -> Map.of("field", fe.getField(), "message", fe.getDefaultMessage()))
+//                .sorted(Comparator.comparing(m -> m.get("message")))
+//                .toList();
+//
+//        return ResponseEntity
+//                .status(ResponseCode.REQUEST_BINDING_ERROR.getHttpStatus())
+//                .body(ApiResponse.<Object>builder()
+//                        .code(ResponseCode.REQUEST_BINDING_ERROR.getCode())
+//                        .message(ResponseCode.REQUEST_BINDING_ERROR.getDetail())
+//                        .data(errors)
+//                        .build());
+//    }
 
     /**
      * @ModelAttribut 으로 binding error 발생시 BindException 발생한다.
@@ -212,15 +236,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnsupportedJwtException.class)
     protected ResponseEntity<ApiResponse<Object>> handleUnsupportedJwtException(UnsupportedJwtException e) {
     	logger.error("handleUnsupportedJwtException", e);
-    	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
-    }
-    
-    /**
-     * JWT의 기존 서명을 확인하지 못했을 경우
-     */
-    @ExceptionHandler(SignatureException.class)
-    protected ResponseEntity<ApiResponse<Object>> handleSignatureException(SignatureException e) {
-    	logger.error("handleSignatureException", e);
     	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
     }
     
