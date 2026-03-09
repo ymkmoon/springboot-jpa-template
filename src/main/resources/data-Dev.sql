@@ -40,13 +40,9 @@ INSERT INTO authority_group_menu (id, group_id, menu_id, created_by, updated_by)
 ('authority_group_menu_uuid8', 'authority_group_uuid3', 'menu_uuid4', 'SYSTEM', 'SYSTEM'),
 ('authority_group_menu_uuid9', 'authority_group_uuid4', 'menu_uuid1', 'SYSTEM', 'SYSTEM');
 
--- 활성 상태(is_active = 'T')인 레코드에 대해 (group_id, menu_id) 중복 방지
--- MySQL은 WHERE 절 부분 인덱스 미지원으로 함수형 고유 인덱스 사용
-CREATE UNIQUE INDEX uix_authority_group_menu_active
-ON authority_group_menu (
-    (CASE WHEN is_active = 'T' THEN group_id ELSE NULL END),
-    (CASE WHEN is_active = 'T' THEN menu_id ELSE NULL END)
-);
+-- (group_id, menu_id) 중복 방지 (소프트 삭제 행은 재활성화로 재사용하므로 단순 유니크로 충분)
+CREATE UNIQUE INDEX uix_authority_group_menu
+ON authority_group_menu (group_id, menu_id);
 
 -- admin
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) VALUES
