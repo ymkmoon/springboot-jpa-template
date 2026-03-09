@@ -30,7 +30,22 @@
       "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | grep -E \"tests completed|FAILED|BUILD|error\")",
       "Bash(./gradlew test jacocoTestReport 2>&1 | tail -20)",
       "Bash(open /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/reports/jacoco/test/html/index.html)",
-      "Bash(cat /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/reports/jacoco/test/html/index.html | grep -E \"\\(td|Total|package\\)\" | grep -v \"^$\" | head -100)"
+      "Bash(cat /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/reports/jacoco/test/html/index.html | grep -E \"\\(td|Total|package\\)\" | grep -v \"^$\" | head -100)",
+      "Bash(find /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/reports/jacoco -name \"*.html\" -o -name \"*.xml\" 2>/dev/null | head -5)",
+      "Bash(./gradlew clean test jacocoTestReport 2>&1 | tail -5)",
+      "Bash(./gradlew test jacocoTestReport 2>&1 | tail -30)",
+      "Bash(./gradlew compileTestJava 2>&1 | grep \"error:\" | head -20)",
+      "Bash(./gradlew compileTestJava 2>&1 | grep -E \"error:|warning:\" | head -20)",
+      "Bash(./gradlew test 2>&1 | grep -E \"FAILED|ERROR|Exception\" | head -30)",
+      "Bash(./gradlew test --tests \"com.example.template.exception.GlobalExceptionHandlerTest\" 2>&1 | grep -A 5 \"FAILED\\\\|AssertionError\")",
+      "Bash(./gradlew test jacocoTestReport 2>&1 | tail -15)",
+      "Bash(./gradlew test 2>&1 | grep -E \"FAILED|Exception\" | head -20)",
+      "Bash(./gradlew test --tests \"com.example.template.exception.JwtAccessDeniedHandlerTest\" 2>&1 | grep -A 10 \"InvalidDefinitionException\")",
+      "Bash(./gradlew test jacocoTestReport 2>&1 | tail -10)",
+      "Bash(./gradlew compileTestJava 2>&1 | grep -A 3 \"error:\")",
+      "Bash(./gradlew test --tests \"com.example.template.admin.AdminRepositoryCustomTest\" 2>&1 | grep \"NoSuchBeanDefinition\" | head -5)",
+      "Bash(python3 -c \"\nimport re\nwith open\\('/Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/reports/tests/test/classes/com.example.template.admin.AdminRepositoryCustomTest.html'\\) as f:\n    text = re.sub\\('<[^>]+>', ' ', f.read\\(\\)\\)\nidx = text.find\\('NoSuchBean'\\)\nprint\\(text[idx:idx+400]\\)\n\")",
+      "Bash(python3 -c \"\nimport re\nwith open\\('/Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/reports/tests/test/classes/com.example.template.admin.AdminRepositoryCustomTest\\\\$SearchAdmin.html'\\) as f:\n    text = re.sub\\('<[^>]+>', ' ', f.read\\(\\)\\)\nidx = text.find\\('NoSuchBean'\\)\nprint\\(text[max\\(0,idx-50\\):idx+500]\\)\n\")"
     ]
   }
 }

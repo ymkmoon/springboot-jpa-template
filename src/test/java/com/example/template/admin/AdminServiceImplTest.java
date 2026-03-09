@@ -197,6 +197,33 @@ class AdminServiceImplTest {
         }
     }
 
+    // ── countAdminListV1 ──────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("countAdminListV1")
+    class CountAdminListV1 {
+
+        @Test
+        @DisplayName("전체_카운트_반환")
+        void 전체카운트() {
+            given(adminRepository.countAdminListV1(any(), any(), any(), any())).willReturn(5L);
+
+            long count = adminService.countAdminListV1(emptyCondition());
+
+            assertThat(count).isEqualTo(5L);
+        }
+
+        @Test
+        @DisplayName("조건검색_카운트_반환")
+        void 조건검색카운트() {
+            given(adminRepository.countAdminListV1(any(), any(), any(), any())).willReturn(1L);
+
+            long count = adminService.countAdminListV1(loginIdCondition("targetuser"));
+
+            assertThat(count).isEqualTo(1L);
+        }
+    }
+
     // ── getAdminDetail ────────────────────────────────────────────────────────
 
     @Nested

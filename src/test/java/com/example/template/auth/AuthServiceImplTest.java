@@ -270,4 +270,119 @@ class AuthServiceImplTest {
             then(redisService).should().saveAccessToken("uuid", "new-token", 600000L);
         }
     }
+
+    // ── loadUserByUsername ─────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("loadUserByUsername")
+    class LoadUserByUsername {
+
+        @Test
+        @DisplayName("성공_CustomUserDetails_반환")
+        void 성공() {
+            AdminEntity admin = buildActiveAdmin("user1");
+            given(adminRepository.findAccountByLoginId("user1")).willReturn(admin);
+
+            var result = authService.loadUserByUsername("user1");
+
+            assertThat(result.getUsername()).isEqualTo(admin.getId());
+        }
+
+        @Test
+        @DisplayName("실패_존재하지않는_로그인ID_UsernameNotFoundException")
+        void 실패_유저없음() {
+            given(adminRepository.findAccountByLoginId("unknown")).willReturn(null);
+
+            assertThatThrownBy(() -> authService.loadUserByUsername("unknown"))
+                    .isInstanceOf(UsernameNotFoundException.class);
+        }
+    }
+
+    // ── loadUserByUuid ─────────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("loadUserByUuid")
+    class LoadUserByUuid {
+
+        @Test
+        @DisplayName("성공_CustomUserDetails_반환")
+        void 성공() {
+            AdminEntity admin = buildActiveAdmin("user1");
+            given(adminRepository.findById("test-uuid")).willReturn(Optional.of(admin));
+
+            var result = authService.loadUserByUuid("test-uuid");
+
+            assertThat(result.getUsername()).isEqualTo(admin.getId());
+        }
+
+        @Test
+        @DisplayName("실패_존재하지않는_UUID_UsernameNotFoundException")
+        void 실패_유저없음() {
+            given(adminRepository.findById("nonexistent")).willReturn(Optional.empty());
+
+            assertThatThrownBy(() -> authService.loadUserByUuid("nonexistent"))
+                    .isInstanceOf(UsernameNotFoundException.class);
+        }
+    }
+
+    // ── saveRefreshToken ───────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("saveRefreshToken")
+    class SaveRefreshToken {
+
+        private AuthDto.SignInResponse buildSignInResponse() {
+            return AuthDto.SignInResponse.builder()
+                    .accessToken("access-token")
+                    .refreshToken("refresh-token")
+                    .build();
+        }
+
+        @Test
+        @DisplayName("성공_기존토큰없으면_새로_저장")
+        void 성공_신규저장() {
+            AdminEntity admin = buildActiveAdmin("user1");
+            given(tokenProvider.getUuidFromToken("refresh-token", AuthConstants.REFRESH_TOKEN.getTitle()))
+                    .willReturn("test-uuid");
+            given(adminRepository.findById("test-uuid")).willReturn(Optional.of(admin));
+            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(null);
+            given(refreshTokenRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
+
+            AuthDto.RefreshResponse result = authService.saveRefreshToken(buildSignInResponse());
+
+            assertThat(result.getRefreshToken()).isEqualTo("refresh-token");
+            then(refreshTokenRepository).should().save(any());
+        }
+
+        @Test
+        @DisplayName("성공_기존토큰있으면_갱신")
+        void 성공_토큰갱신() {
+            AdminEntity admin = buildActiveAdmin("user1");
+            RefreshTokenEntity existing = RefreshTokenEntity.builder()
+                    .adminId(admin)
+                    .refreshToken("old-refresh-token")
+                    .build();
+
+            given(tokenProvider.getUuidFromToken("refresh-token", AuthConstants.REFRESH_TOKEN.getTitle()))
+                    .willReturn("test-uuid");
+            given(adminRepository.findById("test-uuid")).willReturn(Optional.of(admin));
+            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(existing);
+
+            AuthDto.RefreshResponse result = authService.saveRefreshToken(buildSignInResponse());
+
+            assertThat(result.getRefreshToken()).isEqualTo("refresh-token");
+            then(refreshTokenRepository).should(never()).save(any());
+        }
+
+        @Test
+        @DisplayName("실패_존재하지않는_UUID_UsernameNotFoundException")
+        void 실패_유저없음() {
+            given(tokenProvider.getUuidFromToken("refresh-token", AuthConstants.REFRESH_TOKEN.getTitle()))
+                    .willReturn("nonexistent");
+            given(adminRepository.findById("nonexistent")).willReturn(Optional.empty());
+
+            assertThatThrownBy(() -> authService.saveRefreshToken(buildSignInResponse()))
+                    .isInstanceOf(UsernameNotFoundException.class);
+        }
+    }
 }
