@@ -26,7 +26,11 @@
       "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | tail -20)",
       "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --rerun-tasks 2>&1 | grep -E \"tests completed|FAILED|BUILD\")",
       "Bash(find /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/test-results -name \"TEST-*.xml\" -exec grep -h 'tests=' {})",
-      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | grep -E \"tests completed|FAILED|BUILD\")"
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | grep -E \"tests completed|FAILED|BUILD\")",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | grep -E \"tests completed|FAILED|BUILD|error\")",
+      "Bash(./gradlew test jacocoTestReport 2>&1 | tail -20)",
+      "Bash(open /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/reports/jacoco/test/html/index.html)",
+      "Bash(cat /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/reports/jacoco/test/html/index.html | grep -E \"\\(td|Total|package\\)\" | grep -v \"^$\" | head -100)"
     ]
   }
 }

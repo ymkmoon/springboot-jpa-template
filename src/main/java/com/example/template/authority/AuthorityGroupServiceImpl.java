@@ -147,15 +147,6 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
             .orElseThrow(() -> new BusinessException(ResponseCode.AUTHORITY_GROUP_NOT_FOUND));
     }
 
-    private AuthorityGroupMenuEntity findActiveGroupMenuOrThrow(String groupId, String id) {
-        AuthorityGroupMenuEntity groupMenu = authorityGroupMenuRepository.findActiveById(id)
-            .orElseThrow(() -> new BusinessException(ResponseCode.AUTHORITY_GROUP_MENU_NOT_FOUND));
-        if (!groupMenu.getAuthorityGroup().getId().equals(groupId)) {
-            throw new BusinessException(ResponseCode.AUTHORITY_GROUP_MENU_NOT_FOUND);
-        }
-        return groupMenu;
-    }
-
     private AuthorityLevelEntity findLevelOrThrow(String levelCode) {
         return authorityLevelRepository.findById(levelCode)
             .orElseThrow(() -> new BusinessException(ResponseCode.AUTHORITY_LEVEL_NOT_FOUND));
