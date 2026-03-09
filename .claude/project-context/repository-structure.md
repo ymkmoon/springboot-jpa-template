@@ -26,3 +26,17 @@ src/main/resources/
 src/main/generated/   # QueryDSL Q-classes (do not edit)
 
 src/test/
+  java/com/example/template/
+    ApplicationTests.java
+    auth/
+      AuthControllerTest.java
+      AuthServiceImplTest.java
+    admin/
+      AdminControllerTest.java
+      AdminServiceImplTest.java
+    menu/
+      MenuControllerTest.java
+      MenuServiceImplTest.java
+    authority/
+      AuthorityGroupControllerTest.java
+      AuthorityGroupServiceImplTest.java

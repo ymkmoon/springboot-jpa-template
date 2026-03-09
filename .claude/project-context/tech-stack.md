@@ -22,5 +22,11 @@ Spring Actuator
 Prometheus
 Docker (Redis, optional)
 
+Testing
+JUnit 5 (JUnit Jupiter)
+Mockito (via spring-boot-starter-test)
+Spring Boot Test / MockMvc (@WebMvcTest, @ExtendWith)
+spring-security-test (SecurityMockMvcRequestPostProcessors)
+
 Dev Environment
 macOS Apple Silicon (default profile: mac)
