@@ -10,6 +10,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +27,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "authority_group_menu")
+@Table(
+    name = "authority_group_menu",
+    uniqueConstraints = @UniqueConstraint(
+        name = "uix_authority_group_menu",
+        columnNames = {"group_id", "menu_id"}
+    )
+)
 public class AuthorityGroupMenuEntity extends BaseEntity {
 
     @Id
@@ -43,6 +52,10 @@ public class AuthorityGroupMenuEntity extends BaseEntity {
     public AuthorityGroupMenuEntity(AuthorityGroupEntity authorityGroup, MenuEntity menu) {
         this.id = UUID.randomUUID().toString();
         this.authorityGroup = authorityGroup;
+        this.menu = menu;
+    }
+
+    public void updateMenu(MenuEntity menu) {
         this.menu = menu;
     }
 }

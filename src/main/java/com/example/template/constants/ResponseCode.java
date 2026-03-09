@@ -28,6 +28,7 @@ public enum ResponseCode {
     ALREADY_REGIST_PHONE_NUMBER(HttpStatus.BAD_REQUEST, "40000012", "이미 가입한 핸드폰 번호 입니다."),
     ALREADY_REGIST_EMAIL(HttpStatus.BAD_REQUEST, "40000013", "이미 가입한 이메일 입니다."),
     ALREADY_REGIST_LOGIN_ID(HttpStatus.BAD_REQUEST, "40000014", "이미 가입한 아이디 입니다."),
+    AUTHORITY_GROUP_HAS_ACTIVE_ADMINS(HttpStatus.BAD_REQUEST, "40000015", "해당 권한 그룹에 활성 관리자가 존재하여 삭제할 수 없습니다."),
     
 
     // 401
@@ -56,6 +57,11 @@ public enum ResponseCode {
     // 404
     NO_SUCH_ELEMENT(HttpStatus.NOT_FOUND, "40400001", "데이터가 존재하지 않습니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "40400002", "NOT FOUND"),
+    AUTHORITY_GROUP_NOT_FOUND(HttpStatus.NOT_FOUND, "40400003", "권한 그룹이 존재하지 않습니다."),
+    AUTHORITY_GROUP_MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "40400004", "권한 그룹 메뉴가 존재하지 않습니다."),
+    AUTHORITY_GROUP_MENU_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "40000016", "이미 추가된 메뉴입니다."),
+    MENU_NOT_FOUND(HttpStatus.NOT_FOUND, "40400005", "메뉴가 존재하지 않습니다."),
+    AUTHORITY_LEVEL_NOT_FOUND(HttpStatus.NOT_FOUND, "40400006", "권한 레벨이 존재하지 않습니다."),
     
     // 405
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "40500001", "지원하지 않은 HTTP method 입니다."),

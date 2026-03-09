@@ -36,7 +36,6 @@ INSERT INTO authority_group_menu (id, group_id, menu_id, created_by, updated_by)
 -- 일반사용자: 대시보드만
 INSERT INTO authority_group_menu (id, group_id, menu_id, created_by, updated_by) VALUES ('authority_group_menu_uuid9', 'authority_group_uuid4', 'menu_uuid1', 'SYSTEM', 'SYSTEM');
 
-
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
 ('admin_uuid1', 'ymkmoon43', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기', 
 '01029320134', 'ymkmoon43@gmail.com', 'authority_group_uuid1', 'ACTIVE', 'SYSTEM', 'SYSTEM');
@@ -88,3 +87,7 @@ INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) values 
 ('admin_uuid13', 'ymkmoon12', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '비정상적_권한없', 
 '00129320134', '12@gmail.com', null, 'PENDING', 'SYSTEM', 'SYSTEM', 'T');
+
+INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by) values 
+('admin_uuid14', 'ymkmoon13', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기', 
+'99929320134', 'ymkmoon@naver.com', 'authority_group_uuid2', 'ACTIVE', 'SYSTEM', 'SYSTEM');

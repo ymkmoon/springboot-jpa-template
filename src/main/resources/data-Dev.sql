@@ -40,6 +40,10 @@ INSERT INTO authority_group_menu (id, group_id, menu_id, created_by, updated_by)
 ('authority_group_menu_uuid8', 'authority_group_uuid3', 'menu_uuid4', 'SYSTEM', 'SYSTEM'),
 ('authority_group_menu_uuid9', 'authority_group_uuid4', 'menu_uuid1', 'SYSTEM', 'SYSTEM');
 
+-- (group_id, menu_id) 중복 방지 (소프트 삭제 행은 재활성화로 재사용하므로 단순 유니크로 충분)
+CREATE UNIQUE INDEX uix_authority_group_menu
+ON authority_group_menu (group_id, menu_id);
+
 -- admin
 INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_group_id, approval_status, created_by, updated_by, is_active) VALUES
 ('admin_uuid1', 'ymkmoon43', '$2a$10$tuLXB3HaKF9B6IkKQLkER.uBZkbP9qkcgIqUpXoXGrYDy1Ac3GiE2', '유명기', '01029320134', 'ymkmoon43@gmail.com', 'authority_group_uuid1', 'ACTIVE', 'SYSTEM', 'SYSTEM', 'T'),

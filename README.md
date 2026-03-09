@@ -206,12 +206,6 @@ INSERT INTO admin (id, login_id, password, name, phone_number, email, authority_
 
 ---
 
-## 권한 관리 예시
-
-- **SUPER\_ADMIN**: 모든 API 접근 가능
-- **MID\_ADMIN**: 지정된 API 접근 가능
-- **USER**: 기본 API 접근 가능
-
 ### JWT 인증 흐름
 
 1. 로그인 시 AccessToken, RefreshToken 발급
