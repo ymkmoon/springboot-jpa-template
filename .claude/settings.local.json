@@ -2,7 +2,30 @@
   "permissions": {
     "allow": [
       "Bash(./gradlew compileJava 2>&1)",
-      "Bash(./gradlew clean compileJava 2>&1)"
+      "Bash(./gradlew clean compileJava 2>&1)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.*\" 2>&1 | tail -40)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.AdminControllerTest\" --info 2>&1 | grep -A 5 \"Caused by:\" | head -30)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.*\" 2>&1 | tail -30)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.AdminControllerTest\" --info 2>&1 | grep \"Caused by:\" | head -10)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.*\" 2>&1 | tail -25)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.AdminControllerTest\" --info 2>&1 | grep \"Caused by:\" | head -5)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.*\" 2>&1 | tail -20)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.AdminControllerTest\" --info 2>&1 | grep \"Caused by\\\\|FAILED\\\\|Error creating\" | head -15)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.AdminControllerTest.GET /user/v1 \\(Native SQL\\) > 실패_offset_누락_400\" --info 2>&1 | grep -A 3 \"FAILED\\\\|AssertionError\\\\|Expected\" | head -20)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.AdminControllerTest\" 2>&1 | grep -E \"FAILED|PASSED|> Task|Error|Exception\" | head -20)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.*\" 2>&1 | grep -E \"FAILED|PASSED|tests completed|BUILD\" | head -20)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.AdminControllerTest\" --info 2>&1 | grep -A 10 \"실패_offset\" | head -15)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.AdminControllerTest\" --info 2>&1 | grep \"java.lang.AssertionError\\\\|MockHttpServletResponse\\\\|Status = \\\\|Expected status\" | head -10)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.admin.*\" 2>&1 | grep -E \"FAILED|PASSED|tests completed|BUILD\" | head -10)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | grep -E \"FAILED|tests completed|BUILD|> Task :test\" | head -30)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.auth.AuthControllerTest\" --info 2>&1 | grep -E \"FAILED|AssertionError|Expected|but was|Caused by|MockitoException|UnsatisfiedDependency|NoSuchBean\" | head -60)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.auth.AuthControllerTest.POST /auth/sign-up > 성공_200\" --info 2>&1 | grep -E \"FAILED|AssertionError|Expected|but was|Caused by|MockitoException|Header|Status|body|WWW|error\" | head -40)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.auth.AuthControllerTest\" 2>&1 | tail -30)",
+      "Bash(find /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build -name \"TEST-*.xml\" 2>/dev/null | xargs grep -l \"AuthController\" 2>/dev/null)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.auth.AuthControllerTest\" 2>&1 | tail -20)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | tail -20)",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --rerun-tasks 2>&1 | grep -E \"tests completed|FAILED|BUILD\")",
+      "Bash(find /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/test-results -name \"TEST-*.xml\" -exec grep -h 'tests=' {})"
     ]
   }
 }

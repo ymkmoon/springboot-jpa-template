@@ -63,6 +63,10 @@ public class ApiResponse<T> {
     }
     
     public static <T> ApiResponse<T> error(ResponseCode responseCode, String message) {
+    	System.out.println("# ApiResponse.Error");
+    	
+    	System.out.println("responseCode.getCode() : "+responseCode.getCode());
+    	System.out.println("responseCode.getHttpStatus() : "+responseCode.getHttpStatus());
         return ApiResponse.<T>builder()
                 .code(responseCode.getCode())
                 .message(message != null ? message : responseCode.getDetail())
