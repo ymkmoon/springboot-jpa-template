@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
      * 주로 @RequestBody, @RequestPart 어노테이션에서 발생
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ApiResponse<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         logger.error("handleMethodArgumentNotValidException", e);
         String errorMessage = e.getBindingResult()
                 .getAllErrors()
@@ -62,7 +62,9 @@ public class GlobalExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .orElse(ResponseCode.REQUEST_BINDING_ERROR.getDetail());
 
-        return ApiResponse.error(ResponseCode.REQUEST_BINDING_ERROR, errorMessage);
+        return ResponseEntity
+                .status(ResponseCode.REQUEST_BINDING_ERROR.getHttpStatus())
+                .body(ApiResponse.error(ResponseCode.REQUEST_BINDING_ERROR, errorMessage));
     }
 
     /**

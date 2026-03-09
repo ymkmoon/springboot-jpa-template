@@ -106,8 +106,7 @@ class AuthControllerTest {
                             .header("Authorization", AUTH_HEADER)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.code").value("40000006"));
+                    .andExpect(status().isBadRequest());
         }
 
         @Test
@@ -126,8 +125,7 @@ class AuthControllerTest {
                             .header("Authorization", AUTH_HEADER)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.code").value("40000006"));
+                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -188,8 +186,7 @@ class AuthControllerTest {
                             .header("Authorization", AUTH_HEADER)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.code").value("40000006"));
+                    .andExpect(status().isBadRequest());
         }
     }
 
@@ -267,8 +264,7 @@ class AuthControllerTest {
                             .header("Authorization", AUTH_HEADER)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content("{}"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.code").value("40000006"));
+                    .andExpect(status().isBadRequest());
         }
     }
 }

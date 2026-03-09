@@ -25,7 +25,8 @@
       "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --tests \"com.example.template.auth.AuthControllerTest\" 2>&1 | tail -20)",
       "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | tail -20)",
       "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test --rerun-tasks 2>&1 | grep -E \"tests completed|FAILED|BUILD\")",
-      "Bash(find /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/test-results -name \"TEST-*.xml\" -exec grep -h 'tests=' {})"
+      "Bash(find /Users/ymk/Desktop/IT/ymk-workspace/springboot-jpa-template/build/test-results -name \"TEST-*.xml\" -exec grep -h 'tests=' {})",
+      "Bash(JAVA_HOME=/opt/homebrew/Cellar/openjdk@17/17.0.16/libexec/openjdk.jdk/Contents/Home ./gradlew test 2>&1 | grep -E \"tests completed|FAILED|BUILD\")"
     ]
   }
 }
