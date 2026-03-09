@@ -238,6 +238,16 @@ public class GlobalExceptionHandler {
     	logger.error("handleUnsupportedJwtException", e);
     	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
     }
+
+    /**
+     * JWT 서명 키가 유효하지 않거나 보안 요건을 충족하지 않는 경우
+     * 	ex) WeakKeyException - 키 길이가 알고리즘 요구사항 미달인 경우
+     */
+    @ExceptionHandler(SecurityException.class)
+    protected ResponseEntity<ApiResponse<Object>> handleJwtSecurityException(SecurityException e) {
+    	logger.error("handleJwtSecurityException", e);
+    	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
+    }
     
     /**
      * Message 내용이 org.hibernate.TransientPropertyValueException 일 경우
