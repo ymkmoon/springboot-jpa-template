@@ -10,7 +10,7 @@ Rules
 - **Surgical Updates**: Only modify impacted sections.
 - **Avoid Redundancy**: Do not duplicate Javadoc in markdown.
 - **Conciseness**: Use tables or bullet points.
-- **"**Draft Update**: If the changes involve a new technical implementation, draft a summary for the technical blog archive.
+- **Draft Update**: If the changes involve a new technical implementation, draft a summary for the technical blog archive.
 
 Output
 - Documentation Diff
