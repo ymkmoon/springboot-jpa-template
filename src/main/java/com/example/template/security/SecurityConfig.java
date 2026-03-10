@@ -51,8 +51,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManagerBuilder.class).build();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 
         String[] activeProfilesArr = environment.getActiveProfiles();
         String activeProfile = activeProfilesArr.length > 0 ? activeProfilesArr[0] : "default";

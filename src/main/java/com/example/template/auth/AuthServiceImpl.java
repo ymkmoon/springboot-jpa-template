@@ -142,7 +142,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 		RefreshTokenEntity entity = Optional.ofNullable(refreshTokenRepository.findRefreshTokenByAdminId(admin))
 				.orElseThrow(() -> new BusinessException(ResponseCode.TOKEN_IS_NOT_AUTHORIZED));
 		if (!refreshToken.equals(entity.getRefreshToken())) {
-			throw new BusinessException(ResponseCode.INVALUD_REFRESH_TOKEN);
+			throw new BusinessException(ResponseCode.INVALID_REFRESH_TOKEN);
 		}
 	}
 

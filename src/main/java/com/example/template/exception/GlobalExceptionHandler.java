@@ -310,7 +310,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PropertyReferenceException.class)
     protected ResponseEntity<ApiResponse<Object>> handlePropertyReferenceException(PropertyReferenceException e) {
     	logger.error("handlePropertyReferenceException", e);
-    	return ApiResponse.error(ResponseCode.PROPERTY_REFRENCE_ERROR);
+    	return ApiResponse.error(ResponseCode.PROPERTY_REFERENCE_ERROR);
     }
     
     /**

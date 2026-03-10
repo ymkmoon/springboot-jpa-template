@@ -50,7 +50,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         
         
         String accessToken = getAccessTokenFromRequestHeader(wrappedRequest);
-        
+
+        if (!StringUtils.hasText(accessToken)) {
+            new FailResponse(objectMapper, response, ResponseCode.INVALID_ACCESS_TOKEN).writer();
+            return;
+        }
+
     	try {
     		String uuid = tokenProvider.getUuidFromToken(accessToken, AuthConstants.ACCESS_TOKEN.getTitle());
     		String storedToken = redisService.getAccessToken(uuid);

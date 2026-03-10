@@ -23,7 +23,7 @@ public enum ResponseCode {
     HTTP_MESSAGE_NOT_READABLE(HttpStatus.BAD_REQUEST, "40000008", "요청 데이터가 정상적이지 않습니다."),
     INVALID_DATA_ACCESS_API_USAGE(HttpStatus.BAD_REQUEST, "40000009", "요청 데이터가 정상적이지 않습니다."),
     
-    PROPERTY_REFRENCE_ERROR(HttpStatus.BAD_REQUEST, "40000010", "요청 데이터가 정상적이지 않습니다. 필드명 등을 다시 확인해주세요."),
+    PROPERTY_REFERENCE_ERROR(HttpStatus.BAD_REQUEST, "40000010", "요청 데이터가 정상적이지 않습니다. 필드명 등을 다시 확인해주세요."),
     ILLEGAL_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "40000011", "요청 데이터가 정상적이지 않습니다."),
     ALREADY_REGIST_PHONE_NUMBER(HttpStatus.BAD_REQUEST, "40000012", "이미 가입한 핸드폰 번호 입니다."),
     ALREADY_REGIST_EMAIL(HttpStatus.BAD_REQUEST, "40000013", "이미 가입한 이메일 입니다."),
@@ -40,7 +40,7 @@ public enum ResponseCode {
 //    BAD_CREDENTIAL(HttpStatus.UNAUTHORIZED, "40100006", "암호가 일치하지 않습니다."),
     TOKEN_IS_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "40100007", "인증되지 않은 토큰 입니다."),
     NOT_MATCHED_REDIS_TOKEN(HttpStatus.UNAUTHORIZED, "40100008", "인증 실패"), // Redis 에 토큰이 등록되지 않았거나, 마지막 발급 토큰과 일치하지 않는 경우 e.g.) 중복 로그인 하여 access token 이 만료 된 경우
-    INVALUD_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "40100009", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
+    INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "40100009", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
     UNAUTHORIZED_ENTRY_POINT(HttpStatus.UNAUTHORIZED, "40100010", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "40100011", "인증 실패"), // DB 에 refresh token 이 존재하지 않는 경우
     ACCOUNT_PENDING(HttpStatus.UNAUTHORIZED, "40100012", "승인 대기 중 입니다."), // 승인 대기 중 인 경우

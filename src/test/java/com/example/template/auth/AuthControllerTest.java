@@ -247,7 +247,7 @@ class AuthControllerTest {
         @DisplayName("실패_DB에없는_리프레시토큰_401")
         void 실패_DB에없는_토큰() throws Exception {
             given(authService.refreshToken(any()))
-                    .willThrow(new BusinessException(ResponseCode.INVALUD_REFRESH_TOKEN));
+                    .willThrow(new BusinessException(ResponseCode.INVALID_REFRESH_TOKEN));
 
             String body = "{\"refreshToken\":\"invalid-token\"}";
 

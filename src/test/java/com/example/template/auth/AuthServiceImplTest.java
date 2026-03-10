@@ -254,7 +254,7 @@ class AuthServiceImplTest {
         }
 
         @Test
-        @DisplayName("실패_DB와_다른_토큰값_INVALUD_REFRESH_TOKEN")
+        @DisplayName("실패_DB와_다른_토큰값_INVALID_REFRESH_TOKEN")
         void 실패_토큰불일치() {
             String uuid = "test-uuid";
             String refreshTokenValue = "valid-refresh-token";
@@ -274,7 +274,7 @@ class AuthServiceImplTest {
             assertThatThrownBy(() -> authService.refreshToken(req))
                     .isInstanceOf(BusinessException.class)
                     .extracting(e -> ((BusinessException) e).getResponseCode())
-                    .isEqualTo(ResponseCode.INVALUD_REFRESH_TOKEN);
+                    .isEqualTo(ResponseCode.INVALID_REFRESH_TOKEN);
         }
 
         @Test
