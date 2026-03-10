@@ -8,8 +8,9 @@ Rule Priority
 4 api-style.md
 5 coding-rules.md
 
-Efficiency Rules
+Efficiency & Safety Rules (CRITICAL)
 
-- Never read unrelated files.
-- Avoid speculative refactoring.
-- Keep outputs concise.
+- Anti-Loop / Fail-Safe: If an agent fails to pass the `review` step twice for the same issue, IMMEDIATELY STOP the workflow and ask the user for clarification or help. Do not guess blindly.
+- Minimum Context: Never read unrelated files. Use search tools first.
+- No Speculation: Avoid speculative refactoring. Only fix what is explicitly requested.
+- Conciseness: Keep conversational outputs and explanations concise. Let the code speak.

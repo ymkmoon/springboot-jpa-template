@@ -1,25 +1,15 @@
 Architecture: Spring Boot Layered (Controller → Service → Repository)
 
-Layer Flow
+Core Flow
+1. Delivery: Controller handles HTTP mapping and DTO conversion.
+2. Usecase: ServiceImpl handles @Transactional business logic and domain rules.
+3. Repository: Data access via JPA or QueryDSL (Preferred).
 
-HTTP Request
-  → JwtRequestFilter (JWT validation)
-  → SecurityConfig (access control)
-  → Controller
-  → ServiceImpl (@Transactional)
-  → Repository (JPA / QueryDSL)
-  → RoutingDataSource (master write / slave read)
+Architectural Boundaries (Rules)
+- **Dependency Flow**: Controller → Service → Repository. Never skip a layer.
+- **Data Isolation**: Never expose Entities to the Delivery layer. Use DTOs for all API inputs/outputs.
+- **Persistence**: All DB-related logic stays in the Repository. Use `QueryDSL` for complex joins.
+- **Abstraction**: Always separate Service (Interface) and ServiceImpl (Implementation).
 
-Conventions
-
-- Entities: `*Entity`, extend `BaseEntity` (createdAt, updatedAt, isActive, etc.).
-- DTOs: inner static classes in `*Dto` (e.g. `AdminDto.AdminResponse`).
-- Service: interface `*Service` + implementation `*ServiceImpl`.
-- Repository: JPA `*Repository` + optional `*RepositoryCustom` (QueryDSL). Prefer V3 (QueryDSL) for new queries.
-
-Rules
-
-- Business logic belongs in usecase.
-- Domain must remain framework independent.
-- Repositories only handle database operations.
-- Delivery must remain thin.
+Reference Strategy
+- Do not assume infrastructure details (Security/DataSource). If a task involves infra, use `analyzer` to read `config/` or `security/` packages directly.

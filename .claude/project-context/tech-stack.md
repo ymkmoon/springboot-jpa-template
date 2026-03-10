@@ -1,32 +1,19 @@
-Tech Stack
+Tech Stack & Compatibility Rules
 
 Backend
-Java 17
-Spring Boot 3.2.x
-Spring Security
-Spring Data JPA
-QueryDSL 5.x
-JJWT (JWT)
-Gradle
+- Java 17 (Use Records for DTOs when appropriate, Switch expressions, Sealed classes)
+- Spring Boot 3.2.x
+- Spring Security, JPA, QueryDSL 5.x, Gradle
+- JJWT (Use latest secure patterns)
 
-Database
-MySQL 8 (dev/prod)
-H2 in-memory, MODE=MySQL (mac/local)
+Anti-Patterns (DO NOT USE)
+- No `System.out.println` (Use `@Slf4j`)
+- No `@Data` on JPA Entities (Use `@Getter`, `@Setter` separately to avoid recursion)
+- No field injection (`@Autowired`)
+- No manual SQL strings in Service layer
 
-Cache / Session
-Redis (access token store)
-Embedded Redis (local profile)
+Dev & Database
+- MySQL 8 / H2 (MySQL Mode)
+- Redis / Embedded Redis (mac profile)
 
-Infra / Observability
-Spring Actuator
-Prometheus
-Docker (Redis, optional)
-
-Testing
-JUnit 5 (JUnit Jupiter)
-Mockito (via spring-boot-starter-test)
-Spring Boot Test / MockMvc (@WebMvcTest, @ExtendWith)
-spring-security-test (SecurityMockMvcRequestPostProcessors)
-
-Dev Environment
-macOS Apple Silicon (default profile: mac)
+Search Tip: If a library version is unclear, check `build.gradle` before adding new dependencies.
