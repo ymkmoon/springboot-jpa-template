@@ -26,6 +26,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.template.common.dto.AuthDto;
 import com.example.template.constants.ApprovalStatus;
 import com.example.template.constants.AuthConstants;
+import com.example.template.constants.ResponseCode;
+import com.example.template.exception.BusinessException;
 import com.example.template.redis.RedisService;
 import com.example.template.security.CustomUserDetails;
 import com.example.template.security.TokenProvider;
@@ -46,10 +48,10 @@ class AuthControllerTest {
     @MockBean private RedisService redisService;
     @MockBean private UserDetailsService userDetailsService;
 
-    private static final String TEST_UUID        = "test-user-uuid";
-    private static final String TEST_TOKEN       = "test-access-token";
-    private static final String TEST_REFRESH     = "test-refresh-token";
-    private static final String AUTH_HEADER      = "Bearer " + TEST_TOKEN;
+    private static final String TEST_UUID    = "test-user-uuid";
+    private static final String TEST_TOKEN   = "test-access-token";
+    private static final String TEST_REFRESH = "test-refresh-token";
+    private static final String AUTH_HEADER  = "Bearer " + TEST_TOKEN;
 
     @BeforeEach
     void setupJwtBypass() {
@@ -143,13 +145,11 @@ class AuthControllerTest {
                     List.of(new SimpleGrantedAuthority("SUPER_ADMIN")));
 
             given(authenticationManager.authenticate(any())).willReturn(auth);
-            given(tokenProvider.generateToken(auth)).willReturn(
+            given(authService.signIn(any(Authentication.class))).willReturn(
                     AuthDto.SignInResponse.builder()
                             .accessToken(TEST_TOKEN)
                             .refreshToken(TEST_REFRESH)
                             .build());
-            given(authService.saveRefreshToken(any())).willReturn(
-                    AuthDto.RefreshResponse.builder().refreshToken(TEST_REFRESH).build());
 
             String body = "{\"loginId\":\"testuser\",\"password\":\"password123\"}";
 
@@ -226,10 +226,11 @@ class AuthControllerTest {
         @Test
         @DisplayName("성공_200_토큰갱신")
         void 성공() throws Exception {
-            given(authService.validateRegistRefreshToken(any())).willReturn(true);
-            given(tokenProvider.getUuidFromToken(TEST_REFRESH, AuthConstants.REFRESH_TOKEN.getTitle()))
-                    .willReturn(TEST_UUID);
-            given(tokenProvider.validateRefreshToken(TEST_REFRESH)).willReturn("new-access-token");
+            given(authService.refreshToken(any())).willReturn(
+                    AuthDto.SignInResponse.builder()
+                            .accessToken("new-access-token")
+                            .refreshToken(TEST_REFRESH)
+                            .build());
 
             String body = "{\"refreshToken\":\"" + TEST_REFRESH + "\"}";
 
@@ -245,7 +246,8 @@ class AuthControllerTest {
         @Test
         @DisplayName("실패_DB에없는_리프레시토큰_401")
         void 실패_DB에없는_토큰() throws Exception {
-            given(authService.validateRegistRefreshToken(any())).willReturn(false);
+            given(authService.refreshToken(any()))
+                    .willThrow(new BusinessException(ResponseCode.INVALUD_REFRESH_TOKEN));
 
             String body = "{\"refreshToken\":\"invalid-token\"}";
 

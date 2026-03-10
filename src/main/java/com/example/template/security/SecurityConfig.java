@@ -7,15 +7,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -44,27 +40,9 @@ public class SecurityConfig {
     private final RedisService redisService;
     private final Environment environment; 
     
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
-    
     @Value("${spring.security.debug:false}")
     private boolean securityDebug;
 
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(); // 사용자 인증을 처리하는 AuthenticationProvider Bean 등록
-        authProvider.setUserDetailsService(userDetailsService); // 사용자 정보를 로드하는 UserDetailsService 설정
-        authProvider.setPasswordEncoder(passwordEncoder); // 비밀번호 암호화를 위해 PasswordEncoder 설정
-        return authProvider;
-    }
-
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            AuthenticationConfiguration configuration) throws Exception {
-//    	// Spring Security 의 인증 매니저를 빈 등록 > 사용자 인증 절차를 관리
-//        return configuration.getAuthenticationManager();
-//    }
-    
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)

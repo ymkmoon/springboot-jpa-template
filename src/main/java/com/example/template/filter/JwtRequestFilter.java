@@ -2,7 +2,6 @@ package com.example.template.filter;
 
 import java.io.IOException;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -69,7 +68,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     			usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(wrappedRequest));
     			SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     		}
-    	} catch (IllegalArgumentException | AccessDeniedException | MalformedJwtException | SignatureException e) {
+    	} catch (IllegalArgumentException | MalformedJwtException | SignatureException e) {
     		logger.error("Unable to get JWT Token", e);
     		new FailResponse(objectMapper, response, ResponseCode.INVALID_ACCESS_TOKEN).writer();
     		return;
@@ -93,7 +92,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private String getAccessTokenFromRequestHeader(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
 
