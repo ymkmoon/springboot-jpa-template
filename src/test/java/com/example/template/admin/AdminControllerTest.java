@@ -116,14 +116,12 @@ class AdminControllerTest {
         }
 
         @Test
-        @DisplayName("실패_offset_누락_에러코드_반환")
+        @DisplayName("실패_offset_누락_400_반환")
         void 실패_offset_누락() throws Exception {
-            // GlobalExceptionHandler.handleConstraintRequestParameterException 이
-            // ResponseEntity 없이 ApiResponse 반환 → HTTP 200 + 에러코드 40000004
             mockMvc.perform(get("/user/v1")
                             .header("Authorization", AUTH_HEADER)
                             .param("limit", "10"))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value("40000004"));
         }
     }
