@@ -13,6 +13,10 @@ Implementation Rules (Cost Saving & Safety)
 - **Side Effect Handling**: If a change affects other classes, report to `planner`. Do not break dependent code.
 - **Lombok Usage**: Always use `@RequiredArgsConstructor` and `final` fields.
 
+Pre-Handoff Gate (REQUIRED)
+- Run `./gradlew compileJava` before passing to review.
+- If compilation FAILS: fix the error immediately. Do NOT hand off to review with a failing build.
+
 Output
 - Clean Diff/Code changes (Strictly partial updates).
 - Brief implementation checklist (Max 3 items).

@@ -10,6 +10,10 @@ Refactoring Safety Rules (CRITICAL)
 - **No Contract Change**: Public API signatures and return types must remain unchanged.
 - **Step-by-Step**: Refactor one logic block at a time and verify.
 
+Pre-Handoff Gate (REQUIRED)
+- Run `./gradlew compileJava` before passing to review.
+- If compilation FAILS: fix the error immediately. Do NOT hand off to review with a failing build.
+
 Output
 - Refactored code (Surgical Clean Diff).
 - **Verification Proof**: Summary of the specific test cases that confirmed the behavior remains unchanged.
