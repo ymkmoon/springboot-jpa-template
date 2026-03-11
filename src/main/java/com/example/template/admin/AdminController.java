@@ -15,6 +15,7 @@ import com.example.template.common.dto.OffsetBasedPageRequest;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * AdminController
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
  * @author myungki you
  * @created 2025/08/06
  */
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("user")

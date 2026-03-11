@@ -1,7 +1,5 @@
 package com.example.template.menu;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.template.common.ApiResponse;
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.common.dto.MenuDto;
 import com.example.template.security.CustomUserDetails;
 
@@ -33,7 +32,7 @@ public class MenuController {
      * @return 전체 메뉴 목록 (is_active = true)
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<MenuDto.MenuResponse>>> getAllMenus() {
+    public ResponseEntity<ApiResponse<ListResponseDto<MenuDto.MenuResponse>>> getAllMenus() {
         return ApiResponse.success(menuService.getAllMenus());
     }
 
@@ -43,7 +42,7 @@ public class MenuController {
      * JWT 토큰의 관리자 ID 기반으로 접근 가능한 메뉴 목록 조회
      */
     @GetMapping("/accessible")
-    public ResponseEntity<ApiResponse<List<MenuDto.MenuResponse>>> getAccessibleMenus(
+    public ResponseEntity<ApiResponse<ListResponseDto<MenuDto.MenuResponse>>> getAccessibleMenus(
         @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         return ApiResponse.success(menuService.getAccessibleMenus(userDetails.getUsername()));

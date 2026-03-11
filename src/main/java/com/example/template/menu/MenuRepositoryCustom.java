@@ -39,6 +39,7 @@ public class MenuRepositoryCustom {
             .join(authorityGroupMenu.menu, menu)
             .where(
                 admin.id.eq(adminId),
+                menu.isActive.isTrue(),
                 authorityGroup.isActive.isTrue(),
                 authorityGroupMenu.isActive.isTrue()
             )
@@ -56,6 +57,7 @@ public class MenuRepositoryCustom {
             .where(
                 admin.id.eq(adminId),
                 menu.id.eq(menuId),
+                menu.isActive.isTrue(),
                 authorityGroup.isActive.isTrue(),
                 authorityGroupMenu.isActive.isTrue()
             )

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -70,23 +71,15 @@ class AuthServiceImplTest {
     @DisplayName("signUp")
     class SignUp {
 
-        private AuthDto.SignUpRequest buildRequest(String loginId) {
-            // SignUpRequest 는 Jackson 역직렬화용 — 직접 생성 불가
-            // toEntity() 를 검증하기 위해 AdminRepository.save 호출 여부로 검증
-            return null; // 아래 테스트에서 mock 사용
-        }
-
         @Test
         @DisplayName("성공_회원가입")
         void 성공() {
-            // AdminEntity 저장 요청 Mock
             given(adminRepository.existsByLoginId(any())).willReturn(false);
             given(adminRepository.existsByPhoneNumber(any())).willReturn(false);
             given(adminRepository.existsByEmail(any())).willReturn(false);
             given(passwordEncoder.encode(any())).willReturn("encoded");
             given(adminRepository.save(any())).willReturn(mock(AdminEntity.class));
 
-            // SignUpRequest 를 직접 생성할 수 없으므로 mock 사용
             AuthDto.SignUpRequest req = mock(AuthDto.SignUpRequest.class);
             given(req.getLoginId()).willReturn("newuser");
             given(req.getPhoneNumber()).willReturn("01099991111");
@@ -147,6 +140,161 @@ class AuthServiceImplTest {
         }
     }
 
+    // ── signIn ─────────────────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("signIn")
+    class SignIn {
+
+        @Test
+        @DisplayName("성공_토큰생성_및_저장")
+        void 성공() {
+            String uuid = "test-uuid";
+            String accessToken = "access-token";
+            String refreshTokenValue = "refresh-token";
+
+            Authentication authentication = mock(Authentication.class);
+            given(authentication.getName()).willReturn(uuid);
+
+            AuthDto.SignInResponse tokenResponse = AuthDto.SignInResponse.builder()
+                    .accessToken(accessToken).refreshToken(refreshTokenValue).build();
+            given(tokenProvider.generateToken(authentication)).willReturn(tokenResponse);
+
+            AdminEntity admin = buildActiveAdmin("user1");
+            given(adminRepository.findById(uuid)).willReturn(Optional.of(admin));
+            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(null);
+            given(refreshTokenRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
+
+            given(tokenProvider.getExpiration(accessToken, AuthConstants.ACCESS_TOKEN.getTitle()))
+                    .willReturn(600L);
+            given(redisService.hasAccessToken(uuid)).willReturn(false);
+
+            AuthDto.SignInResponse result = authService.signIn(authentication);
+
+            assertThat(result.getAccessToken()).isEqualTo(accessToken);
+            assertThat(result.getRefreshToken()).isEqualTo(refreshTokenValue);
+            then(refreshTokenRepository).should().save(any());
+            then(redisService).should().saveAccessToken(uuid, accessToken, 600L);
+        }
+
+        @Test
+        @DisplayName("실패_사용자없음_BusinessException")
+        void 실패_사용자없음() {
+            String uuid = "nonexistent";
+            Authentication authentication = mock(Authentication.class);
+            given(authentication.getName()).willReturn(uuid);
+
+            given(tokenProvider.generateToken(authentication)).willReturn(
+                    AuthDto.SignInResponse.builder()
+                            .accessToken("access-token").refreshToken("refresh-token").build());
+            given(adminRepository.findById(uuid)).willReturn(Optional.empty());
+
+            assertThatThrownBy(() -> authService.signIn(authentication))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.USER_NAME_NOT_FOUND);
+        }
+    }
+
+    // ── refreshToken ───────────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("refreshToken")
+    class RefreshToken {
+
+        @Test
+        @DisplayName("성공_새로운_액세스토큰_발급")
+        void 성공() {
+            String uuid = "test-uuid";
+            String refreshTokenValue = "valid-refresh-token";
+            String newAccessToken = "new-access-token";
+
+            AdminEntity admin = buildActiveAdmin("user1");
+            RefreshTokenEntity tokenEntity = RefreshTokenEntity.builder()
+                    .adminId(admin).refreshToken(refreshTokenValue).build();
+
+            given(tokenProvider.getUuidFromToken(refreshTokenValue, AuthConstants.REFRESH_TOKEN.getTitle()))
+                    .willReturn(uuid);
+            given(adminRepository.findById(uuid)).willReturn(Optional.of(admin));
+            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(tokenEntity);
+            given(tokenProvider.validateRefreshToken(refreshTokenValue)).willReturn(newAccessToken);
+            given(tokenProvider.getExpiration(newAccessToken, AuthConstants.ACCESS_TOKEN.getTitle()))
+                    .willReturn(600L);
+            given(redisService.hasAccessToken(uuid)).willReturn(false);
+
+            AuthDto.RefreshRequest req = AuthDto.RefreshRequest.builder()
+                    .refreshToken(refreshTokenValue).build();
+
+            AuthDto.SignInResponse result = authService.refreshToken(req);
+
+            assertThat(result.getAccessToken()).isEqualTo(newAccessToken);
+            assertThat(result.getRefreshToken()).isEqualTo(refreshTokenValue);
+            then(redisService).should().saveAccessToken(uuid, newAccessToken, 600L);
+        }
+
+        @Test
+        @DisplayName("실패_DB에_토큰없음_TOKEN_IS_NOT_AUTHORIZED")
+        void 실패_토큰없음() {
+            String uuid = "test-uuid";
+            String refreshTokenValue = "any-token";
+
+            AdminEntity admin = buildActiveAdmin("user1");
+            given(tokenProvider.getUuidFromToken(refreshTokenValue, AuthConstants.REFRESH_TOKEN.getTitle()))
+                    .willReturn(uuid);
+            given(adminRepository.findById(uuid)).willReturn(Optional.of(admin));
+            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(null);
+
+            AuthDto.RefreshRequest req = AuthDto.RefreshRequest.builder()
+                    .refreshToken(refreshTokenValue).build();
+
+            assertThatThrownBy(() -> authService.refreshToken(req))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.TOKEN_IS_NOT_AUTHORIZED);
+        }
+
+        @Test
+        @DisplayName("실패_DB와_다른_토큰값_INVALID_REFRESH_TOKEN")
+        void 실패_토큰불일치() {
+            String uuid = "test-uuid";
+            String refreshTokenValue = "valid-refresh-token";
+
+            AdminEntity admin = buildActiveAdmin("user1");
+            RefreshTokenEntity tokenEntity = RefreshTokenEntity.builder()
+                    .adminId(admin).refreshToken("different-token").build();
+
+            given(tokenProvider.getUuidFromToken(refreshTokenValue, AuthConstants.REFRESH_TOKEN.getTitle()))
+                    .willReturn(uuid);
+            given(adminRepository.findById(uuid)).willReturn(Optional.of(admin));
+            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(tokenEntity);
+
+            AuthDto.RefreshRequest req = AuthDto.RefreshRequest.builder()
+                    .refreshToken(refreshTokenValue).build();
+
+            assertThatThrownBy(() -> authService.refreshToken(req))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.INVALID_REFRESH_TOKEN);
+        }
+
+        @Test
+        @DisplayName("실패_사용자없음_BusinessException")
+        void 실패_사용자없음() {
+            String refreshTokenValue = "any-token";
+            given(tokenProvider.getUuidFromToken(refreshTokenValue, AuthConstants.REFRESH_TOKEN.getTitle()))
+                    .willReturn("nonexistent");
+            given(adminRepository.findById("nonexistent")).willReturn(Optional.empty());
+
+            AuthDto.RefreshRequest req = AuthDto.RefreshRequest.builder()
+                    .refreshToken(refreshTokenValue).build();
+
+            assertThatThrownBy(() -> authService.refreshToken(req))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.USER_NAME_NOT_FOUND);
+        }
+    }
+
     // ── signOut ────────────────────────────────────────────────────────────────
 
     @Nested
@@ -180,94 +328,15 @@ class AuthServiceImplTest {
         }
 
         @Test
-        @DisplayName("실패_사용자없음_UsernameNotFoundException")
+        @DisplayName("실패_사용자없음_BusinessException")
         void 실패_사용자없음() {
             given(redisService.hasAccessToken(any())).willReturn(false);
             given(adminRepository.findById("nonexistent")).willReturn(Optional.empty());
 
             assertThatThrownBy(() -> authService.signOut("nonexistent"))
-                    .isInstanceOf(UsernameNotFoundException.class);
-        }
-    }
-
-    // ── validateRegistRefreshToken ─────────────────────────────────────────────
-
-    @Nested
-    @DisplayName("validateRegistRefreshToken")
-    class ValidateRegistRefreshToken {
-
-        @Test
-        @DisplayName("성공_일치하는_토큰_true_반환")
-        void 성공_토큰일치() {
-            AdminEntity admin = buildActiveAdmin("user1");
-            RefreshTokenEntity tokenEntity = RefreshTokenEntity.builder()
-                    .adminId(admin)
-                    .refreshToken("valid-refresh-token")
-                    .build();
-
-            given(tokenProvider.getUuidFromToken("valid-refresh-token", AuthConstants.REFRESH_TOKEN.getTitle()))
-                    .willReturn("test-uuid");
-            given(adminRepository.findById("test-uuid")).willReturn(Optional.of(admin));
-            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(tokenEntity);
-
-            AuthDto.RefreshRequest req = AuthDto.RefreshRequest.builder()
-                    .refreshToken("valid-refresh-token").build();
-
-            boolean result = authService.validateRegistRefreshToken(req);
-
-            assertThat(result).isTrue();
-        }
-
-        @Test
-        @DisplayName("실패_DB에_토큰없음_TOKEN_IS_NOT_AUTHORIZED")
-        void 실패_토큰없음() {
-            AdminEntity admin = buildActiveAdmin("user1");
-            given(tokenProvider.getUuidFromToken("any-token", AuthConstants.REFRESH_TOKEN.getTitle()))
-                    .willReturn("test-uuid");
-            given(adminRepository.findById("test-uuid")).willReturn(Optional.of(admin));
-            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(null);
-
-            AuthDto.RefreshRequest req = AuthDto.RefreshRequest.builder()
-                    .refreshToken("any-token").build();
-
-            assertThatThrownBy(() -> authService.validateRegistRefreshToken(req))
                     .isInstanceOf(BusinessException.class)
                     .extracting(e -> ((BusinessException) e).getResponseCode())
-                    .isEqualTo(ResponseCode.TOKEN_IS_NOT_AUTHORIZED);
-        }
-    }
-
-    // ── saveAccessToken ────────────────────────────────────────────────────────
-
-    @Nested
-    @DisplayName("saveAccessToken")
-    class SaveAccessToken {
-
-        @Test
-        @DisplayName("성공_기존토큰없는경우_신규저장")
-        void 성공_신규저장() {
-            given(redisService.hasAccessToken("uuid")).willReturn(false);
-            given(tokenProvider.getExpiration("access-token", AuthConstants.ACCESS_TOKEN.getTitle()))
-                    .willReturn(600000L);
-
-            assertThatCode(() -> authService.saveAccessToken("uuid", "access-token"))
-                    .doesNotThrowAnyException();
-
-            then(redisService).should(never()).deleteAccessToken(any());
-            then(redisService).should().saveAccessToken("uuid", "access-token", 600000L);
-        }
-
-        @Test
-        @DisplayName("성공_기존토큰있는경우_삭제후_재저장")
-        void 성공_기존토큰삭제후저장() {
-            given(redisService.hasAccessToken("uuid")).willReturn(true);
-            given(tokenProvider.getExpiration("new-token", AuthConstants.ACCESS_TOKEN.getTitle()))
-                    .willReturn(600000L);
-
-            authService.saveAccessToken("uuid", "new-token");
-
-            then(redisService).should().deleteAccessToken("uuid");
-            then(redisService).should().saveAccessToken("uuid", "new-token", 600000L);
+                    .isEqualTo(ResponseCode.USER_NAME_NOT_FOUND);
         }
     }
 
@@ -316,73 +385,14 @@ class AuthServiceImplTest {
         }
 
         @Test
-        @DisplayName("실패_존재하지않는_UUID_UsernameNotFoundException")
+        @DisplayName("실패_존재하지않는_UUID_BusinessException")
         void 실패_유저없음() {
             given(adminRepository.findById("nonexistent")).willReturn(Optional.empty());
 
             assertThatThrownBy(() -> authService.loadUserByUuid("nonexistent"))
-                    .isInstanceOf(UsernameNotFoundException.class);
-        }
-    }
-
-    // ── saveRefreshToken ───────────────────────────────────────────────────────
-
-    @Nested
-    @DisplayName("saveRefreshToken")
-    class SaveRefreshToken {
-
-        private AuthDto.SignInResponse buildSignInResponse() {
-            return AuthDto.SignInResponse.builder()
-                    .accessToken("access-token")
-                    .refreshToken("refresh-token")
-                    .build();
-        }
-
-        @Test
-        @DisplayName("성공_기존토큰없으면_새로_저장")
-        void 성공_신규저장() {
-            AdminEntity admin = buildActiveAdmin("user1");
-            given(tokenProvider.getUuidFromToken("refresh-token", AuthConstants.REFRESH_TOKEN.getTitle()))
-                    .willReturn("test-uuid");
-            given(adminRepository.findById("test-uuid")).willReturn(Optional.of(admin));
-            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(null);
-            given(refreshTokenRepository.save(any())).willAnswer(inv -> inv.getArgument(0));
-
-            AuthDto.RefreshResponse result = authService.saveRefreshToken(buildSignInResponse());
-
-            assertThat(result.getRefreshToken()).isEqualTo("refresh-token");
-            then(refreshTokenRepository).should().save(any());
-        }
-
-        @Test
-        @DisplayName("성공_기존토큰있으면_갱신")
-        void 성공_토큰갱신() {
-            AdminEntity admin = buildActiveAdmin("user1");
-            RefreshTokenEntity existing = RefreshTokenEntity.builder()
-                    .adminId(admin)
-                    .refreshToken("old-refresh-token")
-                    .build();
-
-            given(tokenProvider.getUuidFromToken("refresh-token", AuthConstants.REFRESH_TOKEN.getTitle()))
-                    .willReturn("test-uuid");
-            given(adminRepository.findById("test-uuid")).willReturn(Optional.of(admin));
-            given(refreshTokenRepository.findRefreshTokenByAdminId(admin)).willReturn(existing);
-
-            AuthDto.RefreshResponse result = authService.saveRefreshToken(buildSignInResponse());
-
-            assertThat(result.getRefreshToken()).isEqualTo("refresh-token");
-            then(refreshTokenRepository).should(never()).save(any());
-        }
-
-        @Test
-        @DisplayName("실패_존재하지않는_UUID_UsernameNotFoundException")
-        void 실패_유저없음() {
-            given(tokenProvider.getUuidFromToken("refresh-token", AuthConstants.REFRESH_TOKEN.getTitle()))
-                    .willReturn("nonexistent");
-            given(adminRepository.findById("nonexistent")).willReturn(Optional.empty());
-
-            assertThatThrownBy(() -> authService.saveRefreshToken(buildSignInResponse()))
-                    .isInstanceOf(UsernameNotFoundException.class);
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.USER_NAME_NOT_FOUND);
         }
     }
 }

@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.common.dto.MenuDto;
+import com.example.template.constants.ResponseCode;
+import com.example.template.exception.BusinessException;
 import com.example.template.model.entity.MenuEntity;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,11 +60,12 @@ class MenuServiceImplTest {
             given(menuRepository.findAllActive())
                     .willReturn(List.of(buildMenu("Dashboard", 1), buildMenu("Settings", 2)));
 
-            List<MenuDto.MenuResponse> result = menuService.getAllMenus();
+            ListResponseDto<MenuDto.MenuResponse> result = menuService.getAllMenus();
 
-            assertThat(result).hasSize(2);
-            assertThat(result.get(0).getMenuName()).isEqualTo("Dashboard");
-            assertThat(result.get(1).getMenuName()).isEqualTo("Settings");
+            assertThat(result.getTotalCount()).isEqualTo(2);
+            assertThat(result.getList()).hasSize(2);
+            assertThat(result.getList().get(0).getMenuName()).isEqualTo("Dashboard");
+            assertThat(result.getList().get(1).getMenuName()).isEqualTo("Settings");
         }
 
         @Test
@@ -68,9 +73,10 @@ class MenuServiceImplTest {
         void 성공_활성메뉴_없음() {
             given(menuRepository.findAllActive()).willReturn(List.of());
 
-            List<MenuDto.MenuResponse> result = menuService.getAllMenus();
+            ListResponseDto<MenuDto.MenuResponse> result = menuService.getAllMenus();
 
-            assertThat(result).isEmpty();
+            assertThat(result.getTotalCount()).isZero();
+            assertThat(result.getList()).isEmpty();
         }
     }
 
@@ -89,10 +95,11 @@ class MenuServiceImplTest {
                     buildMenuResponse("Reports", 2));
             given(menuRepositoryCustom.findAccessibleMenus(adminId)).willReturn(expected);
 
-            List<MenuDto.MenuResponse> result = menuService.getAccessibleMenus(adminId);
+            ListResponseDto<MenuDto.MenuResponse> result = menuService.getAccessibleMenus(adminId);
 
-            assertThat(result).hasSize(2);
-            assertThat(result.get(0).getMenuName()).isEqualTo("Dashboard");
+            assertThat(result.getTotalCount()).isEqualTo(2);
+            assertThat(result.getList()).hasSize(2);
+            assertThat(result.getList().get(0).getMenuName()).isEqualTo("Dashboard");
         }
 
         @Test
@@ -100,9 +107,39 @@ class MenuServiceImplTest {
         void 성공_접근가능메뉴_없음() {
             given(menuRepositoryCustom.findAccessibleMenus(any())).willReturn(List.of());
 
-            List<MenuDto.MenuResponse> result = menuService.getAccessibleMenus("admin-uuid-2");
+            ListResponseDto<MenuDto.MenuResponse> result = menuService.getAccessibleMenus("admin-uuid-2");
 
-            assertThat(result).isEmpty();
+            assertThat(result.getTotalCount()).isZero();
+            assertThat(result.getList()).isEmpty();
+        }
+    }
+
+    // ── getMenuById ───────────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("getMenuById")
+    class GetMenuById {
+
+        @Test
+        @DisplayName("성공_메뉴반환")
+        void 성공_메뉴반환() {
+            MenuEntity menu = buildMenu("Dashboard", 1);
+            given(menuRepository.findById("id")).willReturn(Optional.of(menu));
+
+            MenuEntity result = menuService.getMenuById("id");
+
+            assertThat(result.getMenuName()).isEqualTo("Dashboard");
+        }
+
+        @Test
+        @DisplayName("실패_존재하지않는메뉴_MENU_NOT_FOUND")
+        void 실패_존재하지않는메뉴_MENU_NOT_FOUND() {
+            given(menuRepository.findById("bad-id")).willReturn(Optional.empty());
+
+            assertThatThrownBy(() -> menuService.getMenuById("bad-id"))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.MENU_NOT_FOUND);
         }
     }
 

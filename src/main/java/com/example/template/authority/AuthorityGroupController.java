@@ -1,7 +1,5 @@
 package com.example.template.authority;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.template.common.ApiResponse;
 import com.example.template.common.dto.AuthorityGroupDto;
 import com.example.template.common.dto.AuthorityGroupMenuDto;
+import com.example.template.common.dto.ListResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,7 +32,7 @@ public class AuthorityGroupController {
     private final AuthorityGroupService authorityGroupService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<AuthorityGroupDto.AuthorityGroupResponse>>> getGroups() {
+    public ResponseEntity<ApiResponse<ListResponseDto<AuthorityGroupDto.AuthorityGroupResponse>>> getGroups() {
         return ApiResponse.success(authorityGroupService.getGroups());
     }
 
@@ -67,21 +66,21 @@ public class AuthorityGroupController {
     }
 
     @GetMapping("/{groupId}/menus")
-    public ResponseEntity<ApiResponse<List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse>>> getGroupMenus(
+    public ResponseEntity<ApiResponse<ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse>>> getGroupMenus(
         @PathVariable(value = "groupId") String groupId
     ) {
         return ApiResponse.success(authorityGroupService.getGroupMenus(groupId));
     }
 
     @PostMapping("/menus")
-    public ResponseEntity<ApiResponse<List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse>>> createGroupMenus(
+    public ResponseEntity<ApiResponse<ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse>>> createGroupMenus(
         @RequestBody AuthorityGroupMenuDto.CreateRequest request
     ) {
         return ApiResponse.success(authorityGroupService.createGroupMenus(request));
     }
 
     @PutMapping("/menus")
-    public ResponseEntity<ApiResponse<List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse>>> updateGroupMenus(
+    public ResponseEntity<ApiResponse<ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse>>> updateGroupMenus(
         @RequestBody AuthorityGroupMenuDto.UpdateRequest request
     ) {
         return ApiResponse.success(authorityGroupService.updateGroupMenus(request));

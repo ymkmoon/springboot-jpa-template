@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import com.example.template.common.dto.ListResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -76,25 +77,27 @@ class MenuControllerTest {
         @DisplayName("성공_200_메뉴목록_반환")
         void 성공() throws Exception {
             given(menuService.getAllMenus())
-                    .willReturn(List.of(menuResponse("Dashboard", 1), menuResponse("Settings", 2)));
+                    .willReturn(ListResponseDto.of(2, List.of(menuResponse("Dashboard", 1), menuResponse("Settings", 2))));
 
             mockMvc.perform(get("/menu").header("Authorization", AUTH_HEADER))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("20000000"))
-                    .andExpect(jsonPath("$.data").isArray())
-                    .andExpect(jsonPath("$.data[0].menuName").value("Dashboard"))
-                    .andExpect(jsonPath("$.data[1].menuName").value("Settings"));
+                    .andExpect(jsonPath("$.data.totalCount").value(2))
+                    .andExpect(jsonPath("$.data.list").isArray())
+                    .andExpect(jsonPath("$.data.list[0].menuName").value("Dashboard"))
+                    .andExpect(jsonPath("$.data.list[1].menuName").value("Settings"));
         }
 
         @Test
         @DisplayName("성공_200_빈목록_반환")
         void 성공_빈목록() throws Exception {
-            given(menuService.getAllMenus()).willReturn(List.of());
+            given(menuService.getAllMenus()).willReturn(ListResponseDto.of(0, List.of()));
 
             mockMvc.perform(get("/menu").header("Authorization", AUTH_HEADER))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data").isArray())
-                    .andExpect(jsonPath("$.data").isEmpty());
+                    .andExpect(jsonPath("$.data.totalCount").value(0))
+                    .andExpect(jsonPath("$.data.list").isArray())
+                    .andExpect(jsonPath("$.data.list").isEmpty());
         }
     }
 
@@ -108,22 +111,24 @@ class MenuControllerTest {
         @DisplayName("성공_200_접근가능메뉴_반환")
         void 성공() throws Exception {
             given(menuService.getAccessibleMenus(TEST_UUID))
-                    .willReturn(List.of(menuResponse("Dashboard", 1)));
+                    .willReturn(ListResponseDto.of(1, List.of(menuResponse("Dashboard", 1))));
 
             mockMvc.perform(get("/menu/accessible").header("Authorization", AUTH_HEADER))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("20000000"))
-                    .andExpect(jsonPath("$.data[0].menuName").value("Dashboard"));
+                    .andExpect(jsonPath("$.data.totalCount").value(1))
+                    .andExpect(jsonPath("$.data.list[0].menuName").value("Dashboard"));
         }
 
         @Test
         @DisplayName("성공_200_접근가능메뉴_없음")
         void 성공_없음() throws Exception {
-            given(menuService.getAccessibleMenus(TEST_UUID)).willReturn(List.of());
+            given(menuService.getAccessibleMenus(TEST_UUID)).willReturn(ListResponseDto.of(0, List.of()));
 
             mockMvc.perform(get("/menu/accessible").header("Authorization", AUTH_HEADER))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data").isEmpty());
+                    .andExpect(jsonPath("$.data.totalCount").value(0))
+                    .andExpect(jsonPath("$.data.list").isEmpty());
         }
 
         @Test

@@ -1,13 +1,12 @@
 package com.example.template.authority;
 
-import java.util.List;
-
 import com.example.template.common.dto.AuthorityGroupDto;
 import com.example.template.common.dto.AuthorityGroupMenuDto;
+import com.example.template.common.dto.ListResponseDto;
 
 public interface AuthorityGroupService {
 
-    List<AuthorityGroupDto.AuthorityGroupResponse> getGroups();
+    ListResponseDto<AuthorityGroupDto.AuthorityGroupResponse> getGroups();
 
     AuthorityGroupDto.AuthorityGroupResponse getGroup(String id);
 
@@ -17,10 +16,10 @@ public interface AuthorityGroupService {
 
     void deleteGroup(AuthorityGroupDto.DeleteRequest request);
 
-    List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> getGroupMenus(String groupId);
+    ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> getGroupMenus(String groupId);
 
-    List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> createGroupMenus(AuthorityGroupMenuDto.CreateRequest request);
+    ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> createGroupMenus(AuthorityGroupMenuDto.CreateRequest request);
 
-    List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> updateGroupMenus(AuthorityGroupMenuDto.UpdateRequest request);
+    ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> updateGroupMenus(AuthorityGroupMenuDto.UpdateRequest request);
 
 }

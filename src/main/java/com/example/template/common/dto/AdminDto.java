@@ -3,36 +3,28 @@ package com.example.template.common.dto;
 import java.time.LocalDateTime;
 
 import com.example.template.constants.ApprovalStatus;
-import com.example.template.util.CommonUtil;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.querydsl.core.annotations.QueryProjection;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AdminDto {
 	
 	@Getter
-	@Setter
+	@Builder
 	@NoArgsConstructor
+	@AllArgsConstructor
 	public static class AdminListRequest {
 	    private String loginId;
 	    private String name;
 	    private String phoneNumber;
 	    private String email;
-
-	    @Builder
-		public AdminListRequest(String loginId, String name, String phoneNumber, String email) {
-	    	this.loginId = CommonUtil.stringNormalize(loginId);
-	        this.name = CommonUtil.stringNormalize(name);
-	        this.phoneNumber = CommonUtil.stringNormalize(phoneNumber);
-	        this.email = CommonUtil.stringNormalize(email);
-		}
 	}
 	
 	@Getter

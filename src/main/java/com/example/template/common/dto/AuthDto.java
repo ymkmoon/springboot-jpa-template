@@ -44,16 +44,6 @@ public class AuthDto {
 	    )
 		private String email;
 
-//	    @Builder
-//		public SignUpRequest(@NotBlank String loginId, @NotBlank String password,
-//				@NotBlank String name, @NotBlank String phoneNumber, @NotBlank String email) {
-//			this.loginId = loginId;
-//			this.password = password;
-//			this.name = name;
-//			this.phoneNumber = phoneNumber;
-//			this.email = email;
-//		}
-	    
 	    public AdminEntity toEntity(String encodedPassword) {
 			return AdminEntity.builder()
 					.loginId(loginId)

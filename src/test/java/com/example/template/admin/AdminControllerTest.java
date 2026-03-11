@@ -23,6 +23,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.example.template.auth.AuthService;
 import com.example.template.common.dto.AdminDto;
+import com.example.template.constants.ResponseCode;
+import com.example.template.exception.BusinessException;
 import com.example.template.common.dto.ListResponseDto;
 import com.example.template.constants.ApprovalStatus;
 import com.example.template.constants.AuthConstants;
@@ -114,14 +116,12 @@ class AdminControllerTest {
         }
 
         @Test
-        @DisplayName("실패_offset_누락_에러코드_반환")
+        @DisplayName("실패_offset_누락_400_반환")
         void 실패_offset_누락() throws Exception {
-            // GlobalExceptionHandler.handleConstraintRequestParameterException 이
-            // ResponseEntity 없이 ApiResponse 반환 → HTTP 200 + 에러코드 40000004
             mockMvc.perform(get("/user/v1")
                             .header("Authorization", AUTH_HEADER)
                             .param("limit", "10"))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value("40000004"));
         }
     }
@@ -212,11 +212,12 @@ class AdminControllerTest {
         @DisplayName("실패_존재하지않는_관리자_401")
         void 실패_존재하지않는_관리자() throws Exception {
             given(adminService.getAdminDetail("nonexistent"))
-                    .willThrow(new org.springframework.security.core.userdetails.UsernameNotFoundException("not found"));
+                    .willThrow(new BusinessException(ResponseCode.USER_NAME_NOT_FOUND));
 
             mockMvc.perform(get("/user/nonexistent")
                             .header("Authorization", AUTH_HEADER))
-                    .andExpect(status().isUnauthorized());
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.code").value(ResponseCode.USER_NAME_NOT_FOUND.getCode()));
         }
     }
 }

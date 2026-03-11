@@ -18,9 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.dto.AuthorityGroupDto;
 import com.example.template.common.dto.AuthorityGroupMenuDto;
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
-import com.example.template.menu.MenuRepository;
+import com.example.template.menu.MenuService;
 import com.example.template.model.entity.AuthorityGroupEntity;
 import com.example.template.model.entity.AuthorityGroupMenuEntity;
 import com.example.template.model.entity.AuthorityLevelEntity;
@@ -33,7 +34,7 @@ class AuthorityGroupServiceImplTest {
     @Mock private AuthorityGroupRepository authorityGroupRepository;
     @Mock private AuthorityGroupMenuRepository authorityGroupMenuRepository;
     @Mock private AuthorityLevelRepository authorityLevelRepository;
-    @Mock private MenuRepository menuRepository;
+    @Mock private MenuService menuService;
     @Mock private AdminRepository adminRepository;
     @InjectMocks private AuthorityGroupServiceImpl authorityGroupService;
 
@@ -83,10 +84,11 @@ class AuthorityGroupServiceImplTest {
             AuthorityGroupEntity group = buildGroup("1", "SUPER_ADMIN");
             given(authorityGroupRepository.findAllActive()).willReturn(List.of(group));
 
-            List<AuthorityGroupDto.AuthorityGroupResponse> result = authorityGroupService.getGroups();
+            ListResponseDto<AuthorityGroupDto.AuthorityGroupResponse> result = authorityGroupService.getGroups();
 
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).getName()).isEqualTo("그룹-1");
+            assertThat(result.getTotalCount()).isEqualTo(1);
+            assertThat(result.getList()).hasSize(1);
+            assertThat(result.getList().get(0).getName()).isEqualTo("그룹-1");
         }
 
         @Test
@@ -94,9 +96,10 @@ class AuthorityGroupServiceImplTest {
         void 성공_빈목록() {
             given(authorityGroupRepository.findAllActive()).willReturn(List.of());
 
-            List<AuthorityGroupDto.AuthorityGroupResponse> result = authorityGroupService.getGroups();
+            ListResponseDto<AuthorityGroupDto.AuthorityGroupResponse> result = authorityGroupService.getGroups();
 
-            assertThat(result).isEmpty();
+            assertThat(result.getTotalCount()).isZero();
+            assertThat(result.getList()).isEmpty();
         }
     }
 
@@ -281,11 +284,12 @@ class AuthorityGroupServiceImplTest {
             given(authorityGroupMenuRepository.findActiveByGroupId("group-1"))
                     .willReturn(List.of(groupMenu));
 
-            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+            ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
                     authorityGroupService.getGroupMenus("group-1");
 
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).getMenuName()).isEqualTo("메뉴-1");
+            assertThat(result.getTotalCount()).isEqualTo(1);
+            assertThat(result.getList()).hasSize(1);
+            assertThat(result.getList().get(0).getMenuName()).isEqualTo("메뉴-1");
         }
 
         @Test
@@ -314,21 +318,21 @@ class AuthorityGroupServiceImplTest {
             AuthorityGroupMenuEntity groupMenu = buildGroupMenu(group, menu);
 
             given(authorityGroupRepository.findActiveById("group-1")).willReturn(Optional.of(group));
-            given(menuRepository.findById("menu-m1")).willReturn(Optional.of(menu));
+            given(menuService.getMenuById("menu-m1")).willReturn(menu);
             given(authorityGroupMenuRepository.findByGroupIdAndMenuId("group-1", "menu-m1"))
                     .willReturn(Optional.empty());
             given(authorityGroupRepository.getReferenceById("group-1")).willReturn(group);
-            given(menuRepository.getReferenceById("menu-m1")).willReturn(menu);
             given(authorityGroupMenuRepository.save(any())).willReturn(groupMenu);
 
             AuthorityGroupMenuDto.CreateRequest req = new AuthorityGroupMenuDto.CreateRequest();
             req.setGroupId("group-1");
             req.setMenuIds(List.of("menu-m1"));
 
-            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+            ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
                     authorityGroupService.createGroupMenus(req);
 
-            assertThat(result).hasSize(1);
+            assertThat(result.getTotalCount()).isEqualTo(1);
+            assertThat(result.getList()).hasSize(1);
         }
 
         @Test
@@ -340,7 +344,7 @@ class AuthorityGroupServiceImplTest {
             // isActive() 는 BaseEntity 의 기본값 'T' = true
 
             given(authorityGroupRepository.findActiveById("group-1")).willReturn(Optional.of(group));
-            given(menuRepository.findById("menu-m1")).willReturn(Optional.of(menu));
+            given(menuService.getMenuById("menu-m1")).willReturn(menu);
             given(authorityGroupMenuRepository.findByGroupIdAndMenuId("group-1", "menu-m1"))
                     .willReturn(Optional.of(existing));
 
@@ -352,6 +356,24 @@ class AuthorityGroupServiceImplTest {
                     .isInstanceOf(BusinessException.class)
                     .extracting(e -> ((BusinessException) e).getResponseCode())
                     .isEqualTo(ResponseCode.AUTHORITY_GROUP_MENU_ALREADY_EXISTS);
+        }
+
+        @Test
+        @DisplayName("실패_메뉴없음_MENU_NOT_FOUND")
+        void 실패_메뉴없음() {
+            AuthorityGroupEntity group = buildGroup("1", "SUPER_ADMIN");
+
+            given(authorityGroupRepository.findActiveById("group-1")).willReturn(Optional.of(group));
+            given(menuService.getMenuById(anyString())).willThrow(new BusinessException(ResponseCode.MENU_NOT_FOUND));
+
+            AuthorityGroupMenuDto.CreateRequest req = new AuthorityGroupMenuDto.CreateRequest();
+            req.setGroupId("group-1");
+            req.setMenuIds(List.of("nonexistent-menu"));
+
+            assertThatThrownBy(() -> authorityGroupService.createGroupMenus(req))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.MENU_NOT_FOUND);
         }
     }
 
@@ -369,11 +391,10 @@ class AuthorityGroupServiceImplTest {
             AuthorityGroupMenuEntity newGroupMenu = buildGroupMenu(group, menu);
 
             given(authorityGroupRepository.findActiveById("group-1")).willReturn(Optional.of(group));
-            given(menuRepository.findById("menu-new")).willReturn(Optional.of(menu));
+            given(menuService.getMenuById("menu-new")).willReturn(menu);
             given(authorityGroupMenuRepository.findByGroupIdAndMenuId("group-1", "menu-new"))
                     .willReturn(Optional.empty());
             given(authorityGroupRepository.getReferenceById("group-1")).willReturn(group);
-            given(menuRepository.getReferenceById("menu-new")).willReturn(menu);
             given(authorityGroupMenuRepository.save(any())).willReturn(newGroupMenu);
             given(authorityGroupMenuRepository.findActiveByGroupId("group-1"))
                     .willReturn(List.of(newGroupMenu));
@@ -382,11 +403,12 @@ class AuthorityGroupServiceImplTest {
             req.setGroupId("group-1");
             req.setMenuIds(List.of("menu-new"));
 
-            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+            ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
                     authorityGroupService.updateGroupMenus(req);
 
             then(authorityGroupMenuRepository).should().deactivateAllByGroupId("group-1");
-            assertThat(result).hasSize(1);
+            assertThat(result.getTotalCount()).isEqualTo(1);
+            assertThat(result.getList()).hasSize(1);
         }
 
         @Test
@@ -400,11 +422,30 @@ class AuthorityGroupServiceImplTest {
             req.setGroupId("group-1");
             req.setMenuIds(List.of());
 
-            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+            ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
                     authorityGroupService.updateGroupMenus(req);
 
             then(authorityGroupMenuRepository).should().deactivateAllByGroupId("group-1");
-            assertThat(result).isEmpty();
+            assertThat(result.getTotalCount()).isZero();
+            assertThat(result.getList()).isEmpty();
+        }
+
+        @Test
+        @DisplayName("실패_메뉴없음_MENU_NOT_FOUND")
+        void 실패_메뉴없음() {
+            AuthorityGroupEntity group = buildGroup("1", "SUPER_ADMIN");
+
+            given(authorityGroupRepository.findActiveById("group-1")).willReturn(Optional.of(group));
+            given(menuService.getMenuById(anyString())).willThrow(new BusinessException(ResponseCode.MENU_NOT_FOUND));
+
+            AuthorityGroupMenuDto.UpdateRequest req = new AuthorityGroupMenuDto.UpdateRequest();
+            req.setGroupId("group-1");
+            req.setMenuIds(List.of("nonexistent-menu"));
+
+            assertThatThrownBy(() -> authorityGroupService.updateGroupMenus(req))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.MENU_NOT_FOUND);
         }
     }
 }

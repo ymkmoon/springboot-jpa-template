@@ -17,6 +17,18 @@ INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUE
 INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid2', '회원관리', '/members', 2, 'SYSTEM', 'SYSTEM');
 INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid3', '권한관리', '/authorities', 3, 'SYSTEM', 'SYSTEM');
 INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid4', '메뉴관리', '/menus', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid5', '메뉴관리2', '/menus2', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid6', '메뉴관리3', '/menus3', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid7', '메뉴관리4', '/menus4', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid8', '메뉴관리5', '/menus5', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid9', '메뉴관리6', '/menus6', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid10', '메뉴관리7', '/menus7', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid11', '메뉴관리8', '/menus8', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid12', '메뉴관리9', '/menus9', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid13', '메뉴관리10', '/menus10', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid14', '메뉴관리11', '/menus11', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid15', '메뉴관리12', '/menus12', 4, 'SYSTEM', 'SYSTEM');
+INSERT INTO menu (id, menu_name, path, sort_order, created_by, updated_by) VALUES ('menu_uuid16', '메뉴관리13', '/menus13', 4, 'SYSTEM', 'SYSTEM');
 
 
 -- 최고관리자: 모든 메뉴

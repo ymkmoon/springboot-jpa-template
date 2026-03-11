@@ -4,8 +4,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
@@ -31,6 +29,8 @@ import com.example.template.common.ApiResponse;
 import com.example.template.constants.ResponseCode;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 
+import lombok.extern.slf4j.Slf4j;
+
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -43,10 +43,9 @@ import jakarta.validation.ConstraintViolationException;
  * @author myungki you
  * @created 2025/08/06
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-	
-	Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	/**
      * javax.validation.Valid or @Validated 으로 binding error 발생시 발생한다.
@@ -55,7 +54,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        logger.error("handleMethodArgumentNotValidException", e);
+        log.error("handleMethodArgumentNotValidException", e);
         String errorMessage = e.getBindingResult()
                 .getAllErrors()
                 .stream()
@@ -68,26 +67,6 @@ public class GlobalExceptionHandler {
                 .status(ResponseCode.REQUEST_BINDING_ERROR.getHttpStatus())
                 .body(ApiResponse.error(ResponseCode.REQUEST_BINDING_ERROR, errorMessage));
     }
-    
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-//        logger.error("handleMethodArgumentNotValidException", e);
-//
-//        List<Map<String, String>> errors = e.getBindingResult()
-//                .getFieldErrors()
-//                .stream()
-//                .map(fe -> Map.of("field", fe.getField(), "message", fe.getDefaultMessage()))
-//                .sorted(Comparator.comparing(m -> m.get("message")))
-//                .toList();
-//
-//        return ResponseEntity
-//                .status(ResponseCode.REQUEST_BINDING_ERROR.getHttpStatus())
-//                .body(ApiResponse.<Object>builder()
-//                        .code(ResponseCode.REQUEST_BINDING_ERROR.getCode())
-//                        .message(ResponseCode.REQUEST_BINDING_ERROR.getDetail())
-//                        .data(errors)
-//                        .build());
-//    }
 
     /**
      * @ModelAttribut 으로 binding error 발생시 BindException 발생한다.
@@ -95,7 +74,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BindException.class)
     protected ResponseEntity<ApiResponse<Object>> handleBindException(BindException e) {
-        logger.error("handleBindException", e);
+        log.error("handleBindException", e);
         return ApiResponse.error(ResponseCode.MODEL_BINDING_ERROR);
     }
 
@@ -105,7 +84,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ApiResponse<Object>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        logger.error("handleMethodArgumentTypeMismatchException", e);
+        log.error("handleMethodArgumentTypeMismatchException", e);
         return ApiResponse.error(ResponseCode.TYPE_BINDING_ERROR);
     }
 
@@ -115,7 +94,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<ApiResponse<Object>> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        logger.error("handleHttpRequestMethodNotSupportedException", e);
+        log.error("handleHttpRequestMethodNotSupportedException", e);
         return ApiResponse.error(ResponseCode.METHOD_NOT_ALLOWED);
     }
 
@@ -124,7 +103,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ApiResponse<Object>> handleBusinessException(final BusinessException e) {
-        logger.error("handleBusinessException", e);
+        log.error("handleBusinessException", e);
         return ApiResponse.error(e.getResponseCode());
     }
     
@@ -134,7 +113,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DisabledException.class)
     protected ResponseEntity<ApiResponse<Object>> handleDisabledException(DisabledException e) {
-        logger.error("handleDisabledException", e);
+        log.error("handleDisabledException", e);
         return ApiResponse.error(ResponseCode.DISABLED_USER);
     }
     
@@ -143,7 +122,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BadCredentialsException.class)
     protected ResponseEntity<ApiResponse<Object>> handleBadCredentialsException(BadCredentialsException e) {
-        logger.error("handleBadCredentialsException", e);
+        log.error("handleBadCredentialsException", e);
         return ApiResponse.error(ResponseCode.USER_NAME_NOT_FOUND);
     }
 
@@ -152,7 +131,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UsernameNotFoundException.class)
     protected ResponseEntity<ApiResponse<Object>> handleUsernameNotFoundException(UsernameNotFoundException e) {
-        logger.error("handleUsernameNotFoundException", e);
+        log.error("handleUsernameNotFoundException", e);
         return ApiResponse.error(ResponseCode.USER_NAME_NOT_FOUND);
     }
 
@@ -162,7 +141,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NoSuchElementException.class)
     protected ResponseEntity<ApiResponse<Object>> handleNoSuchElementException(NoSuchElementException e) {
-    	logger.error("handleNoSuchElementException", e);
+    	log.error("handleNoSuchElementException", e);
         return ApiResponse.error(ResponseCode.NO_SUCH_ELEMENT);
     }
     
@@ -172,7 +151,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ResponseEntity<ApiResponse<Object>> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-    	logger.error("handleDataIntegrityViolationException", e);
+    	log.error("handleDataIntegrityViolationException", e);
     	return ApiResponse.error(ResponseCode.DATA_INTEGRITY_VIOLATION);
     }
     
@@ -181,12 +160,12 @@ public class GlobalExceptionHandler {
      * 	ex) 특정 station 조회 시 필수 파마리터인 name 이 존재하지 않는 경우 
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    protected ApiResponse<Object>  handleConstraintRequestParameterException(MissingServletRequestParameterException e) {
-    	logger.error("handleMissingServletRequestParameterException", e);
-    	
-    	String missingParameter = e.getParameterName();
-        String errorMessage = String.format("필수 요청 파라미터 '%s'가 누락되었습니다.", missingParameter);
-    	return ApiResponse.error(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER, errorMessage);
+    protected ResponseEntity<ApiResponse<Object>> handleConstraintRequestParameterException(MissingServletRequestParameterException e) {
+    	log.error("handleMissingServletRequestParameterException", e);
+    	String errorMessage = String.format("필수 요청 파라미터 '%s'가 누락되었습니다.", e.getParameterName());
+    	return ResponseEntity
+                .status(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER.getHttpStatus())
+                .body(ApiResponse.error(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER, errorMessage));
     }
     
     /**
@@ -195,7 +174,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ConstraintViolationException.class)
     protected ResponseEntity<ApiResponse<Object>> handleConstraintViolationException(ConstraintViolationException e) {
-    	logger.error("handleConstraintViolationException", e);
+    	log.error("handleConstraintViolationException", e);
     	return ApiResponse.error(ResponseCode.MISSING_SERVLET_REQUEST_PARAMETER);
     }
     
@@ -207,7 +186,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UnrecognizedPropertyException.class)
     protected ResponseEntity<ApiResponse<Object>> handleUnrecognizedPropertyException(UnrecognizedPropertyException e) {
-        logger.error("handleUnrecognizedPropertyException", e);
+        log.error("handleUnrecognizedPropertyException", e);
         return ApiResponse.error(ResponseCode.INTERNAL_SERVER_ERROR);
     }
     
@@ -216,7 +195,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ExpiredJwtException.class)
     protected ResponseEntity<ApiResponse<Object>> handleExpiredJwtException(ExpiredJwtException e) {
-    	logger.error("handleExpiredJwtException", e);
+    	log.error("handleExpiredJwtException", e);
     	return ApiResponse.error(ResponseCode.TOKEN_EXPIRED);
     }
     
@@ -226,7 +205,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MalformedJwtException.class)
     protected ResponseEntity<ApiResponse<Object>> handleMalformedJwtException(MalformedJwtException e) {
-    	logger.error("handleMalformedJwtException", e);
+    	log.error("handleMalformedJwtException", e);
     	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
     }
     
@@ -235,7 +214,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(UnsupportedJwtException.class)
     protected ResponseEntity<ApiResponse<Object>> handleUnsupportedJwtException(UnsupportedJwtException e) {
-    	logger.error("handleUnsupportedJwtException", e);
+    	log.error("handleUnsupportedJwtException", e);
     	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
     }
 
@@ -245,7 +224,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(SecurityException.class)
     protected ResponseEntity<ApiResponse<Object>> handleJwtSecurityException(SecurityException e) {
-    	logger.error("handleJwtSecurityException", e);
+    	log.error("handleJwtSecurityException", e);
     	return ApiResponse.error(ResponseCode.INVALID_ACCESS_TOKEN);
     }
     
@@ -258,7 +237,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     protected ResponseEntity<ApiResponse<Object>> handleTransientPropertyValueException(InvalidDataAccessApiUsageException e) {
-    	logger.error("handleInvalidDataAccessApiUsageException", e);
+    	log.error("handleInvalidDataAccessApiUsageException", e);
     	return ApiResponse.error(ResponseCode.INVALID_DATA_ACCESS_API_USAGE);
     }
     
@@ -267,7 +246,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ClassCastException.class)
     protected ResponseEntity<ApiResponse<Object>> handleClassCastException(ClassCastException e) {
-    	logger.error("handleClassCastException", e);
+    	log.error("handleClassCastException", e);
     	return ApiResponse.error(ResponseCode.CLASS_CAST_ERROR);
     }
     
@@ -278,7 +257,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<ApiResponse<Object>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-    	logger.error("handleHttpMessageNotReadableException", e);
+    	log.error("handleHttpMessageNotReadableException", e);
     	return ApiResponse.error(ResponseCode.HTTP_MESSAGE_NOT_READABLE);
     }
     
@@ -288,7 +267,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(WebClientRequestException.class)
     protected ResponseEntity<ApiResponse<Object>> handleWebClientRequestException(WebClientRequestException e) {
-    	logger.error("handleWebClientRequestException", e);
+    	log.error("handleWebClientRequestException", e);
     	return ApiResponse.error(ResponseCode.WEBCLIENT_REQUEST_ERROR);
     }
     
@@ -298,7 +277,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DateTimeParseException.class)
     protected ResponseEntity<ApiResponse<Object>> handleDateTimeParseExceptionException(DateTimeParseException e) {
-    	logger.error("handleDateTimeParseExceptionException", e);
+    	log.error("handleDateTimeParseExceptionException", e);
     	return ApiResponse.error(ResponseCode.DATE_TIME_PARSING_ERROR);
     }
     
@@ -309,8 +288,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(PropertyReferenceException.class)
     protected ResponseEntity<ApiResponse<Object>> handlePropertyReferenceException(PropertyReferenceException e) {
-    	logger.error("handlePropertyReferenceException", e);
-    	return ApiResponse.error(ResponseCode.PROPERTY_REFRENCE_ERROR);
+    	log.error("handlePropertyReferenceException", e);
+    	return ApiResponse.error(ResponseCode.PROPERTY_REFERENCE_ERROR);
     }
     
     /**
@@ -322,18 +301,16 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(IllegalArgumentException.class)
     protected ResponseEntity<ApiResponse<Object>> handleIllegalArgumentException(IllegalArgumentException e) {
-    	logger.error("handleIllegalArgumentException", e);
+    	log.error("handleIllegalArgumentException", e);
     	return ApiResponse.error(ResponseCode.ILLEGAL_ARGUMENT_ERROR);
     }
     
     /**
-     * 요청 URL 이 존재하지 않는 경우
-     * 	ex) /template/aut222h/sign-in
-     *  
+     * Redis 연결이 실패한 경우
      */
     @ExceptionHandler(RedisConnectionFailureException.class)
     protected ResponseEntity<ApiResponse<Object>> handleRedisConnectionFailureException(RedisConnectionFailureException e) {
-    	logger.error("handleRedisConnectionFailureException", e);
+    	log.error("handleRedisConnectionFailureException", e);
     	return ApiResponse.error(ResponseCode.REDIS_CONNECTION_ERROR);
     }
     
@@ -344,13 +321,13 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(NoResourceFoundException.class)
     protected ResponseEntity<ApiResponse<Object>> handleNoResourceFoundException(NoResourceFoundException e) {
-    	logger.error("handleNoResourceFoundException", e);
+    	log.error("handleNoResourceFoundException", e);
     	return ApiResponse.error(ResponseCode.NOT_FOUND);
     }
     
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ApiResponse<Object>> handleException(Exception e) {
-    	logger.error("handleException", e);
+    	log.error("handleException", e);
     	return ApiResponse.error(ResponseCode.INTERNAL_SERVER_ERROR);
     }
 }

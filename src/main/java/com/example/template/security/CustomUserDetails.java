@@ -58,7 +58,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-//        return approvalStatus != ApprovalStatus.SUSPENDED; // 일시정지면 잠긴 계정
         return true;
     }
 
@@ -69,8 +68,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-//        return approvalStatus == ApprovalStatus.ACTIVE;
-    	return true;
+        return true;
     }
     
     
