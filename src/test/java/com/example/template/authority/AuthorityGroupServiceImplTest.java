@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.dto.AuthorityGroupDto;
 import com.example.template.common.dto.AuthorityGroupMenuDto;
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
 import com.example.template.menu.MenuService;
@@ -83,10 +84,11 @@ class AuthorityGroupServiceImplTest {
             AuthorityGroupEntity group = buildGroup("1", "SUPER_ADMIN");
             given(authorityGroupRepository.findAllActive()).willReturn(List.of(group));
 
-            List<AuthorityGroupDto.AuthorityGroupResponse> result = authorityGroupService.getGroups();
+            ListResponseDto<AuthorityGroupDto.AuthorityGroupResponse> result = authorityGroupService.getGroups();
 
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).getName()).isEqualTo("그룹-1");
+            assertThat(result.getTotalCount()).isEqualTo(1);
+            assertThat(result.getList()).hasSize(1);
+            assertThat(result.getList().get(0).getName()).isEqualTo("그룹-1");
         }
 
         @Test
@@ -94,9 +96,10 @@ class AuthorityGroupServiceImplTest {
         void 성공_빈목록() {
             given(authorityGroupRepository.findAllActive()).willReturn(List.of());
 
-            List<AuthorityGroupDto.AuthorityGroupResponse> result = authorityGroupService.getGroups();
+            ListResponseDto<AuthorityGroupDto.AuthorityGroupResponse> result = authorityGroupService.getGroups();
 
-            assertThat(result).isEmpty();
+            assertThat(result.getTotalCount()).isZero();
+            assertThat(result.getList()).isEmpty();
         }
     }
 
@@ -281,11 +284,12 @@ class AuthorityGroupServiceImplTest {
             given(authorityGroupMenuRepository.findActiveByGroupId("group-1"))
                     .willReturn(List.of(groupMenu));
 
-            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+            ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
                     authorityGroupService.getGroupMenus("group-1");
 
-            assertThat(result).hasSize(1);
-            assertThat(result.get(0).getMenuName()).isEqualTo("메뉴-1");
+            assertThat(result.getTotalCount()).isEqualTo(1);
+            assertThat(result.getList()).hasSize(1);
+            assertThat(result.getList().get(0).getMenuName()).isEqualTo("메뉴-1");
         }
 
         @Test
@@ -324,10 +328,11 @@ class AuthorityGroupServiceImplTest {
             req.setGroupId("group-1");
             req.setMenuIds(List.of("menu-m1"));
 
-            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+            ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
                     authorityGroupService.createGroupMenus(req);
 
-            assertThat(result).hasSize(1);
+            assertThat(result.getTotalCount()).isEqualTo(1);
+            assertThat(result.getList()).hasSize(1);
         }
 
         @Test
@@ -398,11 +403,12 @@ class AuthorityGroupServiceImplTest {
             req.setGroupId("group-1");
             req.setMenuIds(List.of("menu-new"));
 
-            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+            ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
                     authorityGroupService.updateGroupMenus(req);
 
             then(authorityGroupMenuRepository).should().deactivateAllByGroupId("group-1");
-            assertThat(result).hasSize(1);
+            assertThat(result.getTotalCount()).isEqualTo(1);
+            assertThat(result.getList()).hasSize(1);
         }
 
         @Test
@@ -416,11 +422,12 @@ class AuthorityGroupServiceImplTest {
             req.setGroupId("group-1");
             req.setMenuIds(List.of());
 
-            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+            ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
                     authorityGroupService.updateGroupMenus(req);
 
             then(authorityGroupMenuRepository).should().deactivateAllByGroupId("group-1");
-            assertThat(result).isEmpty();
+            assertThat(result.getTotalCount()).isZero();
+            assertThat(result.getList()).isEmpty();
         }
 
         @Test

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.template.admin.AdminRepository;
 import com.example.template.common.dto.AuthorityGroupDto;
 import com.example.template.common.dto.AuthorityGroupMenuDto;
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
 import com.example.template.menu.MenuService;
@@ -32,10 +33,11 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AuthorityGroupDto.AuthorityGroupResponse> getGroups() {
-        return authorityGroupRepository.findAllActive().stream()
+    public ListResponseDto<AuthorityGroupDto.AuthorityGroupResponse> getGroups() {
+        List<AuthorityGroupDto.AuthorityGroupResponse> list = authorityGroupRepository.findAllActive().stream()
             .map(this::toGroupResponse)
             .toList();
+        return ListResponseDto.of(list.size(), list);
     }
 
     @Override
@@ -81,18 +83,20 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> getGroupMenus(String groupId) {
+    public ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> getGroupMenus(String groupId) {
         findActiveGroupOrThrow(groupId);
-        return authorityGroupMenuRepository.findActiveByGroupId(groupId).stream()
-            .map(this::toGroupMenuResponse)
-            .toList();
+        List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> list =
+            authorityGroupMenuRepository.findActiveByGroupId(groupId).stream()
+                .map(this::toGroupMenuResponse)
+                .toList();
+        return ListResponseDto.of(list.size(), list);
     }
 
     @Override
     @Transactional
-    public List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> createGroupMenus(AuthorityGroupMenuDto.CreateRequest request) {
+    public ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> createGroupMenus(AuthorityGroupMenuDto.CreateRequest request) {
         findActiveGroupOrThrow(request.getGroupId());
-        List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result = request.getMenuIds().stream()
+        List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> list = request.getMenuIds().stream()
             .map(menuId -> {
                 MenuEntity menu = menuService.getMenuById(menuId);
                 return authorityGroupMenuRepository.findByGroupIdAndMenuId(request.getGroupId(), menuId)
@@ -106,8 +110,8 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
                     });
             })
             .toList();
-        log.info("Authority group menus created: groupId={}, count={}", request.getGroupId(), result.size());
-        return result;
+        log.info("Authority group menus created: groupId={}, count={}", request.getGroupId(), list.size());
+        return ListResponseDto.of(list.size(), list);
     }
 
     private AuthorityGroupMenuDto.AuthorityGroupMenuResponse reactivateOrCreateGroupMenu(
@@ -122,7 +126,7 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
 
     @Override
     @Transactional
-    public List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> updateGroupMenus(AuthorityGroupMenuDto.UpdateRequest request) {
+    public ListResponseDto<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> updateGroupMenus(AuthorityGroupMenuDto.UpdateRequest request) {
         findActiveGroupOrThrow(request.getGroupId());
 
         // Step 1: 그룹의 전체 메뉴 매핑 비활성화
@@ -131,9 +135,11 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
         // Step 2: 요청된 menuId 목록 활성화 또는 신규 생성
         if (request.getMenuIds() == null || request.getMenuIds().isEmpty()) {
             log.info("Authority group menus updated (all deactivated): groupId={}", request.getGroupId());
-            return authorityGroupMenuRepository.findActiveByGroupId(request.getGroupId()).stream()
-                .map(this::toGroupMenuResponse)
-                .toList();
+            List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> empty =
+                authorityGroupMenuRepository.findActiveByGroupId(request.getGroupId()).stream()
+                    .map(this::toGroupMenuResponse)
+                    .toList();
+            return ListResponseDto.of(empty.size(), empty);
         }
         request.getMenuIds().forEach(menuId -> {
             MenuEntity menu = menuService.getMenuById(menuId);
@@ -150,12 +156,12 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
         });
 
         // Step 3: 최종 활성 메뉴 목록 반환
-        List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result =
+        List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> list =
             authorityGroupMenuRepository.findActiveByGroupId(request.getGroupId()).stream()
                 .map(this::toGroupMenuResponse)
                 .toList();
-        log.info("Authority group menus updated: groupId={}, count={}", request.getGroupId(), result.size());
-        return result;
+        log.info("Authority group menus updated: groupId={}, count={}", request.getGroupId(), list.size());
+        return ListResponseDto.of(list.size(), list);
     }
 
 

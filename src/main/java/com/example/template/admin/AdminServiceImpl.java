@@ -40,15 +40,8 @@ public class AdminServiceImpl implements AdminService {
         List<AdminDto.AdminResponse> list = adminEntities.stream()
             .map(AdminEntity::toAdminResponse)
             .toList();
-        
-       long totalCount = adminRepository.countAdminListV1(
-               condition.getLoginId(),
-               condition.getName(),
-               condition.getEmail(),
-               condition.getPhoneNumber()
-           );
 
-        return ListResponseDto.of(totalCount, list);
+        return ListResponseDto.of(countAdminListV1(condition), list);
     }
 
 

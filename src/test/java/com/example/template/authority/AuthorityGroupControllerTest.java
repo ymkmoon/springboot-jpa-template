@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.template.auth.AuthService;
 import com.example.template.common.dto.AuthorityGroupDto;
 import com.example.template.common.dto.AuthorityGroupMenuDto;
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.constants.ApprovalStatus;
 import com.example.template.constants.AuthConstants;
 import com.example.template.constants.ResponseCode;
@@ -102,24 +103,26 @@ class AuthorityGroupControllerTest {
         @DisplayName("성공_200_전체그룹목록")
         void 성공() throws Exception {
             given(authorityGroupService.getGroups())
-                    .willReturn(List.of(buildGroupResponse("g1"), buildGroupResponse("g2")));
+                    .willReturn(ListResponseDto.of(2, List.of(buildGroupResponse("g1"), buildGroupResponse("g2"))));
 
             mockMvc.perform(get("/authority/groups").header("Authorization", AUTH_HEADER))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("20000000"))
-                    .andExpect(jsonPath("$.data").isArray())
-                    .andExpect(jsonPath("$.data[0].name").value("그룹-g1"));
+                    .andExpect(jsonPath("$.data.totalCount").value(2))
+                    .andExpect(jsonPath("$.data.list").isArray())
+                    .andExpect(jsonPath("$.data.list[0].name").value("그룹-g1"));
         }
 
         @Test
         @DisplayName("성공_200_빈목록")
         void 성공_빈목록() throws Exception {
-            given(authorityGroupService.getGroups()).willReturn(List.of());
+            given(authorityGroupService.getGroups()).willReturn(ListResponseDto.of(0, List.of()));
 
             mockMvc.perform(get("/authority/groups").header("Authorization", AUTH_HEADER))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data").isArray())
-                    .andExpect(jsonPath("$.data").isEmpty());
+                    .andExpect(jsonPath("$.data.totalCount").value(0))
+                    .andExpect(jsonPath("$.data.list").isArray())
+                    .andExpect(jsonPath("$.data.list").isEmpty());
         }
     }
 
@@ -275,11 +278,12 @@ class AuthorityGroupControllerTest {
         @DisplayName("성공_200_메뉴목록")
         void 성공() throws Exception {
             given(authorityGroupService.getGroupMenus("g1"))
-                    .willReturn(List.of(buildMenuResponse("gm1")));
+                    .willReturn(ListResponseDto.of(1, List.of(buildMenuResponse("gm1"))));
 
             mockMvc.perform(get("/authority/groups/g1/menus").header("Authorization", AUTH_HEADER))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data[0].menuName").value("대시보드"));
+                    .andExpect(jsonPath("$.data.totalCount").value(1))
+                    .andExpect(jsonPath("$.data.list[0].menuName").value("대시보드"));
         }
 
         @Test
@@ -304,7 +308,7 @@ class AuthorityGroupControllerTest {
         @DisplayName("성공_200")
         void 성공() throws Exception {
             given(authorityGroupService.createGroupMenus(any()))
-                    .willReturn(List.of(buildMenuResponse("gm1")));
+                    .willReturn(ListResponseDto.of(1, List.of(buildMenuResponse("gm1"))));
 
             String body = "{\"groupId\":\"g1\",\"menuIds\":[\"menu-1\"]}";
 
@@ -313,7 +317,8 @@ class AuthorityGroupControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data[0].menuName").value("대시보드"));
+                    .andExpect(jsonPath("$.data.totalCount").value(1))
+                    .andExpect(jsonPath("$.data.list[0].menuName").value("대시보드"));
         }
 
         @Test
@@ -342,7 +347,7 @@ class AuthorityGroupControllerTest {
         @DisplayName("성공_200")
         void 성공() throws Exception {
             given(authorityGroupService.updateGroupMenus(any()))
-                    .willReturn(List.of(buildMenuResponse("gm2")));
+                    .willReturn(ListResponseDto.of(1, List.of(buildMenuResponse("gm2"))));
 
             String body = "{\"groupId\":\"g1\",\"menuIds\":[\"menu-2\"]}";
 
@@ -351,7 +356,8 @@ class AuthorityGroupControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.code").value("20000000"));
+                    .andExpect(jsonPath("$.code").value("20000000"))
+                    .andExpect(jsonPath("$.data.totalCount").value(1));
         }
 
         @Test

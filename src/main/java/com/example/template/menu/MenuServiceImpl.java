@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.template.common.dto.ListResponseDto;
 import com.example.template.common.dto.MenuDto;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
@@ -23,8 +24,8 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MenuDto.MenuResponse> getAllMenus() {
-        return menuRepository.findAllActive().stream()
+    public ListResponseDto<MenuDto.MenuResponse> getAllMenus() {
+        List<MenuDto.MenuResponse> list = menuRepository.findAllActive().stream()
             .map(m -> MenuDto.MenuResponse.builder()
                 .id(m.getId())
                 .menuName(m.getMenuName())
@@ -32,12 +33,14 @@ public class MenuServiceImpl implements MenuService {
                 .sortOrder(m.getSortOrder())
                 .build())
             .toList();
+        return ListResponseDto.of(list.size(), list);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<MenuDto.MenuResponse> getAccessibleMenus(String adminId) {
-        return menuRepositoryCustom.findAccessibleMenus(adminId);
+    public ListResponseDto<MenuDto.MenuResponse> getAccessibleMenus(String adminId) {
+        List<MenuDto.MenuResponse> list = menuRepositoryCustom.findAccessibleMenus(adminId);
+        return ListResponseDto.of(list.size(), list);
     }
 
     @Override
