@@ -3,6 +3,7 @@ package com.example.template.authority;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +15,7 @@ import com.example.template.model.entity.AuthorityGroupMenuEntity;
 @Repository
 public interface AuthorityGroupMenuRepository extends JpaRepository<AuthorityGroupMenuEntity, String> {
 
+    @EntityGraph(attributePaths = {"menu", "authorityGroup"})
     @Query("SELECT agm FROM authority_group_menu agm WHERE agm.authorityGroup.id = :groupId AND agm.isActive = true AND agm.authorityGroup.isActive = true ORDER BY agm.createdAt DESC")
     List<AuthorityGroupMenuEntity> findActiveByGroupId(@Param("groupId") String groupId);
 

@@ -353,6 +353,24 @@ class AuthorityGroupServiceImplTest {
                     .extracting(e -> ((BusinessException) e).getResponseCode())
                     .isEqualTo(ResponseCode.AUTHORITY_GROUP_MENU_ALREADY_EXISTS);
         }
+
+        @Test
+        @DisplayName("실패_메뉴없음_MENU_NOT_FOUND")
+        void 실패_메뉴없음() {
+            AuthorityGroupEntity group = buildGroup("1", "SUPER_ADMIN");
+
+            given(authorityGroupRepository.findActiveById("group-1")).willReturn(Optional.of(group));
+            given(menuRepository.findById(anyString())).willReturn(Optional.empty());
+
+            AuthorityGroupMenuDto.CreateRequest req = new AuthorityGroupMenuDto.CreateRequest();
+            req.setGroupId("group-1");
+            req.setMenuIds(List.of("nonexistent-menu"));
+
+            assertThatThrownBy(() -> authorityGroupService.createGroupMenus(req))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.MENU_NOT_FOUND);
+        }
     }
 
     // ── updateGroupMenus ───────────────────────────────────────────────────────
@@ -405,6 +423,24 @@ class AuthorityGroupServiceImplTest {
 
             then(authorityGroupMenuRepository).should().deactivateAllByGroupId("group-1");
             assertThat(result).isEmpty();
+        }
+
+        @Test
+        @DisplayName("실패_메뉴없음_MENU_NOT_FOUND")
+        void 실패_메뉴없음() {
+            AuthorityGroupEntity group = buildGroup("1", "SUPER_ADMIN");
+
+            given(authorityGroupRepository.findActiveById("group-1")).willReturn(Optional.of(group));
+            given(menuRepository.findById(anyString())).willReturn(Optional.empty());
+
+            AuthorityGroupMenuDto.UpdateRequest req = new AuthorityGroupMenuDto.UpdateRequest();
+            req.setGroupId("group-1");
+            req.setMenuIds(List.of("nonexistent-menu"));
+
+            assertThatThrownBy(() -> authorityGroupService.updateGroupMenus(req))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.MENU_NOT_FOUND);
         }
     }
 }
