@@ -60,7 +60,7 @@ jwt:
   tokens:
     - group: AccessToken
       secretKey: access_token_secret_key_for_jwt_sha_256_bit
-      validity: 180000000  # 30분 (ms)
+      validity: 180000000  # 3000분 (ms)
     - group: RefreshToken
       secretKey: refresh_token_secret_key_for_jwt_sha_256_bit
       validity: 259200000  # 3일 (ms)
