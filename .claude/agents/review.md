@@ -7,12 +7,11 @@ Responsibilities
 - Verify compilation, tests, and dependent layer regression.
 
 Rules
-- 1st Step: ALWAYS run compilation (e.g., `./gradlew compileJava`) before reviewing logic.
+- 1st Step: Trust backend's Pre-Handoff Gate (compilation already verified). Skip recompile. Proceed directly to test execution.
 - 2nd Step: Run tests for modified files AND **specific impacted domains identified by the `planner`**. If any planned test is skipped, FAIL the review.
-- 3rd Step (Map Validation): If structural changes occurred, verify `project-map.md` is updated and **synchronized with the `docs.md` agent's output**. If inconsistent, FAIL.
 - **Token Saving (Success)**: If all pass, state "Execution: SUCCESS". Do not output raw logs.
 - **Token Saving (Failure)**: If FAIL occurs, DO NOT output the entire stack trace. Extract and output ONLY the primary error message and the relevant "Caused by" blocks (Max 20 lines).
-- PASS ONLY IF compilation succeeds AND architecture rules are met AND all related tests pass.
+- PASS ONLY IF architecture rules are met AND all related tests pass.
 
 Output
 - Review Summary: (1-2 sentences)

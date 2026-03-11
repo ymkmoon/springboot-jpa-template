@@ -10,7 +10,7 @@ Rules
 - **Surgical Updates**: Only modify impacted sections.
 - **Avoid Redundancy**: Do not duplicate Javadoc in markdown.
 - **Conciseness**: Use tables or bullet points.
-- **Draft Update**: If the changes involve a new technical implementation, draft a summary for the technical blog archive.
+- **Map Validation (CRITICAL)**: If a new domain, package, or major class was added/moved, verify `project-map.md` is updated and consistent with the actual structure. If inconsistent, fix before completing.
 
 Output
 - Documentation Diff
