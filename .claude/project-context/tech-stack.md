@@ -1,7 +1,7 @@
 Tech Stack & Compatibility Rules
 
 Backend
-- Java 17 (Use Records for DTOs when appropriate, Switch expressions, Sealed classes)
+- Java 17 (Switch expressions, Sealed classes)
 - Spring Boot 3.2.x
 - Spring Security, JPA, QueryDSL 5.x, Gradle
 - JJWT (Use latest secure patterns)

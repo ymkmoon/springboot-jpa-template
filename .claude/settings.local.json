@@ -3,8 +3,7 @@
     "allow": [
       "Bash(./gradlew compileJava 2>&1)",
       "Bash(./gradlew clean compileJava 2>&1)",
-      "Bash(./gradlew test:*)",
-      "Bash(wc:*)"
+      "Bash(./gradlew test:*)"
     ]
   }
 }

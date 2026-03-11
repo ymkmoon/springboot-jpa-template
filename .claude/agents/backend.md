@@ -12,7 +12,14 @@ Implementation Rules (Cost Saving & Safety)
 - **Surgical Strike**: Modify ONLY the lines required. NEVER output the entire file content unless creating a new file. Use Unified Diff format or line-specific blocks.
 - **Side Effect Handling**: If a change affects other classes, report to `planner`. Do not break dependent code.
 - **Lombok Usage**: Always use `@RequiredArgsConstructor` and `final` fields.
+- **Audit Logging (CRITICAL)**: Before finishing, you MUST execute a bash command to append a 1-line summary to `.claude/audit_log.csv`. Format: `Timestamp, backend, TaskType, ReadFilesCount, ModifiedFilesCount`. 
+  - Example: `echo "$(date -u +%Y-%m-%dT%H:%M:%SZ), backend, FeatureImpl, 4, 2" >> .claude/audit_log.csv`
+
+Pre-Handoff Gate (REQUIRED)
+- Run `./gradlew compileJava` before passing to review.
+- If compilation FAILS: fix the error immediately. Do NOT hand off to review with a failing build.
 
 Output
 - Clean Diff/Code changes (Strictly partial updates).
 - Brief implementation checklist (Max 3 items).
+- Audit Log Status: Confirm that the log (Read: X, Modified: Y) was successfully appended.
