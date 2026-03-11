@@ -17,9 +17,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.example.template.common.dto.AdminDto;
+import com.example.template.constants.ResponseCode;
+import com.example.template.exception.BusinessException;
 import com.example.template.common.dto.ListResponseDto;
 import com.example.template.common.dto.OffsetBasedPageRequest;
 import com.example.template.constants.ApprovalStatus;
@@ -52,13 +53,11 @@ class AdminServiceImplTest {
     }
 
     private AdminDto.AdminListRequest emptyCondition() {
-        return new AdminDto.AdminListRequest();
+        return AdminDto.AdminListRequest.builder().build();
     }
 
     private AdminDto.AdminListRequest loginIdCondition(String loginId) {
-        AdminDto.AdminListRequest req = new AdminDto.AdminListRequest();
-        req.setLoginId(loginId);
-        return req;
+        return AdminDto.AdminListRequest.builder().loginId(loginId).build();
     }
 
     private OffsetBasedPageRequest page(int offset, int limit) {
@@ -197,33 +196,6 @@ class AdminServiceImplTest {
         }
     }
 
-    // ── countAdminListV1 ──────────────────────────────────────────────────────
-
-    @Nested
-    @DisplayName("countAdminListV1")
-    class CountAdminListV1 {
-
-        @Test
-        @DisplayName("전체_카운트_반환")
-        void 전체카운트() {
-            given(adminRepository.countAdminListV1(any(), any(), any(), any())).willReturn(5L);
-
-            long count = adminService.countAdminListV1(emptyCondition());
-
-            assertThat(count).isEqualTo(5L);
-        }
-
-        @Test
-        @DisplayName("조건검색_카운트_반환")
-        void 조건검색카운트() {
-            given(adminRepository.countAdminListV1(any(), any(), any(), any())).willReturn(1L);
-
-            long count = adminService.countAdminListV1(loginIdCondition("targetuser"));
-
-            assertThat(count).isEqualTo(1L);
-        }
-    }
-
     // ── getAdminDetail ────────────────────────────────────────────────────────
 
     @Nested
@@ -247,7 +219,9 @@ class AdminServiceImplTest {
             given(adminRepository.findById("nonexistent")).willReturn(Optional.empty());
 
             assertThatThrownBy(() -> adminService.getAdminDetail("nonexistent"))
-                    .isInstanceOf(UsernameNotFoundException.class);
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.USER_NAME_NOT_FOUND);
         }
     }
 }

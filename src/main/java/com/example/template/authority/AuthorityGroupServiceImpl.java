@@ -10,7 +10,7 @@ import com.example.template.common.dto.AuthorityGroupDto;
 import com.example.template.common.dto.AuthorityGroupMenuDto;
 import com.example.template.constants.ResponseCode;
 import com.example.template.exception.BusinessException;
-import com.example.template.menu.MenuRepository;
+import com.example.template.menu.MenuService;
 import com.example.template.model.entity.AuthorityGroupEntity;
 import com.example.template.model.entity.AuthorityGroupMenuEntity;
 import com.example.template.model.entity.AuthorityLevelEntity;
@@ -27,7 +27,7 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
     private final AuthorityGroupRepository authorityGroupRepository;
     private final AuthorityGroupMenuRepository authorityGroupMenuRepository;
     private final AuthorityLevelRepository authorityLevelRepository;
-    private final MenuRepository menuRepository;
+    private final MenuService menuService;
     private final AdminRepository adminRepository;
 
     @Override
@@ -94,13 +94,13 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
         findActiveGroupOrThrow(request.getGroupId());
         List<AuthorityGroupMenuDto.AuthorityGroupMenuResponse> result = request.getMenuIds().stream()
             .map(menuId -> {
-                findMenuOrThrow(menuId);
+                MenuEntity menu = menuService.getMenuById(menuId);
                 return authorityGroupMenuRepository.findByGroupIdAndMenuId(request.getGroupId(), menuId)
                     .map(existing -> reactivateOrCreateGroupMenu(existing))
                     .orElseGet(() -> {
                         AuthorityGroupMenuEntity groupMenu = AuthorityGroupMenuEntity.builder()
                             .authorityGroup(authorityGroupRepository.getReferenceById(request.getGroupId()))
-                            .menu(menuRepository.getReferenceById(menuId))
+                            .menu(menu)
                             .build();
                         return toGroupMenuResponse(authorityGroupMenuRepository.save(groupMenu));
                     });
@@ -136,14 +136,14 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
                 .toList();
         }
         request.getMenuIds().forEach(menuId -> {
-            findMenuOrThrow(menuId);
+            MenuEntity menu = menuService.getMenuById(menuId);
             authorityGroupMenuRepository.findByGroupIdAndMenuId(request.getGroupId(), menuId)
                 .ifPresentOrElse(
                     existing -> authorityGroupMenuRepository.activateById(existing.getId()),
                     () -> authorityGroupMenuRepository.save(
                         AuthorityGroupMenuEntity.builder()
                             .authorityGroup(authorityGroupRepository.getReferenceById(request.getGroupId()))
-                            .menu(menuRepository.getReferenceById(menuId))
+                            .menu(menu)
                             .build()
                     )
                 );
@@ -167,11 +167,6 @@ public class AuthorityGroupServiceImpl implements AuthorityGroupService {
     private AuthorityLevelEntity findLevelOrThrow(String levelCode) {
         return authorityLevelRepository.findById(levelCode)
             .orElseThrow(() -> new BusinessException(ResponseCode.AUTHORITY_LEVEL_NOT_FOUND));
-    }
-
-    private MenuEntity findMenuOrThrow(String menuId) {
-        return menuRepository.findById(menuId)
-            .orElseThrow(() -> new BusinessException(ResponseCode.MENU_NOT_FOUND));
     }
 
     private AuthorityGroupDto.AuthorityGroupResponse toGroupResponse(AuthorityGroupEntity group) {

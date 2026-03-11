@@ -23,6 +23,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.example.template.auth.AuthService;
 import com.example.template.common.dto.AdminDto;
+import com.example.template.constants.ResponseCode;
+import com.example.template.exception.BusinessException;
 import com.example.template.common.dto.ListResponseDto;
 import com.example.template.constants.ApprovalStatus;
 import com.example.template.constants.AuthConstants;
@@ -212,11 +214,12 @@ class AdminControllerTest {
         @DisplayName("실패_존재하지않는_관리자_401")
         void 실패_존재하지않는_관리자() throws Exception {
             given(adminService.getAdminDetail("nonexistent"))
-                    .willThrow(new org.springframework.security.core.userdetails.UsernameNotFoundException("not found"));
+                    .willThrow(new BusinessException(ResponseCode.USER_NAME_NOT_FOUND));
 
             mockMvc.perform(get("/user/nonexistent")
                             .header("Authorization", AUTH_HEADER))
-                    .andExpect(status().isUnauthorized());
+                    .andExpect(status().isUnauthorized())
+                    .andExpect(jsonPath("$.code").value(ResponseCode.USER_NAME_NOT_FOUND.getCode()));
         }
     }
 }

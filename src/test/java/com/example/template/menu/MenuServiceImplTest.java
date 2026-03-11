@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,6 +16,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.template.common.dto.MenuDto;
+import com.example.template.constants.ResponseCode;
+import com.example.template.exception.BusinessException;
 import com.example.template.model.entity.MenuEntity;
 
 @ExtendWith(MockitoExtension.class)
@@ -103,6 +106,35 @@ class MenuServiceImplTest {
             List<MenuDto.MenuResponse> result = menuService.getAccessibleMenus("admin-uuid-2");
 
             assertThat(result).isEmpty();
+        }
+    }
+
+    // ── getMenuById ───────────────────────────────────────────────────────────
+
+    @Nested
+    @DisplayName("getMenuById")
+    class GetMenuById {
+
+        @Test
+        @DisplayName("성공_메뉴반환")
+        void 성공_메뉴반환() {
+            MenuEntity menu = buildMenu("Dashboard", 1);
+            given(menuRepository.findById("id")).willReturn(Optional.of(menu));
+
+            MenuEntity result = menuService.getMenuById("id");
+
+            assertThat(result.getMenuName()).isEqualTo("Dashboard");
+        }
+
+        @Test
+        @DisplayName("실패_존재하지않는메뉴_MENU_NOT_FOUND")
+        void 실패_존재하지않는메뉴_MENU_NOT_FOUND() {
+            given(menuRepository.findById("bad-id")).willReturn(Optional.empty());
+
+            assertThatThrownBy(() -> menuService.getMenuById("bad-id"))
+                    .isInstanceOf(BusinessException.class)
+                    .extracting(e -> ((BusinessException) e).getResponseCode())
+                    .isEqualTo(ResponseCode.MENU_NOT_FOUND);
         }
     }
 

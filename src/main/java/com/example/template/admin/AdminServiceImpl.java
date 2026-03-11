@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +11,13 @@ import com.example.template.common.dto.AdminDto;
 import com.example.template.common.dto.AdminDto.AdminResponse;
 import com.example.template.constants.ResponseCode;
 import com.example.template.common.dto.ListResponseDto;
+import com.example.template.exception.BusinessException;
 import com.example.template.model.entity.AdminEntity;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
@@ -23,6 +25,7 @@ public class AdminServiceImpl implements AdminService {
 	private final AdminRepository adminRepository;
 	private final AdminRepositoryCustom adminRepositoryCustom;
 
+	@Override
 	@Transactional(readOnly = true)
 	public ListResponseDto<AdminDto.AdminResponse> getAdminListV1(Pageable pageable, AdminDto.AdminListRequest condition) {
         List<AdminEntity> adminEntities = adminRepository.findAdminListV1(
@@ -49,9 +52,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
-    @Override
-    @Transactional(readOnly = true)
-    public long countAdminListV1(AdminDto.AdminListRequest condition) {
+    private long countAdminListV1(AdminDto.AdminListRequest condition) {
         return adminRepository.countAdminListV1(
                 condition.getLoginId(),
                 condition.getName(),
@@ -85,10 +86,11 @@ public class AdminServiceImpl implements AdminService {
 
 
 	@Override
-	@Transactional(readOnly = true) 
+	@Transactional(readOnly = true)
 	public AdminResponse getAdminDetail(String id) {
 		AdminEntity admin = adminRepository.findById(id)
-				.orElseThrow(() -> new UsernameNotFoundException(ResponseCode.USER_NAME_NOT_FOUND.getDetail()));
+				.orElseThrow(() -> new BusinessException(ResponseCode.USER_NAME_NOT_FOUND));
+		log.info("Get admin detail: uuid={}", id);
 		return admin.toAdminResponse();
 	}
 

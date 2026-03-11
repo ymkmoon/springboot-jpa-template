@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.template.common.dto.MenuDto;
+import com.example.template.constants.ResponseCode;
+import com.example.template.exception.BusinessException;
+import com.example.template.model.entity.MenuEntity;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +48,13 @@ public class MenuServiceImpl implements MenuService {
             .menuId(menuId)
             .accessible(accessible)
             .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MenuEntity getMenuById(String menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(() -> new BusinessException(ResponseCode.MENU_NOT_FOUND));
     }
 
 }
