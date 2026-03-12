@@ -14,6 +14,6 @@ Anti-Patterns (DO NOT USE)
 
 Dev & Database
 - MySQL 8 / H2 (MySQL Mode)
-- Redis / Embedded Redis (mac profile)
+- Redis (mac profile) / Embedded Redis 
 
 Search Tip: If a library version is unclear, check `build.gradle` before adding new dependencies.
