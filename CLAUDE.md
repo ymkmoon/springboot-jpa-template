@@ -154,6 +154,25 @@ ApiResponse<T>
 
 ---
 
+# SQL Rules & Sub-agent Guidelines
+
+**분석 우선:** 모든 SQL 리팩토링 및 튜닝 작업 시, 먼저 해당 DBMS의 분석 스킬을 사용하여 실행 계획을 확보할 것.
+
+**튜닝 절차:**
+1. 슬로우 쿼리나 개선 대상을 선정한다.
+2. 분석 스킬을 통해 병목 지점을 파악한다.
+3. 튜닝 스킬을 통해 개선된 쿼리와 인덱스 전략을 도출한다.
+
+**결과 보고:** 튜닝 후에는 반드시 기존 쿼리 대비 예상 성능 향상 폭을 보고할 것.
+
+| DBMS | Analysis Skill | Tuning Skill |
+|------|-----------|-----------|
+| MySQL | `/mysql-query-analysis` | `/mysql-query-tuning` |
+| PostgreSQL | `/postgres-query-analysis` | `/postgres-query-tuning` |
+| MongoDB | `/mongo-query-analysis` | `/mongo-query-tuning` |
+
+---
+
 # Important Notes
 
 Targeted Test Execution
