@@ -9,52 +9,49 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 For complex tasks (new features, bug fixes, refactoring), ALWAYS follow these steps to minimize token usage and ensure zero-regression:
 
 1. **Read project context**
-   - Load only necessary files from `.claude/project-context/` (architecture.md, coding-rules.md, etc.).
+   - Load only necessary files from `.claude/project-context/` (`project-map.md`, `architecture.md`, etc.).
+   - ALWAYS consult `project-map.md` BEFORE searching for files.
 
 2. **Search Before Reading**
    - Use `grep`, `find`, or `ls` to identify logic.
    - NEVER `cat` entire files just to find a method.
 
 3. **Select the correct workflow** from `.claude/workflows/`
+   - New feature → `feature.md`
+     (`planner` → `analyzer` → `backend` → `review` → `docs`)
+   - Bug fix → `bugfix.md`
+     (`analyzer` → `backend` → `review` → `docs` if API changes)
+   - Refactoring → `refactoring.md`
+     (`analyzer` → `refactor` → `review` → `docs` if architecture changes)
 
-- New feature → `feature.md`
-  planner → analyzer → backend → review → docs
+4. **Efficiency & Safety Rules (Global)**
+   - **Surgical Updates ONLY**: No full file rewrites.
+   - **Precision Handoff**: Agents MUST pass "Exact Line Numbers" to the next agent.
+   - **Context Pruning**: Hand-offs must include a max 3-sentence summary.
+   - **File Reading limits**: Use `sed -n` to read specific blocks. Avoid `cat`.
+   - **JSON Safety**: ALWAYS use `jq` to update `postman/BE_*.json`. NEVER use `sed` or `append`.
+   - **No Test → No Refactor**.
+   - **Zero Conversational Filler**: Act like a CLI tool. Omit greetings or conversational filler. Output ONLY logs, diffs, or required summaries.
 
-- Bug fix → `bugfix.md`
-  analyzer → backend → review
-
-- Refactoring → `refactoring.md`
-  analyzer → refactor → review
-
-4. **Efficiency & Safety Rules**
-
-- Surgical Updates ONLY (no full file rewrites)
-- Log truncation (max 20 lines)
-- No Test → No Refactor
-
-Simple single-file changes may skip workflow.
+*Simple single-file changes may skip the formal workflow but MUST adhere to Efficiency Rules.*
 
 ---
 
 # Build & Run
 
-Build
+Build:
+`./gradlew clean build`
 
-./gradlew clean build
+Run:
+`./gradlew bootRun --args='--spring.profiles.active=mac'`
+`./gradlew bootRun --args='--spring.profiles.active=local'`
+`./gradlew bootRun --args='--spring.profiles.active=dev'`
 
-Run
+Run targeted tests:
+`./gradlew test --tests "com.example.template.{domain}.*"`
 
-./gradlew bootRun --args='--spring.profiles.active=mac'
-./gradlew bootRun --args='--spring.profiles.active=local'
-./gradlew bootRun --args='--spring.profiles.active=dev'
-
-Run targeted tests
-
-./gradlew test --tests "com.example.template.domain.{domain}.*"
-
-Generate QueryDSL classes
-
-./gradlew compileJava
+Generate QueryDSL classes:
+`./gradlew compileJava`
 
 ---
 
@@ -70,75 +67,38 @@ Generate QueryDSL classes
 
 # Architecture & Constraints
 
-Request Flow
-
-JwtRequestFilter → SecurityConfig → Controller → ServiceImpl → Repository → RoutingDataSource
+Request Flow:
+`JwtRequestFilter` → `SecurityConfig` → `Controller` → `ServiceImpl` → `Repository` → `RoutingDataSource`
 
 ---
 
 # Database Stability
 
-Schema Sync (CRITICAL)
+Schema Sync (CRITICAL):
+When modifying `*Entity`, check `src/main/resources/data.sql`. Ensure DB schema matches the entity.
 
-When modifying `*Entity`, check:
+Soft Delete:
+Always use `isActive`. Do NOT use hard DELETE queries.
 
-src/main/resources/data.sql
-
-Ensure DB schema matches the entity.
-
-Soft Delete
-
-Always use:
-
-isActive
-
-Do NOT use hard DELETE queries.
-
-QueryDSL
-
+QueryDSL:
 Use **V3 QueryDSL** for new features unless V1 or V2 is required.
 
 ---
 
 # Entity & DTO Conventions
 
-Entities
-
-*Entity → extend `BaseEntity`
-
-DTO
-
-Inner static classes inside `*Dto`
-
-Example
-
-AdminDto.AdminResponse
-
-Service
-
-Interface
-
-*Service
-
-Implementation
-
-*ServiceImpl
+- **Entities**: `*Entity` → extend `BaseEntity`
+- **DTO**: Inner static classes inside `*Dto` (Example: `AdminDto.AdminResponse`)
+- **Service Interface**: `*Service`
+- **Service Implementation**: `*ServiceImpl`
 
 ---
 
 # Exception Handling
 
-All exceptions go through:
-
-GlobalExceptionHandler
-
-Throw:
-
-BusinessException
-
-Response wrapper:
-
-ApiResponse<T>
+All exceptions go through: `GlobalExceptionHandler`
+Throw: `BusinessException`
+Response wrapper: `ApiResponse<T>`
 
 ---
 
@@ -146,11 +106,12 @@ ApiResponse<T>
 
 | Concern | Path |
 |------|------|
-| Security config | config/SecurityConfig.java |
-| Datasource routing | config/DataSourceConfig.java |
-| Global exception handler | exception/GlobalExceptionHandler.java |
-| Base entity | model/BaseEntity.java |
-| Initial seed data | src/main/resources/data.sql |
+| API Documentation (Postman) | `postman/BE_*.json` |
+| Security config | `config/SecurityConfig.java` |
+| Datasource routing | `config/DataSourceConfig.java` |
+| Global exception handler | `exception/GlobalExceptionHandler.java` |
+| Base entity | `model/BaseEntity.java` |
+| Initial seed data | `src/main/resources/data.sql` |
 
 ---
 
@@ -175,19 +136,6 @@ ApiResponse<T>
 
 # Important Notes
 
-Targeted Test Execution
-
-DO NOT run the entire test suite for routine checks.
-
-Always run targeted tests for impacted domain.
-
-Anti-Loop
-
-If review fails twice → STOP and ask the user.
-
-No Speculation
-
-Do not perform speculative refactoring.
-
-Only implement what is explicitly requested.
-
+- **Targeted Test Execution**: DO NOT run the entire test suite for routine checks. Always run targeted tests for the impacted domain.
+- **Anti-Loop**: If review fails twice → STOP and ask the user.
+- **No Speculation**: Do not perform speculative refactoring. Only implement what is explicitly requested.
